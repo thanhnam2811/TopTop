@@ -2,7 +2,9 @@ package com.toptop.adapters;
 
 import android.content.Context;
 import android.view.*;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.toptop.R;
@@ -11,7 +13,7 @@ import com.toptop.models.Video;
 import java.util.List;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
-    private List<Video> videos;
+    private final List<Video> videos;
     Context context;
 
     public VideoAdapter(List<Video> videos, Context context) {
@@ -19,14 +21,21 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         this.context = context;
     }
 
+    @NonNull
     @Override
-    public VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_video, parent, false);
+    public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.video_layout, parent, false);
         return new VideoViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(VideoViewHolder holder, int position) {
+        Video video = videos.get(position);
+        holder.txt_username.setText(video.getUsername());
+        holder.txt_content.setText(video.getContent());
+        holder.txt_num_likes.setText(String.valueOf(video.getTotalLikes()));
+        holder.txt_num_comments.setText(String.valueOf(video.getTotalComments()));
     }
 
     @Override
@@ -34,9 +43,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         return videos.size();
     }
 
-    class VideoViewHolder extends RecyclerView.ViewHolder {
+    static class VideoViewHolder extends RecyclerView.ViewHolder {
+        TextView txt_username, txt_content, txt_num_likes, txt_num_comments;
         public VideoViewHolder(View itemView) {
             super(itemView);
+            txt_username = itemView.findViewById(R.id.txt_username);
+            txt_content = itemView.findViewById(R.id.txt_content);
+            txt_num_likes = itemView.findViewById(R.id.txt_num_likes);
+            txt_num_comments = itemView.findViewById(R.id.txt_num_comments);
         }
     }
 }

@@ -7,10 +7,10 @@
     android:layout_gravity="bottom"
     tools:context=".MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <FrameLayout
         android:paddingLeft="24dp"
@@ -32,6 +32,5 @@
             app:cnb_radius="24dp"
             app:cnb_textColor="@color/white" />
     </FrameLayout>
-
 
 </RelativeLayout>

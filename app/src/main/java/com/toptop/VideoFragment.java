@@ -1,63 +1,83 @@
 package com.toptop;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link VideoFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.toptop.adapters.VideoAdapter;
+import com.toptop.models.Video;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+
 public class VideoFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView recyclerView;
+    private Video video;
+    private ArrayList<Video> videos;
+    private VideoAdapter videoAdapter;
 
     public VideoFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment VideoFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static VideoFragment newInstance(String param1, String param2) {
-        VideoFragment fragment = new VideoFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    private void initData() {
+        videos.add(new Video("V001", "thanhnam", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt. Nulla sit amet nulla sagittis, sollicitudin mauris at, tristique diam. Ut posuere enim a rutrum rutrum. Donec viverra libero vitae eleifend tempor. Nullam sit amet turpis non nibh ullamcorper molestie. Praesent magna."
+                , "", 99999, 123, 99999, new Date()));
+        videos.add(new Video("V002", "ngoctrung", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt. Nulla sit amet nulla sagittis, sollicitudin mauris at, tristique diam. Ut posuere enim a rutrum rutrum. Donec viverra libero vitae eleifend tempor. Nullam sit amet turpis non nibh ullamcorper molestie. Praesent magna."
+                , "", 123321, 123, 99999, new Date()));
+        videos.add(new Video("V003", "hoaitan", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt. Nulla sit amet nulla sagittis, sollicitudin mauris at, tristique diam. Ut posuere enim a rutrum rutrum. Donec viverra libero vitae eleifend tempor. Nullam sit amet turpis non nibh ullamcorper molestie. Praesent magna."
+                , "", 231, 21344, 99999, new Date()));
+        videos.add(new Video("V001", "thanhnam", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt. Nulla sit amet nulla sagittis, sollicitudin mauris at, tristique diam. Ut posuere enim a rutrum rutrum. Donec viverra libero vitae eleifend tempor. Nullam sit amet turpis non nibh ullamcorper molestie. Praesent magna."
+                , "", 312, 243, 99999, new Date()));
+        videos.add(new Video("V002", "ngoctrung", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt. Nulla sit amet nulla sagittis, sollicitudin mauris at, tristique diam. Ut posuere enim a rutrum rutrum. Donec viverra libero vitae eleifend tempor. Nullam sit amet turpis non nibh ullamcorper molestie. Praesent magna."
+                , "", 43523, 2342, 99999, new Date()));
+        videos.add(new Video("V003", "hoaitan", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt. Nulla sit amet nulla sagittis, sollicitudin mauris at, tristique diam. Ut posuere enim a rutrum rutrum. Donec viverra libero vitae eleifend tempor. Nullam sit amet turpis non nibh ullamcorper molestie. Praesent magna."
+                , "", 12323, 234, 99999, new Date()));
+
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_video, container, false);
+
+        recyclerView = view.findViewById(R.id.recyclerView);
+
+        videos = new ArrayList<>();
+        initData();
+        videoAdapter = new VideoAdapter(videos, view.getContext());
+        recyclerView.setAdapter(videoAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_video, container, false);
+        return view;
     }
 }

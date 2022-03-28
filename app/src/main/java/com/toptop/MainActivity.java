@@ -22,9 +22,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ChipNavigationBar chipNavigationBar;
     private Fragment fragment = null;
-    private List<Video> videoList = new ArrayList<>();
-    private VideoAdapter videoAdapter;
-    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
         // Remove the action bar
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.hide();
 
         // Bind the view using the id
@@ -44,46 +42,22 @@ public class MainActivity extends AppCompatActivity {
         // Set videos fragment as default
         chipNavigationBar.setItemSelected(R.id.video, true);
         fragment = new VideoFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.recyclerView, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
 
         // Set listener
         chipNavigationBar.setOnItemSelectedListener(i -> {
-            switch (i) {
-                case R.id.video:
-                    fragment = new VideoFragment();
-                    break;
-                case R.id.search:
-                    fragment = new SearchFragment();
-                    break;
-                case R.id.notification:
-                    fragment = new NotificationFragment();
-                    break;
-                case R.id.profile:
-                    fragment = new ProfileFragment();
-                    break;
-            }
+            if (i == R.id.video)
+                fragment = new VideoFragment();
+            else if (i == R.id.search)
+                fragment = new SearchFragment();
+            else if (i == R.id.notification)
+                fragment = new NotificationFragment();
+            else if (i == R.id.profile)
+                fragment = new ProfileFragment();
+
             if (fragment != null) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.recyclerView, fragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
             }
         });
-
-        // RecyclerView
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(recyclerView);
-
-        videoList.add(new Video("", "", "", "", 5, 5, 5, new Date()));
-        videoList.add(new Video("", "", "", "", 5, 5, 5, new Date()));
-        videoList.add(new Video("", "", "", "", 5, 5, 5, new Date()));
-        videoList.add(new Video("", "", "", "", 5, 5, 5, new Date()));
-        videoList.add(new Video("", "", "", "", 5, 5, 5, new Date()));
-
-        videoAdapter = new VideoAdapter(videoList, getApplicationContext());
-        recyclerView.setAdapter(videoAdapter);
-        videoAdapter.notifyDataSetChanged();
     }
 }
