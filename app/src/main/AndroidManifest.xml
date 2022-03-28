@@ -10,9 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TopTop">
         <activity
+            android:windowSoftInputMode="adjustNothing"
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
+            android:windowSoftInputMode="adjustNothing"
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
