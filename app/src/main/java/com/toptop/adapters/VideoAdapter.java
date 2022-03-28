@@ -1,12 +1,16 @@
 package com.toptop.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.*;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.toptop.LoginActivity;
 import com.toptop.R;
 import com.toptop.models.Video;
 
@@ -26,6 +30,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.video_layout, parent, false);
+
+        ImageView imgFollow = view.findViewById(R.id.img_follow);
+        imgFollow.setOnClickListener(v -> {
+            Intent intent = new Intent(context, LoginActivity.class);
+            context.startActivity(intent);
+        });
         return new VideoViewHolder(view);
     }
 

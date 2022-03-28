@@ -1,10 +1,13 @@
-package com.toptop;
+package com.toptop.fragment;
 
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,6 +16,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.toptop.R;
 import com.toptop.adapters.VideoAdapter;
 import com.toptop.models.Video;
 
@@ -47,12 +51,6 @@ public class VideoFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -80,4 +78,6 @@ public class VideoFragment extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
+
+
 }
