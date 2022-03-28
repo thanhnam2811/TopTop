@@ -1,4 +1,4 @@
-package com.toptop;
+package com.toptop.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.toptop.R;
 import com.toptop.adapters.VideoAdapter;
 import com.toptop.models.Video;
 

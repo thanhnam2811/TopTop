@@ -5,18 +5,12 @@ import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
 
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
-import com.toptop.adapters.VideoAdapter;
-import com.toptop.models.Video;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.toptop.fragment.NotificationFragment;
+import com.toptop.fragment.ProfileFragment;
+import com.toptop.fragment.SearchFragment;
+import com.toptop.fragment.VideoFragment;
 
 public class MainActivity extends AppCompatActivity {
 
