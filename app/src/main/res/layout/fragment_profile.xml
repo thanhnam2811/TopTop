@@ -1,16 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileFragment">
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <include layout="@layout/toolbar" />
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="40dp"
-        android:text="Trang cá nhân" />
+        android:orientation="vertical"
+        android:paddingTop="15dp">
 
-</FrameLayout>
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            app:riv_oval="true"
+            android:src="@drawable/avatar"></com.mikhaellopez.circularimageview.CircularImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Trung Nguyễn"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:textStyle=""
+            android:paddingBottom="15dp"></TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="Theo dõi"
+                android:textColor="@color/black"
+                android:textSize="17dp"></TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="300K"
+                android:textColor="@color/black"
+                android:textSize="19dp"
+                android:textStyle="bold"
+                ></TextView>
+        </LinearLayout>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:background="#D6CFCF"
+            android:layout_gravity="center"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Người theo dõi"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:textSize="17dp"
+                android:padding="15dp"></TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="300K"
+                android:textColor="@color/black"
+                android:textSize="19dp"
+                android:textStyle="bold"
+                ></TextView>
+        </LinearLayout>
+        <View
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:background="#D6CFCF"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="Like"
+                android:textColor="@color/black"
+                android:textSize="17dp"></TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="300K"
+                android:textColor="@color/black"
+                android:textSize="19dp"
+                android:textStyle="bold"
+                ></TextView>
+        </LinearLayout>
+
+    </LinearLayout>
+    <View
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D6CFCF"
+        />
+
+
+</LinearLayout>
