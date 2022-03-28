@@ -34,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="@+id/img_comment"
         app:layout_constraintStart_toStartOf="@+id/img_comment" />
 
-    <com.makeramen.roundedimageview.RoundedImageView
+    <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/img_avatar"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -42,11 +42,7 @@
         android:src="@drawable/demo_avatar"
         app:layout_constraintBottom_toTopOf="@+id/img_like"
         app:layout_constraintEnd_toEndOf="@+id/img_like"
-        app:layout_constraintStart_toStartOf="@+id/img_like"
-        app:riv_border_color="#ffffff"
-        app:riv_border_width="2dp"
-        app:riv_mutate_background="true"
-        app:riv_oval="true" />
+        app:layout_constraintStart_toStartOf="@+id/img_like" />
 
     <ImageView
         android:id="@+id/img_follow"

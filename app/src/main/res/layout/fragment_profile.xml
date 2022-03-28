@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.ProfileFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".fragment.ProfileFragment">
 
     <include layout="@layout/toolbar" />
 
@@ -20,33 +20,32 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
-            app:riv_oval="true"
-            android:src="@drawable/avatar"></com.mikhaellopez.circularimageview.CircularImageView>
+            android:src="@drawable/avatar" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
+            android:paddingBottom="15dp"
             android:text="Trung Nguyễn"
             android:textColor="@color/black"
             android:textSize="20dp"
-            android:textStyle=""
-            android:paddingBottom="15dp"></TextView>
+            android:textStyle="" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center"
-        >
+        android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
@@ -55,7 +54,7 @@
                 android:padding="15dp"
                 android:text="Theo dõi"
                 android:textColor="@color/black"
-                android:textSize="17dp"></TextView>
+                android:textSize="17dp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -64,28 +63,30 @@
                 android:text="300K"
                 android:textColor="@color/black"
                 android:textSize="19dp"
-                android:textStyle="bold"
-                ></TextView>
+                android:textStyle="bold" />
         </LinearLayout>
+
         <View
             android:layout_width="1dp"
             android:layout_height="50dp"
-            android:background="#D6CFCF"
             android:layout_gravity="center"
-            />
+            android:background="#D6CFCF" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">>
+            android:gravity="center"
+            android:orientation="vertical">>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="15dp"
                 android:text="Người theo dõi"
                 android:textColor="@color/black"
-                android:gravity="center"
-                android:textSize="17dp"
-                android:padding="15dp"></TextView>
+                android:textSize="17dp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,19 +94,19 @@
                 android:text="300K"
                 android:textColor="@color/black"
                 android:textSize="19dp"
-                android:textStyle="bold"
-                ></TextView>
+                android:textStyle="bold" />
         </LinearLayout>
+
         <View
             android:layout_width="2dp"
             android:layout_height="50dp"
-            android:background="#D6CFCF"
-            />
+            android:background="#D6CFCF" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">>
+            android:gravity="center"
+            android:orientation="vertical">>
 
             <TextView
                 android:layout_width="match_parent"
@@ -114,7 +115,8 @@
                 android:padding="15dp"
                 android:text="Like"
                 android:textColor="@color/black"
-                android:textSize="17dp"></TextView>
+                android:textSize="17dp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -122,17 +124,16 @@
                 android:text="300K"
                 android:textColor="@color/black"
                 android:textSize="19dp"
-                android:textStyle="bold"
-                ></TextView>
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>
+
     <View
-        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#D6CFCF"
-        />
+        android:layout_marginTop="15dp"
+        android:background="#D6CFCF" />
 
 
 </LinearLayout>
