@@ -4,10 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
 
 import com.toptop.R;
+import com.toptop.adapters.NotificationAdapter;
+import com.toptop.models.Notification;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,12 +59,31 @@ public class NotificationFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_notification, container, false);
+
+        //        1. create notification data
+        ArrayList<Notification> notifications = new ArrayList<>();
+        notifications.add(new Notification(1, R.drawable.demo_avatar, "Thaí Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
+        notifications.add(new Notification(2, R.drawable.demo_avatar, "Thaí Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
+        notifications.add(new Notification(3, R.drawable.demo_avatar, "Thaí Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
+        notifications.add(new Notification(4, R.drawable.demo_avatar, "Thaí Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
+        notifications.add(new Notification(5, R.drawable.demo_avatar, "Thaí Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
+        // 2 binding listview
+        ListView listView = view.findViewById(R.id.listNotification);
+        //  3. create adapter
+        NotificationAdapter adapter = new NotificationAdapter(this, R.layout.item_listinform);
+        // 4. set adapter for listview
+        adapter.addAll(notifications);
+        listView.setAdapter(adapter);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notification, container, false);
+        return view;
     }
 }

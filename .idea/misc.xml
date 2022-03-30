@@ -7,23 +7,38 @@
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1955" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_like.xml" value="0.3315" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/menu_background.xml" value="0.3475" />
-        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_login.xml" value="0.19652777777777777" />
-        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_main.xml" value="0.23229166666666667" />
-        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_register.xml" value="0.23917525773195877" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_main.xml" value="0.21415384615384617" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_splash_screen.xml" value="0.24166666666666667" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_notification.xml" value="0.3625" />
-        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_profile.xml" value="0.12361111111111112" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_profile.xml" value="0.3625" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_search.xml" value="0.3625" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_video.xml" value="0.23917525773195877" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/layout_video_player.xml" value="0.24166666666666667" />
-        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/video_layout.xml" value="0.24166666666666667" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/menu/menu_background.xml" value="0.10416666666666667" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/menu/nav_item.xml" value="0.18541666666666667" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1935" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/drawable-v24/ic_person.xml" value="0.1855" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/drawable/ic_search.xml" value="0.1855" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/drawable/ic_share.xml" value="0.1855" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/activity_login.xml" value="0.21197916666666666" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/activity_main.xml" value="0.2879999900124293" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/activity_register.xml" value="0.21197916666666666" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/activity_splash_screen.xml" value="0.21197916666666666" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/fragment_notification.xml" value="0.21818181061547676" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/fragment_profile.xml" value="0.21197916666666666" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/fragment_search.xml" value="0.25" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/fragment_video.xml" value="0.21197916666666666" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/item_list.xml" value="0.20625" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/item_listInform.xml" value="0.2911458333333333" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/item_listinform.xml" value="0.5934426229508196" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/items_listsearch.xml" value="0.4363636212309535" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/toolbar.xml" value="0.21197916666666666" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/video_layout.xml" value="0.21197916666666666" />
+        <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/menu/nav_item.xml" value="0.21197916666666666" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

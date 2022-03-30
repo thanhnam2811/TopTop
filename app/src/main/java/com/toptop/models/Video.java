@@ -6,6 +6,16 @@ public class Video {
     private String videoId, username, content, linkVideo;
     private Long totalLikes, totalComments, totalViews;
     private Date date;
+//    image decription video
+    private int imageVideo;
+
+    public Video(String videoId, String username, String content, int imageVideo, Date date) {
+        this.videoId = videoId;
+        this.username = username;
+        this.content = content;
+        this.imageVideo = imageVideo;
+        this.date = date;
+    }
 
     public Video(String videoId, String username, String content, String linkVideo, Long totalLikes, Long totalComments, Long totalViews, Date date) {
         this.videoId = videoId;
@@ -27,6 +37,14 @@ public class Video {
         this.totalComments = (long) totalComments;
         this.totalViews = (long) totalViews;
         this.date = date;
+    }
+
+    public int getImageVideo() {
+        return imageVideo;
+    }
+
+    public void setImageVideo(int imageVideo) {
+        this.imageVideo = imageVideo;
     }
 
     public String getVideoId() {
