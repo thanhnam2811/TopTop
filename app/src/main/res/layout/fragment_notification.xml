@@ -6,23 +6,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".fragment.NotificationFragment">
-<!-- Title bar Start-->
+    <!-- Title bar Start-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#0387C3"
-        android:gravity="center"
-        >
+        android:background="@color/white"
+        android:gravity="center">
+
         <TextView
             android:id="@+id/titleNotification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="Thông báo"
+            android:textColor="@color/main_color"
             android:textSize="25sp"
-            android:textStyle="bold"
-            android:textColor="#F5F7F8"
-            />
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/imageNotification"
             android:layout_width="39dp"
@@ -30,7 +30,7 @@
             android:layout_alignParentLeft="true"
             android:src="@drawable/ic_notification" />
     </LinearLayout>
-<!--Title bar End-->
+    <!--Title bar End-->
 
 
     <FrameLayout

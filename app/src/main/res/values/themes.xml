@@ -16,4 +16,9 @@
         <!-- Transparent status bar. -->
         <item name="android:windowTranslucentStatus">true</item>
     </style>
+
+    <style name="Theme.RemoveSplashScreenTheme" parent="@style/Theme.TopTop">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/black</item>
+    </style>
 </resources>

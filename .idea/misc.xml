@@ -6,19 +6,29 @@
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable-v24/ic_arow_back.xml" value="0.3635" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable-v24/ic_edituser.xml" value="0.3635" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1955" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable-v24/ic_person.xml" value="0.1935" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/button_background.xml" value="0.3635" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_comment.xml" value="0.3635" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1955" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_like.xml" value="0.3315" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_logout.xml" value="0.1935" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_notification.xml" value="0.1935" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_profile.xml" value="0.1935" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_profile_avd.xml" value="0.1935" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_search.xml" value="0.1935" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_search_avd.xml" value="0.1935" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_video.xml" value="0.1575" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_video_avd.xml" value="0.1935" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/menu_background.xml" value="0.3475" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/font/aclonica.xml" value="0.26180555555555557" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/font/lobster.xml" value="0.14375" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_login.xml" value="0.18900343642611683" />
-        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_main.xml" value="0.21415384615384617" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_main.xml" value="0.20694444444444443" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_register.xml" value="0.1810996563573883" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_splash_screen.xml" value="0.12361111111111112" />
-        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_notification.xml" value="0.3625" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_notification.xml" value="0.20694444444444443" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_profile.xml" value="0.23917525773195877" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_profile2.xml" value="0.12361111111111112" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_search.xml" value="0.3625" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_video.xml" value="0.23917525773195877" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/item_listinform.xml" value="0.1909722222222222" />
