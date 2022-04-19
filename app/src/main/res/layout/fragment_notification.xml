@@ -20,13 +20,13 @@
             android:layout_margin="10dp"
             android:text="Thông báo"
             android:textColor="@color/main_color"
-            android:textSize="25sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageNotification"
-            android:layout_width="39dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentLeft="true"
             android:src="@drawable/ic_notification" />
     </LinearLayout>
