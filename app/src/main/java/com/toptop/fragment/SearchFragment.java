@@ -14,10 +14,8 @@ import com.toptop.R;
 import com.toptop.adapters.ListSearchAdapter;
 import com.toptop.models.Video;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -25,21 +23,20 @@ import java.util.GregorianCalendar;
  * Use the {@link SearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SearchFragment extends Fragment implements SearchView.OnQueryTextListener{
+public class SearchFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     // Declare Variables
     ListView listView;
     ListSearchAdapter adapter;
     SearchView editsearch;
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -76,12 +73,12 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search, container, false);
-    // Generate sample data
+        // Generate sample data
         ArrayList<Video> videos = new ArrayList<Video>();
-        videos.add(new Video("1","Nguyễn Ngọc Trung","Video xinh đẹp",R.drawable.avatar, new  GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
-        videos.add(new Video("2","Nguyễn Ngọc Trung","Video ca nhạc",R.drawable.avatar, new  GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
-        videos.add(new Video("3","Nguyễn Ngọc Trung","Video ca hát",R.drawable.avatar, new  GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
-        videos.add(new Video("4","Nguyễn Ngọc Trung","Video nhảy nhót",R.drawable.avatar, new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
+        videos.add(new Video("1", "Nguyễn Ngọc Trung", "Video xinh đẹp", R.drawable.avatar, new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
+        videos.add(new Video("2", "Nguyễn Ngọc Trung", "Video ca nhạc", R.drawable.avatar, new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
+        videos.add(new Video("3", "Nguyễn Ngọc Trung", "Video ca hát", R.drawable.avatar, new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
+        videos.add(new Video("4", "Nguyễn Ngọc Trung", "Video nhảy nhót", R.drawable.avatar, new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
 
         // Locate the ListView in listview_main.xml
         listView = view.findViewById(R.id.listsearch);
@@ -102,6 +99,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
         return view;
     }
+
     @Override
     public boolean onQueryTextSubmit(String query) {
 
