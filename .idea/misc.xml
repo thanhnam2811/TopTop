@@ -3,20 +3,34 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable-v24/ic_arow_back.xml" value="0.3635" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable-v24/ic_edituser.xml" value="0.3635" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1955" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/button_background.xml" value="0.3635" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_comment.xml" value="0.3635" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1955" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_like.xml" value="0.3315" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_video.xml" value="0.1575" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/menu_background.xml" value="0.3475" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/font/lobster.xml" value="0.14375" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_login.xml" value="0.18900343642611683" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_main.xml" value="0.21415384615384617" />
-        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_splash_screen.xml" value="0.24166666666666667" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_register.xml" value="0.1810996563573883" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_splash_screen.xml" value="0.12361111111111112" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_notification.xml" value="0.3625" />
-        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_profile.xml" value="0.3625" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_profile.xml" value="0.23917525773195877" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_search.xml" value="0.3625" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_video.xml" value="0.23917525773195877" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/item_listinform.xml" value="0.1909722222222222" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/items_listsearch.xml" value="0.1909722222222222" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/layout_bg_comment.xml" value="0.24166666666666667" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/layout_video_player.xml" value="0.24166666666666667" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/toolbar.xml" value="0.1909722222222222" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/video_layout.xml" value="0.1" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/menu/menu_background.xml" value="0.10416666666666667" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/menu/nav_item.xml" value="0.18541666666666667" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1935" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3635" />
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/drawable-v24/ic_person.xml" value="0.1855" />
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/drawable/ic_search.xml" value="0.1855" />
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/drawable/ic_share.xml" value="0.1855" />

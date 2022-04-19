@@ -6,7 +6,7 @@ public class Video {
     private String videoId, username, content, linkVideo;
     private Long totalLikes, totalComments, totalViews;
     private Date date;
-//    image decription video
+//  image description video
     private int imageVideo;
 
     public Video(String videoId, String username, String content, int imageVideo, Date date) {

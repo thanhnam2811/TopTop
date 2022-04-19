@@ -1,0 +1,154 @@
+{
+    "users": {
+        "thanhnam1324": {
+            "username": "thanhnam1324",
+            "password": "thanhnam1324",
+            "full_name": "Thái Thành Nam",
+            "phone_number": "0989898989",
+            "email": "thanhnam1324@gmail.com",
+            "num_following": 2,
+            "following": {
+                "ngoctrung": true,
+                "hoaitan": true
+            },
+            "num_followers": 2,
+            "followers": {
+                "ngoctrung": true,
+                "hoaitan": true
+            },
+            "total_likes": 0
+        },
+        "ngoctrung": {
+            "username": "ngoctrung",
+            "password": "ngoctrung",
+            "full_name": "Nguyễn Ngọc Trung",
+            "phone_number": "0989898989",
+            "email": "ngoctrung@gmail.com",
+            "num_following": 1,
+            "following": {
+                "thanhnam1324": true
+            },
+            "num_followers": 1,
+            "followers": {
+                "thanhnam1324": true
+            },
+            "total_likes": 0
+        },
+        "hoaitan": {
+            "username": "hoaitan",
+            "password": "hoaitan",
+            "full_name": "Cao Hoài Tấn",
+            "phone_number": "0989898989",
+            "email": "hoaitan@gmail.com",
+            "num_following": 1,
+            "following": {
+                "thanhnam1324": true
+            },
+            "num_followers": 1,
+            "followers": {
+                "thanhnam1324": true
+            },
+            "total_likes": 0
+        }
+    },
+    "videos": {
+        "yuyuuyue": {
+            "video_id": "yuyuuyue",
+            "username": "thanhnam1324",
+            "content": "Video yuyuuyue",
+            "total_likes": 1,
+            "likes": {
+                "thanhnam1324": true
+            },
+            "total_comments": 1,
+            "comments": {
+                "yuyuuyue_uiuiuiui": true
+            },
+            "link_video": "https://www.youtube.com/watch?v=yuyuuyue",
+            "total_views": 1,
+            "date_uploaded": "20-10-2019"
+        },
+        "qwiueiuoqwe": {
+            "video_id": "qwiueiuoqwe",
+            "username": "ngoctrung",
+            "content": "Video qwiueiuoqwe",
+            "total_likes": 1,
+            "likes": {
+                "thanhnam1324": true
+            },
+            "total_comments": 1,
+            "comments": {
+                "qwiueiuoqwe_uyyuyuyu": true
+            },
+            "link_video": "https://www.youtube.com/watch?v=qwiueiuoqwe",
+            "total_views": 1,
+            "date_uploaded": "20-10-2019"
+        },
+        "qwieiuqwie": {
+            "video_id": "qwieiuqwie",
+            "username": "hoaitan",
+            "content": "Video qwieiuqwie",
+            "total_likes": 1,
+            "likes": {
+                "thanhnam1324": true
+            },
+            "total_comments": 1,
+            "comments": {
+                "qwieiuqwie_uyuyuyuy": true
+            },
+            "link_video": "https://www.youtube.com/watch?v=qwieiuqwie",
+            "total_views": 1,
+            "date_uploaded": "20-10-2019"
+        }
+    },
+    "comments": {
+        "yuyuuyue_uiuiuiui": {
+            "comment_id": "yuyuuyue_uiuiuiui",
+            "username": "thanhnam1324",
+            "video_id": "yuyuuyue",
+            "content": "Comment yuyuuyue",
+            "reply_to": {
+                "yuyuuyue_uiuiuiui_uyueyr": true
+            },
+            "time": "20-10-2019 10:00:00"
+        },
+        "qwiueiuoqwe_uyyuyuyu": {
+            "comment_id": "qwiueiuoqwe_uyyuyuyu",
+            "username": "thanhnam1324",
+            "video_id": "qwiueiuoqwe",
+            "content": "Comment qwiueiuoqwe",
+            "reply_to": {
+            },
+            "time": "20-10-2019 10:00:00"
+        },
+        "qwieiuqwie_uyuyuyuy": {
+            "comment_id": "qwieiuqwie_uyuyuyuy",
+            "username": "thanhnam1324",
+            "video_id": "qwieiuqwie",
+            "content": "Comment qwieiuqwie",
+            "reply_to": {
+            },
+            "time": "20-10-2019 10:00:00"
+        },
+        "yuyuuyue_uiuiuiui_uyueyr": {
+            "comment_id": "yuyuuyue_uiuiuiui_uyueyr",
+            "username": "hoaitan",
+            "video_id": "yuyuuyue",
+            "content": "Comment yuyuuyue",
+            "reply_to": {
+            },
+            "time": "20-10-2019 10:00:00"
+        }
+    },
+    "notifications": {
+        "thanhnam1324_Newuewuy": {
+            "notification_id": "thanhnam1324_Newuewuy",
+            "username": "thanhnam1324",
+            "type": "REPLY_COMMENT",
+            "content": "hoaitan replied to your comment",
+            "time": "20-10-2019 10:00:00",
+            "redirect_to": "yuyuuyue_uiuiuiui_uyueyr",
+            "seen": false
+        }
+    }
+}
