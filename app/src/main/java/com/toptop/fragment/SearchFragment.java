@@ -1,5 +1,6 @@
 package com.toptop.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,6 +95,10 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
         editsearch = view.findViewById(R.id.search);
         editsearch.setOnQueryTextListener(this);
+
+        // Set status bar color
+        requireActivity().getWindow().setStatusBarColor(Color.WHITE);
+        requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 
         return view;
     }

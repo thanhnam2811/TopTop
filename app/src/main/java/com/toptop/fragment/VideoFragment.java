@@ -56,7 +56,6 @@ public class VideoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Set transparent status bar
         View view = inflater.inflate(R.layout.fragment_video, container, false);
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
@@ -72,6 +71,10 @@ public class VideoFragment extends Fragment {
 
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
+
+        // Set status bar color
+        requireActivity().getWindow().setStatusBarColor(Color.BLACK);
+        requireActivity().getWindow().getDecorView().setSystemUiVisibility(0);
 
         // Inflate the layout for this fragment
         return view;

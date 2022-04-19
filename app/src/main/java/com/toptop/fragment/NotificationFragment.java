@@ -1,5 +1,6 @@
 package com.toptop.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,6 +83,10 @@ public class NotificationFragment extends Fragment {
         // 4. set adapter for listview
         adapter.addAll(notifications);
         listView.setAdapter(adapter);
+
+        // Set status bar color
+        requireActivity().getWindow().setStatusBarColor(Color.WHITE);
+        requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 
         // Inflate the layout for this fragment
         return view;
