@@ -3,8 +3,6 @@ package com.toptop;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.view.View;
-import android.view.WindowManager;
 
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;

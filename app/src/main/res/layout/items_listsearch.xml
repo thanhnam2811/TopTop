@@ -53,7 +53,7 @@
                     android:layout_height="25dp"
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
-                    app:srcCompat="@drawable/follow" />
+                    app:srcCompat="@drawable/ic_follow" />
 
             </LinearLayout>
             <TextView

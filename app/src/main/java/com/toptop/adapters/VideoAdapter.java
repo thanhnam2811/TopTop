@@ -103,7 +103,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     }
 
     private void initVideo(VideoView videoView, String linkVideo) {
-        linkVideo = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/video3135074881.mp4?alt=media&token=c6c991ee-e80c-422f-880a-01026015aabf";
+        linkVideo = "https://vimeo.com/701098493";
         try {
             videoView.setVideoURI(Uri.parse(linkVideo));
             videoView.requestFocus();
