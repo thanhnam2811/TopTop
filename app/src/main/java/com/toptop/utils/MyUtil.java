@@ -1,12 +1,5 @@
 package com.toptop.utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,9 +16,20 @@ public class MyUtil {
         }
     }
 
-    public static String getFormatedDate(Date date) {
+    public static String getFormattedDate(Date date) {
         String pattern = "dd-MM-yyyy HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(date);
+    }
+
+    // check valid dateString
+    public static boolean isValidDate(String dateString) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        try {
+            sdf.parse(dateString);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
     }
 }

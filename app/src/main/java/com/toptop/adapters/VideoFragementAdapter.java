@@ -1,17 +1,19 @@
 package com.toptop.adapters;
 
-import static com.toptop.utils.MyUtil.getDateFromFirebase;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
@@ -21,12 +23,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.LoginActivity;
+import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.models.Comment;
 import com.toptop.models.Video;
+import com.toptop.utils.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,10 +37,9 @@ import java.util.List;
 import java.util.Map;
 
 public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAdapter.VideoViewHolder> {
-	private static final String LOG_TAG = "AndroidVideoView";
+	private static final String TAG = "VideoFragementAdapter";
 
 	private DatabaseReference mDB_comment;
-	private final String FIREBASE_URL = "https://toptop-4d369-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
 	private final List<Video> videos;
 	Context context;
@@ -73,7 +75,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		holder.recycler_comment.removeAllViews();
 
 		// Get comments from firebase
-		mDB_comment = FirebaseDatabase.getInstance(FIREBASE_URL).getReference("comments");
+		mDB_comment = new FirebaseUtil("comments").getDatabase();
 		mDB_comment.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -85,8 +87,8 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 						String username = (String) map.get("username");
 						String video_id = (String) map.get("video_id");
 						String content = (String) map.get("content");
-						Date time = getDateFromFirebase( (String) map.get("time"));
-						Comment comment = new Comment(comment_id, username, video_id, content, time);
+						String formattedTime = (String) map.get("time");
+						Comment comment = new Comment(comment_id, username, video_id, content, formattedTime);
 						comments.add(comment);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -102,7 +104,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError error) {
-				System.out.println(error.getMessage());
+				Log.e(TAG, "failed to read value from firebase", error.toException());
 			}
 		});
 
@@ -127,6 +129,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 
 		// Set onClickListener for video
 		holder.videoView.setOnClickListener(v -> {
+			Log.i(TAG, "onClick video");
 			VideoView videoView = holder.videoView;
 			ImageView imgPause = holder.img_pause;
 			if (videoView.isPlaying())
@@ -134,13 +137,45 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			else
 				playVideo(videoView, imgPause);
 			if (holder.layout_comment.getVisibility() == View.VISIBLE)
-				holder.layout_comment.setVisibility(View.GONE);
+				((MainActivity) context).onBackPressed();
 		});
 
 		// Set onClickListener for img_comment
 		holder.img_comment.setOnClickListener(v -> {
-			holder.layout_comment.setVisibility(View.VISIBLE);
+			// Add layout_comment to MainActivity
+			((MainActivity) context)
+					.addContentView(holder.layout_comment,
+							new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+			EditText txt_input_comment = holder.layout_comment.findViewById(R.id.input_comment).findViewById(R.id.txt_comment_input);
+			ImageView ic_send_comment = holder.layout_comment.findViewById(R.id.input_comment).findViewById(R.id.ic_send_comment);
+			txt_input_comment.addTextChangedListener(new TextWatcher() {
+				@Override
+				public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				}
 
+				@Override
+				public void onTextChanged(CharSequence charSequence, int start, int count, int after) {
+					String content = charSequence.toString().trim();
+					System.out.println(content);
+					if (content.length() > 0)
+						ic_send_comment.setVisibility(View.VISIBLE);
+					else ic_send_comment.setVisibility(View.GONE);
+				}
+
+				@Override
+				public void afterTextChanged(Editable editable) {
+				}
+			});
+
+			ic_send_comment.setOnClickListener(view -> {
+				mDB_comment = new FirebaseUtil("comments").getDatabase();
+				String content = txt_input_comment.getText().toString().trim();
+				Comment newComment = new Comment(mDB_comment.getKey(), "thanhnam1324", "hsdhgsdgh", content, new Date());
+				mDB_comment.push().setValue(newComment);
+				Toast.makeText(context, "Comment success", Toast.LENGTH_SHORT).show();
+			});
+
+			holder.layout_comment.setVisibility(View.VISIBLE);
 		});
 	}
 
@@ -150,7 +185,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		// Return 0 if not found.
 		int resID = context.getResources().getIdentifier(resName, "raw", pkgName);
 
-		Log.i(LOG_TAG, "Res Name: " + resName + "==> Res ID = " + resID);
+		Log.i(TAG, "Res Name: " + resName + "==> Res ID = " + resID);
 		return resID;
 	}
 
@@ -161,18 +196,18 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			videoView.requestFocus();
 			System.out.println("Init Video");
 		} catch (Exception e) {
-			Log.e(LOG_TAG, e.getMessage());
+			Log.e(TAG, e.getMessage());
 		}
 	}
 
 	public void playVideo(VideoView videoView, ImageView imgPause) {
 		videoView.start();
-		imgPause.setVisibility(View.VISIBLE);
+		imgPause.setVisibility(View.GONE);
 	}
 
 	public void pauseVideo(VideoView videoView, ImageView imgPause) {
 		videoView.pause();
-		imgPause.setVisibility(View.GONE);
+		imgPause.setVisibility(View.VISIBLE);
 	}
 
 	@Override
@@ -183,7 +218,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	static class VideoViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username, txt_content, txt_num_likes, txt_num_comments;
 		VideoView videoView;
-		ImageView img_comment, img_pause;
+		ImageView img_comment, img_pause, ic_send_comment;
 		LinearLayout layout_comment;
 		RecyclerView recycler_comment;
 
@@ -198,6 +233,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			img_pause = itemView.findViewById(R.id.img_pause);
 			layout_comment = itemView.findViewById(R.id.layout_comment);
 			recycler_comment = itemView.findViewById(R.id.recycler_view_comments);
+			ic_send_comment = itemView.findViewById(R.id.ic_send_comment);
 		}
 	}
 }

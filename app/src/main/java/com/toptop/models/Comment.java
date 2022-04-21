@@ -1,12 +1,17 @@
 package com.toptop.models;
 
+import android.util.Log;
+
+import com.toptop.utils.MyUtil;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Comment {
+    private static final String TAG = "Comment Model";
     private String comment_id, username, video_id, content;
-    private Date time;
+    private String time;
     private List<Comment> reply_to = new ArrayList<>();
 
     public Comment() {
@@ -17,7 +22,20 @@ public class Comment {
         this.username = username;
         this.video_id = video_id;
         this.content = content;
-        this.time = time;
+        this.time = MyUtil.getFormattedDate(time);
+    }
+
+    public Comment(String comment_id, String username, String video_id, String content, String formattedTime) {
+        this.comment_id = comment_id;
+        this.username = username;
+        this.video_id = video_id;
+        this.content = content;
+        if (MyUtil.isValidDate(formattedTime)) {
+            this.time = formattedTime;
+        } else {
+            Log.i(TAG, "formattedTime is not valid, set to current time");
+            this.time = MyUtil.getFormattedDate(new Date());
+        }
     }
 
     public Comment(String comment_id, String username, String video_id, String content, Date time, List<Comment> reply_to) {
@@ -25,7 +43,7 @@ public class Comment {
         this.username = username;
         this.video_id = video_id;
         this.content = content;
-        this.time = time;
+        this.time = MyUtil.getFormattedDate(time);
         this.reply_to = reply_to;
     }
 
@@ -61,12 +79,12 @@ public class Comment {
         this.content = content;
     }
 
-    public Date getTime() {
+    public String getTime() {
         return time;
     }
 
     public void setTime(Date time) {
-        this.time = time;
+        this.time = MyUtil.getFormattedDate(time);
     }
 
     public List<Comment> getReply_to() {

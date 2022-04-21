@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
@@ -20,7 +21,7 @@ import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem;
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView;
 
 public class MainActivity extends FragmentActivity {
-	private static final String TAG = "MainActivity";
+	private static final String TAG = "MainActivity", NAV_TAG = "Navigation";
 
 	public static final String
 			STATUS_BAR_LIGHT_MODE = "status_bar_light_mode",
@@ -56,57 +57,65 @@ public class MainActivity extends FragmentActivity {
 
 		// Add fragment to the container
 		getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, new SearchFragment(), SEARCH_FRAGMENT_TAG)
-                .addToBackStack(SEARCH_FRAGMENT_TAG)
-                .add(R.id.fragment_container, new NotificationFragment(), NOTIFICATION_FRAGMENT_TAG)
-                .addToBackStack(NOTIFICATION_FRAGMENT_TAG)
-                .add(R.id.fragment_container, new ProfileFragment(), PROFILE_FRAGMENT_TAG)
-                .addToBackStack(PROFILE_FRAGMENT_TAG)
+				.add(R.id.fragment_container, new SearchFragment(), SEARCH_FRAGMENT_TAG)
+				.addToBackStack(SEARCH_FRAGMENT_TAG)
+				.add(R.id.fragment_container, new NotificationFragment(), NOTIFICATION_FRAGMENT_TAG)
+				.addToBackStack(NOTIFICATION_FRAGMENT_TAG)
+				.add(R.id.fragment_container, new ProfileFragment(), PROFILE_FRAGMENT_TAG)
+				.addToBackStack(PROFILE_FRAGMENT_TAG)
 				.add(R.id.fragment_container, new VideoFragment(), VIDEO_FRAGMENT_TAG)
 				.addToBackStack(VIDEO_FRAGMENT_TAG)
-                .commit();
+				.commit();
 
 		// Execute transaction
-        getSupportFragmentManager().executePendingTransactions();
+		getSupportFragmentManager().executePendingTransactions();
 
 		// Set the items
 		nav.setMenuItems(items, 0);
 
 		// Set the listener
 		nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> {
+			// If layout_comment is showing, don't allow the user to click on the menu
+			if (findViewById(R.id.layout_comment) != null && findViewById(R.id.layout_comment).getVisibility() == View.VISIBLE)
+				return null;
 			switch (cbnMenuItem.getIcon()) {
 				case R.drawable.ic_video:
 					getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container,
-                                    Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VIDEO_FRAGMENT_TAG)))
-                            .commit();
+							.replace(R.id.fragment_container,
+									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VIDEO_FRAGMENT_TAG)))
+							.commit();
+					Log.i(NAV_TAG, "Change to video fragment");
 					break;
-                case R.drawable.ic_search:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container,
-                                    Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(SEARCH_FRAGMENT_TAG)))
-                            .commit();
-                    break;
-                case R.drawable.ic_notification:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container,
-                                    Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(NOTIFICATION_FRAGMENT_TAG)))
-                            .commit();
-                    break;
-                case R.drawable.ic_profile:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container,
-                                    Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(PROFILE_FRAGMENT_TAG)))
-                            .commit();
+				case R.drawable.ic_search:
+					getSupportFragmentManager().beginTransaction()
+							.replace(R.id.fragment_container,
+									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(SEARCH_FRAGMENT_TAG)))
+							.commit();
+					Log.i(NAV_TAG, "Change to search fragment");
+					break;
+				case R.drawable.ic_notification:
+					getSupportFragmentManager().beginTransaction()
+							.replace(R.id.fragment_container,
+									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(NOTIFICATION_FRAGMENT_TAG)))
+							.commit();
+					Log.i(NAV_TAG, "Change to notification fragment");
+					break;
+				case R.drawable.ic_profile:
+					getSupportFragmentManager().beginTransaction()
+							.replace(R.id.fragment_container,
+									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(PROFILE_FRAGMENT_TAG)))
+							.commit();
+					Log.i(NAV_TAG, "Change to profile fragment");
+					break;
 			}
 			return null;
 		});
 
-        // Set the default fragment
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container,
-                        Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VIDEO_FRAGMENT_TAG)))
-                .commit();
+		// Set the default fragment
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.fragment_container,
+						Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VIDEO_FRAGMENT_TAG)))
+				.commit();
 
 		getPermission();
 	}
@@ -118,6 +127,7 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	// Set status bar color mode
 	public void setStatusBarColor(String mode) {
 		if (mode.equals(STATUS_BAR_DARK_MODE)) {
 			getWindow().setStatusBarColor(Color.BLACK);
@@ -128,5 +138,18 @@ public class MainActivity extends FragmentActivity {
 			getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 			Log.i(TAG, "setStatusBarColor: LIGHT MODE");
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		System.out.println("onBackPressed");
+		// Set onBackPressed when layout_comment is showing
+		if (findViewById(R.id.layout_comment) != null && findViewById(R.id.layout_comment).getVisibility() == View.VISIBLE) {
+			InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			System.out.println("HIDE KEYBOARD");
+			imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+			System.out.println("HIDE LAYOUT COMMENT");
+			findViewById(R.id.layout_comment).setVisibility(View.GONE);
+		} else super.onBackPressed();
 	}
 }

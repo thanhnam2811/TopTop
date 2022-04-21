@@ -31,13 +31,13 @@
     <TextView
         android:id="@+id/txt_content"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:lines="2"
+        android:lines="3"
         android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt."
 
-        app:layout_constraintBottom_toBottomOf="@+id/img_avatar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView4"
@@ -57,8 +57,8 @@
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/img_avatar"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,6 +66,7 @@
         app:srcCompat="@drawable/demo_avatar" />
 
     <View
+        android:alpha="0.5"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginStart="8dp"
