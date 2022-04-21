@@ -32,7 +32,11 @@
 
     </LinearLayout>
     <!--Title bar End-->
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/linear_layout"
+        android:background="#6A6868" />
 
     <FrameLayout
         android:layout_width="match_parent"
