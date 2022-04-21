@@ -7,6 +7,7 @@
     tools:context=".fragment.InputAccountRegister">
 
     <EditText
+        android:textSize="20sp"
         android:id="@+id/txt_username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,6 +20,7 @@
         tools:layout_editor_absoluteY="94dp" />
 
     <EditText
+        android:textSize="20sp"
         android:id="@+id/txt_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -30,6 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_username" />
 
     <EditText
+        android:textSize="20sp"
         android:id="@+id/txt_password_confirm"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -7,6 +7,7 @@
     tools:context=".fragment.InputInfoRegister">
 
     <EditText
+        android:textSize="20sp"
         android:id="@+id/txt_fullname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -17,6 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
+        android:textSize="20sp"
         android:id="@+id/txt_phone_number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -28,6 +30,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_fullname" />
 
     <EditText
+        android:textSize="20sp"
         android:id="@+id/txt_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
