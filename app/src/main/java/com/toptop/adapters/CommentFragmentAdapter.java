@@ -13,16 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.DatabaseReference;
 import com.toptop.R;
 import com.toptop.models.Comment;
+import com.toptop.utils.FirebaseUtil;
+import com.toptop.utils.MyUtil;
 
 import java.util.List;
 
 public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragmentAdapter.ViewHolder> {
 
-	private DatabaseReference mDB_comment;
-	private List<Comment> comments;
+	private final DatabaseReference mDB_comment;
+	private final List<Comment> comments;
 	Context context;
 
 	public CommentFragmentAdapter(List<Comment> comments, Context context) {
+		mDB_comment = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
 		this.comments = comments;
 		this.context = context;
 	}
@@ -40,6 +43,7 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 		Comment comment = comments.get(position);
 		holder.txt_content.setText(comment.getContent());
 		holder.txt_username.setText(comment.getUsername());
+		holder.txt_time_comment.setText(MyUtil.getTimeAgo(comment.getTime()));
 	}
 
 	@Override
@@ -48,15 +52,15 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
-		TextView txt_username, txt_content;
-		ImageView img_avatar, ic_send_comment;
+		TextView txt_username, txt_content, txt_time_comment;
+		ImageView img_avatar;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
 			txt_username = itemView.findViewById(R.id.txt_username);
 			txt_content = itemView.findViewById(R.id.txt_content);
 			img_avatar = itemView.findViewById(R.id.img_avatar);
-			ic_send_comment = itemView.findViewById(R.id.ic_send_comment);
+			txt_time_comment = itemView.findViewById(R.id.txt_time_comment);
 		}
 	}
 }

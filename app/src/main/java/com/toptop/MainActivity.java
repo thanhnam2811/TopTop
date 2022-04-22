@@ -5,15 +5,17 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.toptop.adapters.VideoFragementAdapter;
 import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
 import com.toptop.fragment.SearchFragment;
 import com.toptop.fragment.VideoFragment;
+import com.toptop.utils.KeyboardUtils;
 
 import java.util.Objects;
 
@@ -75,8 +77,8 @@ public class MainActivity extends FragmentActivity {
 
 		// Set the listener
 		nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> {
-			// If layout_comment is showing, don't allow the user to click on the menu
-			if (findViewById(R.id.layout_comment) != null && findViewById(R.id.layout_comment).getVisibility() == View.VISIBLE)
+			// If fragment_comment_container is showing, don't allow the user to click on the menu
+			if (findViewById(R.id.fragment_comment_container) != null && findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE)
 				return null;
 			switch (cbnMenuItem.getIcon()) {
 				case R.drawable.ic_video:
@@ -117,6 +119,9 @@ public class MainActivity extends FragmentActivity {
 						Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VIDEO_FRAGMENT_TAG)))
 				.commit();
 
+		// Set navigation bar color
+		getWindow().setNavigationBarColor(Color.WHITE);
+
 		getPermission();
 	}
 
@@ -142,14 +147,17 @@ public class MainActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-		System.out.println("onBackPressed");
-		// Set onBackPressed when layout_comment is showing
-		if (findViewById(R.id.layout_comment) != null && findViewById(R.id.layout_comment).getVisibility() == View.VISIBLE) {
-			InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-			System.out.println("HIDE KEYBOARD");
-			imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-			System.out.println("HIDE LAYOUT COMMENT");
-			findViewById(R.id.layout_comment).setVisibility(View.GONE);
+		Log.i(TAG, "onBackPressed: fragment_comment_container shown? " + (findViewById(R.id.fragment_comment_container) != null && findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE));
+		// Set onBackPressed when fragment_comment_container is showing
+		if (findViewById(R.id.fragment_comment_container) != null && findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE) {
+			Log.i(TAG, "onBackPressed: HIDE KEYBOARD");
+			KeyboardUtils.hideKeyboard(this);
+			Log.i(TAG, "onBackPressed: HIDE LAYOUT_COMMENT");
+			findViewById(R.id.fragment_comment_container).setVisibility(View.GONE);
+
+			// Enable scroll
+			RecyclerView recycler_view_videos = findViewById(R.id.recycler_view_videos);
+			recycler_view_videos.removeOnItemTouchListener(VideoFragementAdapter.disableTouchListener);
 		} else super.onBackPressed();
 	}
 }

@@ -15,6 +15,8 @@
         <item name="android:windowDisablePreview">true</item>
         <!-- Default font family. -->
         <item name="android:fontFamily">@font/varela_round</item>
+        <!-- Font size. -->
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="Theme.RemoveSplashScreenTheme" parent="@style/Theme.TopTop">
