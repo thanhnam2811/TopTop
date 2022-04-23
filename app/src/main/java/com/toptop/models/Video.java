@@ -1,113 +1,130 @@
 package com.toptop.models;
 
-import java.util.Date;
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Video {
-    private String videoId, username, content, linkVideo;
-    private Long totalLikes, totalComments, totalViews;
-    private Date date;
-//  image description video
-    private int imageVideo;
+	private static final String TAG = "Video Model";
+	private String video_id, username, content, link_video;
+	private Long total_likes, total_comments, total_views;
+	private String date_uploaded;
+	private HashMap<String, Boolean> likes;
+	private HashMap<String, Boolean> comments;
 
-    public Video(String videoId, String username, String content, int imageVideo, Date date) {
-        this.videoId = videoId;
-        this.username = username;
-        this.content = content;
-        this.imageVideo = imageVideo;
-        this.date = date;
-    }
+	public Video(String video_id, String username, String content, String link_video, Long total_likes, Long total_comments, Long total_views, String date_uploaded) {
+		this.video_id = video_id;
+		this.username = username;
+		this.content = content;
+		this.link_video = link_video;
+		this.total_likes = total_likes;
+		this.total_comments = total_comments;
+		this.total_views = total_views;
+		this.date_uploaded = date_uploaded;
+	}
 
-    public Video(String videoId, String username, String content, String linkVideo, Long totalLikes, Long totalComments, Long totalViews, Date date) {
-        this.videoId = videoId;
-        this.username = username;
-        this.content = content;
-        this.linkVideo = linkVideo;
-        this.totalLikes = totalLikes;
-        this.totalComments = totalComments;
-        this.totalViews = totalViews;
-        this.date = date;
-    }
+	public Video(DataSnapshot dataSnapshot) {
+		Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+		this.video_id = dataSnapshot.getKey();
+		this.username = map.get("username").toString();
+		this.content = map.get("content").toString();
+		this.link_video = map.get("link_video").toString();
+		this.total_likes = (Long) map.get("total_likes");
+		this.total_comments = (Long) map.get("total_comments");
+		this.total_views = (Long) map.get("total_views");
+		this.date_uploaded = map.get("date_uploaded").toString();
+		this.likes = (HashMap<String, Boolean>) map.get("likes");
+		this.comments = (HashMap<String, Boolean>) map.get("comments");
+	}
 
-    public Video(String videoId, String username, String content, String linkVideo, int totalLikes, int totalComments, int totalViews, Date date) {
-        this.videoId = videoId;
-        this.username = username;
-        this.content = content;
-        this.linkVideo = linkVideo;
-        this.totalLikes = (long) totalLikes;
-        this.totalComments = (long) totalComments;
-        this.totalViews = (long) totalViews;
-        this.date = date;
-    }
+	public String getVideo_id() {
+		return video_id;
+	}
 
-    public int getImageVideo() {
-        return imageVideo;
-    }
+	public void setVideo_id(String video_id) {
+		this.video_id = video_id;
+	}
 
-    public void setImageVideo(int imageVideo) {
-        this.imageVideo = imageVideo;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public String getVideoId() {
-        return videoId;
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public void setVideoId(String videoId) {
-        this.videoId = videoId;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public void setContent(String content) {
+		this.content = content;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public String getLinkVideo() {
+		return link_video;
+	}
 
-    public String getContent() {
-        return content;
-    }
+	public void setLinkVideo(String link_video) {
+		this.link_video = link_video;
+	}
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+	public Long getTotalLikes() {
+		return total_likes;
+	}
 
-    public String getLinkVideo() {
-        return linkVideo;
-    }
+	public void setTotalLikes(Long total_likes) {
+		this.total_likes = total_likes;
+	}
 
-    public void setLinkVideo(String linkVideo) {
-        this.linkVideo = linkVideo;
-    }
+	public Long getTotalComments() {
+		return total_comments;
+	}
 
-    public Long getTotalLikes() {
-        return totalLikes;
-    }
+	public void setTotalComments(Long total_comments) {
+		this.total_comments = total_comments;
+	}
 
-    public void setTotalLikes(Long totalLikes) {
-        this.totalLikes = totalLikes;
-    }
+	public Long getTotalViews() {
+		return total_views;
+	}
 
-    public Long getTotalComments() {
-        return totalComments;
-    }
+	public void setTotalViews(Long total_views) {
+		this.total_views = total_views;
+	}
 
-    public void setTotalComments(Long totalComments) {
-        this.totalComments = totalComments;
-    }
+	public String getDate() {
+		return date_uploaded;
+	}
 
-    public Long getTotalViews() {
-        return totalViews;
-    }
+	public void setDate(String date_uploaded) {
+		this.date_uploaded = date_uploaded;
+	}
 
-    public void setTotalViews(Long totalViews) {
-        this.totalViews = totalViews;
-    }
+	public HashMap<String, Boolean> getLikes() {
+		return likes;
+	}
 
-    public Date getDate() {
-        return date;
-    }
+	public void setLikes(HashMap<String, Boolean> likes) {
+		this.likes = likes;
+	}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	public HashMap<String, Boolean> getComments() {
+		return comments;
+	}
+
+	public void setComments(HashMap<String, Boolean> comments) {
+		this.comments = comments;
+	}
+
+	public boolean existInVideos(List<Video> videos) {
+		for (Video v : videos)
+			if (v.getVideo_id().equals(video_id))
+				return true;
+		return false;
+	}
 }

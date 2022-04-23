@@ -1,45 +1,38 @@
 package com.toptop.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.adapters.VideoFragementAdapter;
 import com.toptop.models.Video;
+import com.toptop.utils.FirebaseUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class VideoFragment extends Fragment {
-	private ArrayList<Video> videos;
+	private static final String TAG = "VideoFragment";
+	private ArrayList<Video> videos = new ArrayList<>();
+	DatabaseReference mDatabase;
 
 	public VideoFragment() {
 		// Required empty public constructor
-	}
-
-	private void initData() {
-		videos.add(new Video("qwieiuqwie", "thanhnam", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt."
-				, "video3135074881", 99999, 123, 99999, new Date()));
-		videos.add(new Video("qwiueiuoqwe", "ngoctrung", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt."
-				, "video3135074881", 123321, 123, 99999, new Date()));
-		videos.add(new Video("yuyuuyue", "hoaitan", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt."
-				, "video3135074881", 231, 21344, 99999, new Date()));
-		videos.add(new Video("hsdhgsdgh", "thanhnam", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt."
-				, "video3135074881", 312, 243, 99999, new Date()));
-		videos.add(new Video("V002", "ngoctrung", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt."
-				, "video3135074881", 43523, 2342, 99999, new Date()));
-		videos.add(new Video("V003", "hoaitan", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt."
-				, "video3135074881", 12323, 234, 99999, new Date()));
-
 	}
 
 	@Override
@@ -54,10 +47,26 @@ public class VideoFragment extends Fragment {
 
 		RecyclerView recyclerView = view.findViewById(R.id.recycler_view_videos);
 
-		videos = new ArrayList<>();
-		initData();
-		VideoFragementAdapter videoFragementAdapter = new VideoFragementAdapter(videos, view.getContext());
-		recyclerView.setAdapter(videoFragementAdapter);
+		mDatabase = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_VIDEOS);
+		mDatabase.addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				videos.clear();
+				for (DataSnapshot dataSnapshot : snapshot.getChildren())
+					videos.add(new Video(dataSnapshot));
+
+				VideoFragementAdapter videoFragementAdapter = new VideoFragementAdapter(videos, view.getContext());
+				if (recyclerView.getAdapter() == null)
+					recyclerView.setAdapter(videoFragementAdapter);
+				else recyclerView.swapAdapter(videoFragementAdapter, true);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				Log.e(TAG, "onCancelled: ", error.toException());
+			}
+		});
+
 		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
 		linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
@@ -65,6 +74,13 @@ public class VideoFragment extends Fragment {
 
 		SnapHelper snapHelper = new PagerSnapHelper();
 		snapHelper.attachToRecyclerView(recyclerView);
+
+		recyclerView.addOnScrollListener(new OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+				super.onScrollStateChanged(recyclerView, newState);
+			}
+		});
 
 		// Set status bar color
 		((MainActivity) requireActivity()).setStatusBarColor(MainActivity.STATUS_BAR_DARK_MODE);

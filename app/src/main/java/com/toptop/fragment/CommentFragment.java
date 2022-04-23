@@ -58,22 +58,41 @@ public class CommentFragment extends Fragment {
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.fragment_comment, container, false);
 
+		view.setVisibility(View.VISIBLE);
+
+		// Disable scrollable when layout comment is visible
 		RecyclerView recycler_view_comments = view.findViewById(R.id.recycler_view_comments);
+		RecyclerView recycler_view_videos = requireActivity().findViewById(R.id.recycler_view_videos);
+		recycler_view_videos.addOnItemTouchListener(VideoFragementAdapter.disableTouchListener);
 
 		// Get comments from firebase by video id
-		Query mDB_comment_query = FirebaseUtil.getCommentsByVideoId(video.getVideoId());
+		Query mDB_comment_query = FirebaseUtil.getCommentsByVideoId(video.getVideo_id());
 		mDB_comment_query.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				Log.i(TAG, "onDataChange: RELOAD COMMENT FOR VIDEO: " + video.getVideoId());
+				Log.i(TAG, "onDataChange: RELOAD COMMENT FOR VIDEO: " + video.getVideo_id());
+
+				// Get all comments from firebase
 				List<Comment> comments = new ArrayList<>();
-				for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+				for (DataSnapshot dataSnapshot : snapshot.getChildren())
 					comments.add(new Comment(dataSnapshot));
-				}
+
+				// Set adapter for recycler view
 				Comment.sortByTimeNewsest(comments);
 				CommentFragmentAdapter adapter = new CommentFragmentAdapter(comments, context);
 				recycler_view_comments.setAdapter(adapter);
 				recycler_view_comments.setLayoutManager(new LinearLayoutManager(context));
+
+				// Set number of comment
+				VideoFragementAdapter videoFragementAdapter = (VideoFragementAdapter) recycler_view_videos.getAdapter();
+				int position = videoFragementAdapter.getPosition(video.getVideo_id());
+				long current_number_of_comment = videoFragementAdapter.getNumberOfComment(position);
+
+				if (current_number_of_comment != comments.size()) {
+					videoFragementAdapter.notifyItemChanged(position, video);
+					// Update number of comment for video
+					FirebaseUtil.setNumberOfComments(comments.size(), video);
+				}
 			}
 
 			@Override
@@ -104,11 +123,16 @@ public class CommentFragment extends Fragment {
 
 		// Set onClickListener for ic_send_comment
 		ic_send_comment.setOnClickListener(v -> {
-			mDB_comment = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
+			// Get comment content
 			String content = txt_comment_input.getText().toString().trim();
-			Comment newComment = new Comment(mDB_comment.push().getKey(), "thanhnam1324", video.getVideoId(), content, new Date());
-			mDB_comment.child(newComment.getComment_id()).setValue(newComment);
+			Comment newComment = new Comment(mDB_comment.push().getKey(), "thanhnam1324", video.getVideo_id(), content, new Date());
+
+			// Add comment to firebase
+			FirebaseUtil.addComment(video, newComment);
+
 			Toast.makeText(context, "Comment success", Toast.LENGTH_SHORT).show();
+
+			// Clear comment input
 			txt_comment_input.setText("");
 		});
 
@@ -118,12 +142,6 @@ public class CommentFragment extends Fragment {
 			if (((MainActivity) context).findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE)
 				((MainActivity) context).onBackPressed();
 		});
-
-		view.setVisibility(View.VISIBLE);
-
-		// Disable scrollable when layout comment is visible
-		RecyclerView recycler_view_videos = requireActivity().findViewById(R.id.recycler_view_videos);
-		recycler_view_videos.addOnItemTouchListener(VideoFragementAdapter.disableTouchListener);
 
 		return view;
 	}

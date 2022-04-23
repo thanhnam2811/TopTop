@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:clickable="true"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:paddingBottom="8dp">
+    android:background="@color/white">
 
     <com.mikhaellopez.circularimageview.CircularImageView
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/main_color"
         android:id="@+id/img_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -25,8 +28,11 @@
         android:layout_marginEnd="8dp"
         android:background="@drawable/create_comment_background"
         android:hint="Bình luận"
-        android:inputType="text"
-        android:padding="8dp"
+        android:inputType="textMultiLine"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/ic_send_comment"
         app:layout_constraintStart_toEndOf="@+id/img_avatar"
@@ -36,7 +42,7 @@
         android:id="@+id/view"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:alpha="0.5"
+        android:alpha="0.4"
         android:background="@color/secondary_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -77,9 +77,6 @@ public class MainActivity extends FragmentActivity {
 
 		// Set the listener
 		nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> {
-			// If fragment_comment_container is showing, don't allow the user to click on the menu
-			if (findViewById(R.id.fragment_comment_container) != null && findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE)
-				return null;
 			switch (cbnMenuItem.getIcon()) {
 				case R.drawable.ic_video:
 					getSupportFragmentManager().beginTransaction()

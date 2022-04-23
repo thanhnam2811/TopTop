@@ -28,7 +28,15 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	private static final String TAG = "VideoFragementAdapter";
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
 
-	private final List<Video> videos;
+	public List<Video> getVideos() {
+		return videos;
+	}
+
+	public void setVideos(List<Video> videos) {
+		this.videos = videos;
+	}
+
+	private List<Video> videos;
 	Context context;
 
 	@Override
@@ -59,7 +67,6 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public void onBindViewHolder(VideoViewHolder holder, int position) {
-
 		// Set info video
 		Video video = videos.get(position);
 		holder.txt_username.setText(video.getUsername());
@@ -84,9 +91,9 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			}
 		});
 
+
 		// Set onPreparedListener for video
 		holder.videoView.setOnPreparedListener(mp -> mp.setLooping(true));
-
 
 		// Set onClickListener for img_comment
 		holder.img_comment.setOnClickListener(v -> {
@@ -108,7 +115,6 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	}
 
 	private void initVideo(VideoView videoView, String linkVideo) {
-		linkVideo = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/video3135074881.mp4?alt=media&token=c6c991ee-e80c-422f-880a-01026015aabf";
 		try {
 			videoView.setVideoURI(Uri.parse(linkVideo));
 			videoView.requestFocus();
@@ -116,6 +122,11 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
 		}
+	}
+
+	@Override
+	public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+		super.onAttachedToRecyclerView(recyclerView);
 	}
 
 	public void playVideo(VideoView videoView, ImageView imgPause) {
@@ -135,6 +146,10 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		return videos.size();
 	}
 
+	public Long getNumberOfComment(int position) {
+		return videos.get(position).getTotalComments();
+	}
+
 	static class VideoViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username, txt_content, txt_num_likes, txt_num_comments;
 		VideoView videoView;
@@ -150,5 +165,15 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			img_comment = itemView.findViewById(R.id.img_comment);
 			img_pause = itemView.findViewById(R.id.img_pause);
 		}
+	}
+
+	// Get position of video by video ID
+	public int getPosition(String videoID) {
+		for (int i = 0; i < videos.size(); i++) {
+			if (videos.get(i).getVideo_id().equals(videoID)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }

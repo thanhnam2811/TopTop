@@ -15,8 +15,7 @@ import com.toptop.adapters.ListSearchAdapter;
 import com.toptop.models.Video;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,15 +73,10 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.fragment_search, container, false);
 		// Generate sample data
-		ArrayList<Video> videos = new ArrayList<Video>();
-		videos.add(new Video("1", "Nguyễn Ngọc Trung", "Video xinh đẹp", R.drawable.avatar, new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
-		videos.add(new Video("2", "Nguyễn Ngọc Trung", "Video ca nhạc", R.drawable.avatar, new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
-		videos.add(new Video("3", "Nguyễn Ngọc Trung", "Video ca hát", R.drawable.avatar, new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
-		videos.add(new Video("4", "Nguyễn Ngọc Trung", "Video nhảy nhót", R.drawable.avatar, new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime()));
+		List<Video> videos = new ArrayList<Video>();
 
 		// Locate the ListView in listview_main.xml
 		listView = view.findViewById(R.id.listsearch);
-
 
 		// Pass results to ListViewAdapter Class
 		adapter = new ListSearchAdapter(this.getContext(), videos);
