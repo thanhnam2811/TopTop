@@ -1,45 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="\@"
-        android:textColor="@color/black"
-
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/img_avatar"
-        app:layout_constraintTop_toTopOf="@+id/img_avatar" />
-
-    <TextView
-        android:id="@+id/txt_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:text="username"
-
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toTopOf="@+id/img_avatar" />
-
-    <TextView
-        android:id="@+id/txt_content"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt."
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/img_avatar"
@@ -51,26 +15,81 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/demo_avatar" />
 
+    <LinearLayout
+        android:id="@+id/comment_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/img_avatar"
+        app:layout_constraintTop_toTopOf="@+id/img_avatar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:padding="8dp"
+            android:background="@drawable/bg_comment_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\@"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txt_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="username"
+
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/textView4"
+                app:layout_constraintTop_toTopOf="@+id/textView4" />
+
+            <TextView
+                android:id="@+id/txt_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur maximus urna nec sem rhoncus, scelerisque sodales felis tincidunt."
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/textView4"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+            <TextView
+                android:id="@+id/txt_time_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:alpha="0.6"
+                android:text="5 giờ trước"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/txt_username"
+                app:layout_constraintStart_toEndOf="@+id/txt_username"
+                app:layout_constraintTop_toTopOf="@+id/txt_username" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/txt_reply_comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:text="Trả lời"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txt_content"
-        app:layout_constraintTop_toBottomOf="@+id/txt_content" />
+        app:layout_constraintStart_toStartOf="@+id/comment_content"
+        app:layout_constraintTop_toBottomOf="@+id/comment_content" />
 
-    <TextView
-        android:id="@+id/txt_time_comment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:alpha="0.6"
-        android:text="5 giờ trước"
-        android:textSize="10sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/txt_username"
-        app:layout_constraintStart_toEndOf="@+id/txt_username"
-        app:layout_constraintTop_toTopOf="@+id/txt_username" />
 </androidx.constraintlayout.widget.ConstraintLayout>
