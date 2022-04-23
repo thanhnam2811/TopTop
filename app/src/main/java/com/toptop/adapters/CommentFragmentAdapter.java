@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.DatabaseReference;
 import com.toptop.R;
 import com.toptop.models.Comment;
-import com.toptop.utils.FirebaseUtil;
+import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.MyUtil;
 
 import java.util.List;

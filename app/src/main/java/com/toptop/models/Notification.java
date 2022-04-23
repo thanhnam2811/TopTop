@@ -1,37 +1,44 @@
 package com.toptop.models;
 
+import com.google.firebase.database.DataSnapshot;
+
+import java.util.HashMap;
+
 public class Notification {
 //notification_id,avatar, username, content, time_notification, image_notification
-    private int notification_id;
-    private int avatar;
-    private String username;
-    private String content;
-    private String time_notification;
-    private int image_notification;
+    private String notificationId, username, content, type, time, redirectTo;
+    private Boolean seen;
 
-    public Notification(int notification_id, int avatar, String username, String content, String time_notification, int image_notification) {
-        this.notification_id = notification_id;
-        this.avatar = avatar;
+    public Notification() {
+    }
+
+    public Notification(String notificationId, String username, String content, String type, String time, String redirectTo, Boolean seen) {
+        this.notificationId = notificationId;
         this.username = username;
         this.content = content;
-        this.time_notification = time_notification;
-        this.image_notification = image_notification;
+        this.type = type;
+        this.time = time;
+        this.redirectTo = redirectTo;
+        this.seen = seen;
     }
 
-    public int getNotification_id() {
-        return notification_id;
+    public Notification(DataSnapshot dataSnapshot) {
+        HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.getValue();
+        this.notificationId = dataSnapshot.getKey();
+        this.username = (String) data.get("username");
+        this.content = (String) data.get("content");
+        this.type = (String) data.get("type");
+        this.time = (String) data.get("time");
+        this.redirectTo = (String) data.get("redirectTo");
+        this.seen = (Boolean) data.get("seen");
     }
 
-    public void setNotification_id(int notification_id) {
-        this.notification_id = notification_id;
+    public String getNotificationId() {
+        return notificationId;
     }
 
-    public int getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(int avatar) {
-        this.avatar = avatar;
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
     }
 
     public String getUsername() {
@@ -50,21 +57,48 @@ public class Notification {
         this.content = content;
     }
 
-    public String getTime_notification() {
-        return time_notification;
+    public String getType() {
+        return type;
     }
 
-    public void setTime_notification(String time_notification) {
-        this.time_notification = time_notification;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public int getImage_notification() {
-        return image_notification;
+    public String getTime() {
+        return time;
     }
 
-    public void setImage_notification(int image_notification) {
-        this.image_notification = image_notification;
+    public void setTime(String time) {
+        this.time = time;
     }
 
+    public String getRedirectTo() {
+        return redirectTo;
+    }
 
+    public void setRedirectTo(String redirectTo) {
+        this.redirectTo = redirectTo;
+    }
+
+    public Boolean getSeen() {
+        return seen;
+    }
+
+    public void setSeen(Boolean seen) {
+        this.seen = seen;
+    }
+
+    @Override
+    public String toString() {
+        return "Notification {" +
+                "notificationId=" + notificationId +
+                ", username='" + username + '\'' +
+                ", content='" + content + '\'' +
+                ", type='" + type + '\'' +
+                ", time='" + time + '\'' +
+                ", redirectTo='" + redirectTo + '\'' +
+                ", seen=" + seen +
+                '}';
+    }
 }

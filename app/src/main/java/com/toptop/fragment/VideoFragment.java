@@ -22,7 +22,7 @@ import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.adapters.VideoFragementAdapter;
 import com.toptop.models.Video;
-import com.toptop.utils.FirebaseUtil;
+import com.toptop.utils.firebase.FirebaseUtil;
 
 import java.util.ArrayList;
 
@@ -58,7 +58,6 @@ public class VideoFragment extends Fragment {
 				VideoFragementAdapter videoFragementAdapter = new VideoFragementAdapter(videos, view.getContext());
 				if (recyclerView.getAdapter() == null)
 					recyclerView.setAdapter(videoFragementAdapter);
-				else recyclerView.swapAdapter(videoFragementAdapter, true);
 			}
 
 			@Override

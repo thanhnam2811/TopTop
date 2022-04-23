@@ -71,8 +71,8 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		Video video = videos.get(position);
 		holder.txt_username.setText(video.getUsername());
 		holder.txt_content.setText(video.getContent());
-		holder.txt_num_likes.setText(String.valueOf(video.getTotalLikes()));
-		holder.txt_num_comments.setText(String.valueOf(video.getTotalComments()));
+		holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
+		holder.txt_num_comments.setText(String.valueOf(video.getNumComments()));
 
 		initVideo(holder.videoView, video.getLinkVideo());
 		playVideo(holder.videoView, holder.img_pause);
@@ -147,7 +147,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	}
 
 	public Long getNumberOfComment(int position) {
-		return videos.get(position).getTotalComments();
+		return videos.get(position).getNumComments();
 	}
 
 	static class VideoViewHolder extends RecyclerView.ViewHolder {
@@ -170,7 +170,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	// Get position of video by video ID
 	public int getPosition(String videoID) {
 		for (int i = 0; i < videos.size(); i++) {
-			if (videos.get(i).getVideo_id().equals(videoID)) {
+			if (videos.get(i).getVideoId().equals(videoID)) {
 				return i;
 			}
 		}

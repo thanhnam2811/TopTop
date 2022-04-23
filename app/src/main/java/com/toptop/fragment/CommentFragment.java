@@ -28,7 +28,9 @@ import com.toptop.adapters.CommentFragmentAdapter;
 import com.toptop.adapters.VideoFragementAdapter;
 import com.toptop.models.Comment;
 import com.toptop.models.Video;
-import com.toptop.utils.FirebaseUtil;
+import com.toptop.utils.MyUtil;
+import com.toptop.utils.firebase.CommentFirebase;
+import com.toptop.utils.firebase.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,11 +68,11 @@ public class CommentFragment extends Fragment {
 		recycler_view_videos.addOnItemTouchListener(VideoFragementAdapter.disableTouchListener);
 
 		// Get comments from firebase by video id
-		Query mDB_comment_query = FirebaseUtil.getCommentsByVideoId(video.getVideo_id());
+		Query mDB_comment_query = FirebaseUtil.getCommentsByVideoId(video.getVideoId());
 		mDB_comment_query.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				Log.i(TAG, "onDataChange: RELOAD COMMENT FOR VIDEO: " + video.getVideo_id());
+				Log.i(TAG, "onDataChange: RELOAD COMMENT FOR VIDEO: " + video.getVideoId());
 
 				// Get all comments from firebase
 				List<Comment> comments = new ArrayList<>();
@@ -85,13 +87,11 @@ public class CommentFragment extends Fragment {
 
 				// Set number of comment
 				VideoFragementAdapter videoFragementAdapter = (VideoFragementAdapter) recycler_view_videos.getAdapter();
-				int position = videoFragementAdapter.getPosition(video.getVideo_id());
+				int position = videoFragementAdapter.getPosition(video.getVideoId());
 				long current_number_of_comment = videoFragementAdapter.getNumberOfComment(position);
 
 				if (current_number_of_comment != comments.size()) {
 					videoFragementAdapter.notifyItemChanged(position, video);
-					// Update number of comment for video
-					FirebaseUtil.setNumberOfComments(comments.size(), video);
 				}
 			}
 
@@ -125,11 +125,16 @@ public class CommentFragment extends Fragment {
 		ic_send_comment.setOnClickListener(v -> {
 			// Get comment content
 			String content = txt_comment_input.getText().toString().trim();
-			Comment newComment = new Comment(mDB_comment.push().getKey(), "thanhnam1324", video.getVideo_id(), content, new Date());
+			Comment newComment = new Comment();
+			newComment.setContent(content);
+			newComment.setTime(MyUtil.getFormattedDateStringFromDate(new Date()));
+			newComment.setUsername("thanhnam");
+			newComment.setVideoId(video.getVideoId());
 
 			// Add comment to firebase
-			FirebaseUtil.addComment(video, newComment);
+			CommentFirebase.addCommentToVideo(newComment, video);
 
+			// Toast message
 			Toast.makeText(context, "Comment success", Toast.LENGTH_SHORT).show();
 
 			// Clear comment input

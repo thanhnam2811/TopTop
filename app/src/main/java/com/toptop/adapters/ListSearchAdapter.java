@@ -74,7 +74,7 @@ public class ListSearchAdapter extends BaseAdapter {
 		}
 		holder.usename.setText(videoList.get(position).getUsername());
 		holder.content.setText(videoList.get(position).getContent());
-		holder.time.setText(videoList.get(position).getDate());
+		holder.time.setText(videoList.get(position).getDateUploaded());
 
 		return view;
 	}

@@ -71,11 +71,11 @@ public class NotificationFragment extends Fragment {
 
         //        1. create notification data
         ArrayList<Notification> notifications = new ArrayList<>();
-        notifications.add(new Notification(1, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
-        notifications.add(new Notification(2, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước", R.drawable.avatar));
-        notifications.add(new Notification(3, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
-        notifications.add(new Notification(4, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
-        notifications.add(new Notification(5, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
+//        notifications.add(new Notification(1, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
+//        notifications.add(new Notification(2, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước", R.drawable.avatar));
+//        notifications.add(new Notification(3, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
+//        notifications.add(new Notification(4, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
+//        notifications.add(new Notification(5, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
         // 2 binding listview
         ListView listView = view.findViewById(R.id.listNotification);
         //  3. create adapter

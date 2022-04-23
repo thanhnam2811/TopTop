@@ -1,24 +1,19 @@
 package com.toptop.adapters;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.app.Activity;
-import android.content.ClipData;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.toptop.R;
 import com.toptop.models.Notification;
-import com.toptop.models.Video;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class NotificationAdapter extends ArrayAdapter<Notification> {
@@ -46,11 +41,11 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
         TextView time = v.findViewById(R.id.txt_timeNotification);
         ImageView img_notification = v.findViewById(R.id.img_Notification);
 
-        avatar.setImageResource(notification.getAvatar());
-        username.setText(notification.getUsername());
-        content.setText(notification.getContent());
-        time.setText(notification.getTime_notification());
-        img_notification.setImageResource(notification.getImage_notification());
+//        avatar.setImageResource(notification.getAvatar());
+//        username.setText(notification.getUsername());
+//        content.setText(notification.getContent());
+//        time.setText(notification.getTime_notification());
+//        img_notification.setImageResource(notification.getImage_notification());
         return v;
 
     }

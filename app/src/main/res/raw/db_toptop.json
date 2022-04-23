@@ -3,151 +3,177 @@
         "thanhnam1324": {
             "username": "thanhnam1324",
             "password": "thanhnam1324",
-            "full_name": "Thái Thành Nam",
-            "phone_number": "0989898989",
+            "fullname": "Thái Thành Nam",
+            "phoneNumber": "0989898989",
             "email": "thanhnam1324@gmail.com",
-            "num_following": 2,
+            "numFollowing": 2,
             "following": {
                 "ngoctrung": true,
                 "hoaitan": true
             },
-            "num_followers": 2,
+            "numFollowers": 2,
             "followers": {
                 "ngoctrung": true,
                 "hoaitan": true
             },
-            "total_likes": 0
+            "numLikes": 0,
+            "avatar": "https://scontent.fhan3-3.fna.fbcdn.net/v/t39.30808-1/272802526_670513611030137_3003616416545379509_n.jpg?stp=dst-jpg_p200x200&_nc_cat=108&ccb=1-5&_nc_sid=7206a8&_nc_ohc=FWOt-ZURdtYAX-cgtZp&_nc_ht=scontent.fhan3-3.fna&oh=00_AT_AcHVek3r5dVwDBAVwz-90YeBhVTynYY6SOkOqJ7BzyQ&oe=6269AB22"
         },
         "ngoctrung": {
             "username": "ngoctrung",
             "password": "ngoctrung",
-            "full_name": "Nguyễn Ngọc Trung",
-            "phone_number": "0989898989",
+            "fullname": "Nguyễn Ngọc Trung",
+            "phoneNumber": "0989898989",
             "email": "ngoctrung@gmail.com",
-            "num_following": 1,
+            "numFollowing": 1,
             "following": {
                 "thanhnam1324": true
             },
-            "num_followers": 1,
+            "numFollowers": 1,
             "followers": {
                 "thanhnam1324": true
             },
-            "total_likes": 0
+            "numLikes": 0,
+            "avatar": "https://scontent.fhan3-3.fna.fbcdn.net/v/t39.30808-1/272802526_670513611030137_3003616416545379509_n.jpg?stp=dst-jpg_p200x200&_nc_cat=108&ccb=1-5&_nc_sid=7206a8&_nc_ohc=FWOt-ZURdtYAX-cgtZp&_nc_ht=scontent.fhan3-3.fna&oh=00_AT_AcHVek3r5dVwDBAVwz-90YeBhVTynYY6SOkOqJ7BzyQ&oe=6269AB22"
         },
         "hoaitan": {
             "username": "hoaitan",
             "password": "hoaitan",
-            "full_name": "Cao Hoài Tấn",
-            "phone_number": "0989898989",
+            "fullname": "Cao Hoài Tấn",
+            "phoneNumber": "0989898989",
             "email": "hoaitan@gmail.com",
-            "num_following": 1,
+            "numFollowing": 1,
             "following": {
                 "thanhnam1324": true
             },
-            "num_followers": 1,
+            "numFollowers": 1,
             "followers": {
                 "thanhnam1324": true
             },
-            "total_likes": 0
+            "numLikes": 0,
+            "avatar": "https://scontent.fhan3-3.fna.fbcdn.net/v/t39.30808-1/272802526_670513611030137_3003616416545379509_n.jpg?stp=dst-jpg_p200x200&_nc_cat=108&ccb=1-5&_nc_sid=7206a8&_nc_ohc=FWOt-ZURdtYAX-cgtZp&_nc_ht=scontent.fhan3-3.fna&oh=00_AT_AcHVek3r5dVwDBAVwz-90YeBhVTynYY6SOkOqJ7BzyQ&oe=6269AB22"
         }
     },
     "videos": {
         "yuyuuyue": {
-            "video_id": "yuyuuyue",
+            "videoId": "yuyuuyue",
+            "preview": "https://scontent.fhan3-3.fna.fbcdn.net/v/t39.30808-1/272802526_670513611030137_3003616416545379509_n.jpg?stp=dst-jpg_p200x200&_nc_cat=108&ccb=1-5&_nc_sid=7206a8&_nc_ohc=FWOt-ZURdtYAX-cgtZp&_nc_ht=scontent.fhan3-3.fna&oh=00_AT_AcHVek3r5dVwDBAVwz-90YeBhVTynYY6SOkOqJ7BzyQ&oe=6269AB22",
             "username": "thanhnam1324",
             "content": "Video yuyuuyue",
-            "total_likes": 1,
+            "numLikes": 1,
             "likes": {
                 "thanhnam1324": true
             },
-            "total_comments": 1,
+            "numComments": 1,
             "comments": {
                 "yuyuuyue_uiuiuiui": true
             },
-            "link_video": "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/video3135074881.mp4?alt=media&token=c6c991ee-e80c-422f-880a-01026015aabf",
-            "total_views": 1,
-            "date_uploaded": "20-10-2019 10:00:00"
+            "linkVideo": "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/video3135074881.mp4?alt=media&token=c6c991ee-e80c-422f-880a-01026015aabf",
+            "numViews": 1,
+            "dateUploaded": "20-10-2019 10:00:00"
         },
         "qwiueiuoqwe": {
-            "video_id": "qwiueiuoqwe",
+            "videoId": "qwiueiuoqwe",
+            "preview": "https://scontent.fhan3-3.fna.fbcdn.net/v/t39.30808-1/272802526_670513611030137_3003616416545379509_n.jpg?stp=dst-jpg_p200x200&_nc_cat=108&ccb=1-5&_nc_sid=7206a8&_nc_ohc=FWOt-ZURdtYAX-cgtZp&_nc_ht=scontent.fhan3-3.fna&oh=00_AT_AcHVek3r5dVwDBAVwz-90YeBhVTynYY6SOkOqJ7BzyQ&oe=6269AB22",
             "username": "ngoctrung",
             "content": "Video qwiueiuoqwe",
-            "total_likes": 1,
+            "numLikes": 1,
             "likes": {
                 "thanhnam1324": true
             },
-            "total_comments": 1,
+            "numComments": 1,
             "comments": {
                 "qwiueiuoqwe_uyyuyuyu": true
             },
-            "link_video": "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/video3135074881.mp4?alt=media&token=c6c991ee-e80c-422f-880a-01026015aabf",
-            "total_views": 1,
-            "date_uploaded": "20-10-2019 10:00:00"
+            "linkVideo": "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/video3135074881.mp4?alt=media&token=c6c991ee-e80c-422f-880a-01026015aabf",
+            "numViews": 1,
+            "dateUploaded": "20-10-2019 10:00:00"
         },
         "qwieiuqwie": {
-            "video_id": "qwieiuqwie",
+            "videoId": "qwieiuqwie",
+            "preview": "https://scontent.fhan3-3.fna.fbcdn.net/v/t39.30808-1/272802526_670513611030137_3003616416545379509_n.jpg?stp=dst-jpg_p200x200&_nc_cat=108&ccb=1-5&_nc_sid=7206a8&_nc_ohc=FWOt-ZURdtYAX-cgtZp&_nc_ht=scontent.fhan3-3.fna&oh=00_AT_AcHVek3r5dVwDBAVwz-90YeBhVTynYY6SOkOqJ7BzyQ&oe=6269AB22",
             "username": "hoaitan",
             "content": "Video qwieiuqwie",
-            "total_likes": 1,
+            "numLikes": 1,
             "likes": {
                 "thanhnam1324": true
             },
-            "total_comments": 1,
+            "numComments": 1,
             "comments": {
                 "qwieiuqwie_uyuyuyuy": true
             },
-            "link_video": "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/video3135074881.mp4?alt=media&token=c6c991ee-e80c-422f-880a-01026015aabf",
-            "total_views": 1,
-            "date_uploaded": "20-10-2019 10:00:00"
+            "linkVideo": "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/video3135074881.mp4?alt=media&token=c6c991ee-e80c-422f-880a-01026015aabf",
+            "numViews": 1,
+            "dateUploaded": "20-10-2019 10:00:00"
         }
     },
     "comments": {
         "yuyuuyue_uiuiuiui": {
-            "comment_id": "yuyuuyue_uiuiuiui",
+            "commentId": "yuyuuyue_uiuiuiui",
             "username": "thanhnam1324",
-            "video_id": "yuyuuyue",
+            "videoId": "yuyuuyue",
             "content": "Comment yuyuuyue",
-            "reply_to": {
+            "numReplies": 1,
+            "replies": {
                 "yuyuuyue_uiuiuiui_uyueyr": true
             },
-            "time": "20-10-2019 10:00:00"
+            "time": "20-10-2019 10:00:00",
+            "numLikes": 1,
+            "likes": {
+                "thanhnam1324": true
+            }
         },
         "qwiueiuoqwe_uyyuyuyu": {
-            "comment_id": "qwiueiuoqwe_uyyuyuyu",
+            "commentId": "qwiueiuoqwe_uyyuyuyu",
             "username": "thanhnam1324",
-            "video_id": "qwiueiuoqwe",
+            "videoId": "qwiueiuoqwe",
             "content": "Comment qwiueiuoqwe",
-            "reply_to": {
+            "numReplies": 0,
+            "replies": {
             },
-            "time": "20-10-2019 10:00:00"
+            "time": "20-10-2019 10:00:00",
+            "numLikes": 1,
+            "likes": {
+                "thanhnam1324": true
+            }
         },
         "qwieiuqwie_uyuyuyuy": {
-            "comment_id": "qwieiuqwie_uyuyuyuy",
+            "commentId": "qwieiuqwie_uyuyuyuy",
             "username": "thanhnam1324",
-            "video_id": "qwieiuqwie",
+            "videoId": "qwieiuqwie",
             "content": "Comment qwieiuqwie",
-            "reply_to": {
+            "numReplies": 0,
+            "replies": {
             },
-            "time": "20-10-2019 10:00:00"
+            "time": "20-10-2019 10:00:00",
+            "numLikes": 1,
+            "likes": {
+                "thanhnam1324": true
+            }
         },
         "yuyuuyue_uiuiuiui_uyueyr": {
-            "comment_id": "yuyuuyue_uiuiuiui_uyueyr",
+            "commentId": "yuyuuyue_uiuiuiui_uyueyr",
             "username": "hoaitan",
-            "video_id": "yuyuuyue",
+            "videoId": "yuyuuyue",
             "content": "Comment yuyuuyue",
-            "reply_to": {
+            "numReplies": 0,
+            "replies": {
             },
-            "time": "20-10-2019 10:00:00"
+            "time": "20-10-2019 10:00:00",
+            "numLikes": 1,
+            "likes": {
+                "thanhnam1324": true
+            }
         }
     },
     "notifications": {
         "thanhnam1324_Newuewuy": {
-            "notification_id": "thanhnam1324_Newuewuy",
+            "notificationId": "thanhnam1324_Newuewuy",
             "username": "thanhnam1324",
             "type": "REPLY_COMMENT",
             "content": "hoaitan replied to your comment",
             "time": "20-10-2019 10:00:00",
-            "redirect_to": "yuyuuyue_uiuiuiui_uyueyr",
+            "redirectTo": "yuyuuyue_uiuiuiui_uyueyr",
             "seen": false
         }
     }
