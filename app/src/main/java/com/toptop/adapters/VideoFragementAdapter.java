@@ -171,6 +171,12 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	}
 
 	private void initVideo(VideoView videoView, Video video) {
+		videoView.setVideoURI(Uri.parse(video.getLinkVideo()));
+		videoView.requestFocus();
+		Log.i(TAG, "initVideo: " + video.getVideoId());
+	}
+
+	private void initVideoAndDownload(VideoView videoView, Video video) {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		Handler handler = new Handler(Looper.getMainLooper());
 		String path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/" + video.getVideoId() + ".mp4";
