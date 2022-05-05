@@ -149,4 +149,16 @@ public class User {
 				", followers=" + followers +
 				'}';
 	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setUsername(String username) {
+		if (this.username == null) this.username = username;
+	}
+
+	public void setPassword(String password) {
+		if (this.password == null) this.password = password;
+	}
 }

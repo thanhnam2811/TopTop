@@ -1,5 +1,6 @@
 package com.toptop;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -10,8 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.toptop.fragment.InputAccountRegister;
 import com.toptop.fragment.InputInfoRegister;
+import com.toptop.models.User;
+import com.toptop.utils.firebase.UserFirebase;
 
 public class RegisterActivity extends AppCompatActivity {
+    // tag
+    private static final String TAG = "RegisterActivity";
+
+    public User newUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +44,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         TextView txt_login = findViewById(R.id.txt_login);
         txt_login.setOnClickListener(v -> {
-            onBackPressed();
+            // Open login activity
+            finish();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
         });
 
+        newUser = new User();
     }
 
     @Override
@@ -51,5 +62,12 @@ public class RegisterActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         super.onBackPressed();
+    }
+
+    // Create new user
+    public void createUser() {
+        UserFirebase.addUser(newUser);
+        // Set user to current user
+        MainActivity.setCurrentUser(newUser);
     }
 }

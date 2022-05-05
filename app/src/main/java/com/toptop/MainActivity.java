@@ -1,21 +1,32 @@
 package com.toptop;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.toptop.adapters.VideoFragementAdapter;
 import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
 import com.toptop.fragment.SearchFragment;
 import com.toptop.fragment.VideoFragment;
+import com.toptop.models.User;
 import com.toptop.utils.KeyboardUtils;
+import com.toptop.utils.firebase.FirebaseUtil;
 
 import java.util.Objects;
 
@@ -23,7 +34,58 @@ import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem;
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView;
 
 public class MainActivity extends FragmentActivity {
-	private static final String TAG = "MainActivity", NAV_TAG = "Navigation";
+	private static final String TAG = "MainActivity", NAV_TAG = "Navigation", SAVE_USER = "SaveUser", SAVE_PASSWORD = "SavePassword";
+	private static SharedPreferences mAppPreferences;
+	private static SharedPreferences.Editor mEditor;
+	private static User currentUser;
+
+	public static User getCurrentUser() {
+		return currentUser;
+	}
+
+	public static void setCurrentUser(User currentUser) {
+		// Log
+		Log.i(TAG, "setCurrentUser: " + currentUser.getUsername());
+		MainActivity.currentUser = currentUser;
+
+		// Save user to memory
+		mEditor.putString(SAVE_USER, currentUser.getUsername());
+		mEditor.putString(SAVE_PASSWORD, currentUser.getPassword());
+		mEditor.apply();
+	}
+
+	private void getUserFromMemory() {
+		// Get user from memory
+		String username = mAppPreferences.getString(SAVE_USER, null);
+		String password = mAppPreferences.getString(SAVE_PASSWORD, null);
+		if (username != null && password != null) {
+			// Set current user
+			Query query = FirebaseUtil.getUserByUsername(username);
+			query.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(@NonNull DataSnapshot snapshot) {
+					if (snapshot.exists()) {
+						User user = new User(snapshot.getChildren().iterator().next());
+						if (user.getPassword().equals(password)) {
+							setCurrentUser(user);
+							// Log
+							Log.i(TAG, "getUserFromMemory: " + user.getUsername());
+						} else {
+							// Log
+							Log.i(TAG, "getUserFromMemory: Password is not correct");
+						}
+					}
+				}
+
+				@Override
+				public void onCancelled(@NonNull DatabaseError error) {
+					Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+				}
+			});
+		} else
+			// Log
+			Log.i(TAG, "getUserFromMemory: User is not found");
+	}
 
 	public static final String
 			STATUS_BAR_LIGHT_MODE = "status_bar_light_mode",
@@ -35,10 +97,21 @@ public class MainActivity extends FragmentActivity {
 			NOTIFICATION_FRAGMENT_TAG = "notification",
 			PROFILE_FRAGMENT_TAG = "profile";
 
+	public static boolean isLoggedIn() {
+		return currentUser != null;
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		mAppPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		mEditor = mAppPreferences.edit();
+
+		// Get user from memory
+		getUserFromMemory();
+
 		init();
 	}
 
@@ -156,5 +229,11 @@ public class MainActivity extends FragmentActivity {
 			RecyclerView recycler_view_videos = findViewById(R.id.recycler_view_videos);
 			recycler_view_videos.removeOnItemTouchListener(VideoFragementAdapter.disableTouchListener);
 		} else super.onBackPressed();
+	}
+
+	// Open login activity
+	public void openLoginActivity() {
+		Intent intent = new Intent(this, LoginActivity.class);
+		startActivity(intent);
 	}
 }

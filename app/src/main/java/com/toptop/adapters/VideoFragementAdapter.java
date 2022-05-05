@@ -4,12 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
@@ -20,21 +24,19 @@ import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.Video;
+import com.toptop.utils.MyUtil;
 import com.toptop.utils.RecyclerViewDisabler;
+import com.toptop.utils.firebase.VideoFirebase;
 
+import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAdapter.VideoViewHolder> {
 	private static final String TAG = "VideoFragementAdapter";
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
-
-	public List<Video> getVideos() {
-		return videos;
-	}
-
-	public void setVideos(List<Video> videos) {
-		this.videos = videos;
-	}
 
 	private List<Video> videos;
 	Context context;
@@ -66,7 +68,11 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
-	public void onBindViewHolder(VideoViewHolder holder, int position) {
+	public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
+		// Check video is exist or not
+		if (videos.get(position) == null)
+			return;
+
 		// Set info video
 		Video video = videos.get(position);
 		holder.txt_username.setText(video.getUsername());
@@ -74,7 +80,12 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
 		holder.txt_num_comments.setText(String.valueOf(video.getNumComments()));
 
-		initVideo(holder.videoView, video.getLinkVideo());
+		// Check if video is liked or not
+		if (video.isLiked()) {
+			holder.img_like.setImageResource(R.drawable.ic_liked);
+		}
+
+		initVideo(holder.videoView, video);
 		playVideo(holder.videoView, holder.img_pause);
 
 		// Set onClickListener for video
@@ -82,18 +93,23 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			VideoView videoView = holder.videoView;
 			ImageView imgPause = holder.img_pause;
 
-			if (imgPause.getVisibility() == View.VISIBLE) {
-				Log.i(TAG, "onClick: play");
-				imgPause.setVisibility(View.GONE);
-			} else {
+			if (videoView.isPlaying()) {
 				Log.i(TAG, "onClick: pause");
-				imgPause.setVisibility(View.VISIBLE);
+				pauseVideo(videoView, imgPause);
+			} else {
+				Log.i(TAG, "onClick: play");
+				playVideo(videoView, imgPause);
 			}
 		});
 
 
 		// Set onPreparedListener for video
-		holder.videoView.setOnPreparedListener(mp -> mp.setLooping(true));
+		holder.videoView.setOnPreparedListener(mp -> {
+			mp.setLooping(true);
+			// Log
+			Log.i(TAG, "Loading video...");
+			playVideo(holder.videoView, holder.img_pause);
+		});
 
 		// Set onClickListener for img_comment
 		holder.img_comment.setOnClickListener(v -> {
@@ -102,26 +118,90 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 					.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_comment_container, new CommentFragment(video, context)).commit();
 			((MainActivity) context).findViewById(R.id.fragment_comment_container).setVisibility(View.VISIBLE);
 		});
+
+		// Set onClickListener for img_like
+		holder.img_like.setOnClickListener(v -> {
+			if (MainActivity.getCurrentUser() == null)
+				Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
+			else {
+				// Log
+				Log.i(TAG, "Likes list: " + video.getLikes());
+				if (video.isLiked())
+					VideoFirebase.unlikeVideo(video);
+				else
+					VideoFirebase.likeVideo(video);
+			}
+		});
 	}
 
-	// Find ID corresponding to the name of the resource (in the directory RAW).
-	public static int getRawResIdByName(Context context, String resName) {
-		String pkgName = context.getPackageName();
-		// Return 0 if not found.
-		int resID = context.getResources().getIdentifier(resName, "raw", pkgName);
+	@Override
+	public void onBindViewHolder(@NonNull VideoViewHolder holder, int position, @NonNull List<Object> payloads) {
+		if (payloads.isEmpty())
+			super.onBindViewHolder(holder, position, payloads);
+		else if (position >= videos.size())
+			notifyItemInserted(position);
+		else {
+			if (payloads.get(0) instanceof Video) {
+				Video video = (Video) payloads.get(0);
+				videos.set(position, video);
 
-		Log.i(TAG, "Res Name: " + resName + "==> Res ID = " + resID);
-		return resID;
-	}
+				holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
+				holder.txt_num_comments.setText(String.valueOf(video.getNumComments()));
+				if (video.isLiked()) {
+					holder.img_like.setImageResource(R.drawable.ic_liked);
+				} else {
+					holder.img_like.setImageResource(R.drawable.ic_like);
+				}
 
-	private void initVideo(VideoView videoView, String linkVideo) {
-		try {
-			videoView.setVideoURI(Uri.parse(linkVideo));
-			videoView.requestFocus();
-			System.out.println("Init Video");
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
+				// Set onClickListener for img_like
+				holder.img_like.setOnClickListener(v -> {
+					if (MainActivity.getCurrentUser() == null)
+						Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
+					else {
+						// Log
+						Log.i(TAG, "Likes list: " + video.getLikes());
+						if (video.isLiked())
+							VideoFirebase.unlikeVideo(video);
+						else
+							VideoFirebase.likeVideo(video);
+					}
+				});
+			}
 		}
+	}
+
+	private void initVideo(VideoView videoView, Video video) {
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		Handler handler = new Handler(Looper.getMainLooper());
+		String path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/" + video.getVideoId() + ".mp4";
+		File file = new File(path);
+		AtomicReference<Uri> uri = new AtomicReference<>(Uri.parse(path));
+		if (!file.exists()) {
+			Log.i(TAG, "Video is not downloaded");
+			uri.set(Uri.parse(video.getLinkVideo()));
+			executor.execute(() -> {
+				// Download video in background
+				MyUtil.downloadFile(video.getLinkVideo(), file);
+				handler.post(() -> {
+					// Set video uri
+					uri.set(Uri.parse(path));
+					videoView.setVideoURI(uri.get());
+
+					// Log
+					Log.i(TAG, "Video is downloaded");
+				});
+			});
+		} else {
+			Log.i(TAG, "Video is downloaded");
+		}
+		videoView.setVideoURI(uri.get());
+		videoView.requestFocus();
+		Log.i(TAG, "initVideo: " + video.getVideoId());
+	}
+
+	@Override
+	public void onViewRecycled(@NonNull VideoViewHolder holder) {
+		super.onViewRecycled(holder);
 	}
 
 	@Override
@@ -146,14 +226,10 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		return videos.size();
 	}
 
-	public Long getNumberOfComment(int position) {
-		return videos.get(position).getNumComments();
-	}
-
 	static class VideoViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username, txt_content, txt_num_likes, txt_num_comments;
 		VideoView videoView;
-		ImageView img_comment, img_pause;
+		ImageView img_comment, img_pause, img_like;
 
 		public VideoViewHolder(@NonNull View itemView) {
 			super(itemView);
@@ -164,16 +240,13 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			videoView = itemView.findViewById(R.id.videoView);
 			img_comment = itemView.findViewById(R.id.img_comment);
 			img_pause = itemView.findViewById(R.id.img_pause);
+			img_like = itemView.findViewById(R.id.img_like);
 		}
 	}
 
-	// Get position of video by video ID
-	public int getPosition(String videoID) {
-		for (int i = 0; i < videos.size(); i++) {
-			if (videos.get(i).getVideoId().equals(videoID)) {
-				return i;
-			}
-		}
-		return -1;
+	@Override
+	public long getItemId(int position) {
+		Video video = videos.get(position);
+		return video.getVideoId().hashCode();
 	}
 }

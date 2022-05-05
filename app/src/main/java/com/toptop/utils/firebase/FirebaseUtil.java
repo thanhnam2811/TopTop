@@ -22,4 +22,16 @@ public class FirebaseUtil {
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_COMMENTS);
 		return ref.orderByChild("videoId").equalTo(videoId);
 	}
+
+	// Get Comment by replyToCommentId
+	public static Query getCommentByReplyToCommentId(String replyToCommentId) {
+		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_COMMENTS);
+		return ref.orderByChild("replyToCommentId").equalTo(replyToCommentId);
+	}
+
+	// Get user by username
+	public static Query getUserByUsername(String username) {
+		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
+		return ref.orderByChild("username").equalTo(username).limitToFirst(1);
+	}
 }

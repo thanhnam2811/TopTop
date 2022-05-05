@@ -1,5 +1,11 @@
 package com.toptop.utils;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -68,5 +74,38 @@ public class MyUtil {
 	public static String getTimeAgo(String dateString) {
 		Date date = getDateFromFormattedDateString(dateString);
 		return getTimeAgo(date);
+	}
+
+	// generate long id from string
+	public static long generateId(String str) {
+		StringBuilder idStr = new StringBuilder();
+		for (int i = 0; i < str.length(); i++) {
+			long id = str.charAt(i);
+			idStr.append(id);
+		}
+		return Long.parseLong(idStr.toString());
+	}
+
+	public static void downloadFile(String url, File outputFile) {
+		// Log
+		System.out.println("Downloading file from " + url);
+		try {
+			URL u = new URL(url);
+			URLConnection conn = u.openConnection();
+			int contentLength = conn.getContentLength();
+
+			DataInputStream stream = new DataInputStream(u.openStream());
+
+			byte[] buffer = new byte[contentLength];
+			stream.readFully(buffer);
+			stream.close();
+
+			DataOutputStream fos = new DataOutputStream(new FileOutputStream(outputFile));
+			fos.write(buffer);
+			fos.flush();
+			fos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -5,59 +5,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 
 import com.toptop.R;
+import com.toptop.RegisterActivity;
 
-import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link InputInfoRegister#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class InputInfoRegister extends Fragment {
     public final static String TAG = "InputInfoRegister";
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    EditText mEditTextName, mEditTextEmail, mEditTextPhone;
 
     public InputInfoRegister() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment InputInfoRegister.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static InputInfoRegister newInstance(String param1, String param2) {
-        InputInfoRegister fragment = new InputInfoRegister();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -66,11 +32,69 @@ public class InputInfoRegister extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_input_info_register, container, false);
 
+        // Binding
         Button btnContinue = view.findViewById(R.id.btn_continue_register);
-        btnContinue.setOnClickListener(v -> requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.input_fragment, requireActivity().getSupportFragmentManager().findFragmentByTag(InputAccountRegister.TAG))
-                .commit());
+        mEditTextName = view.findViewById(R.id.txt_fullname);
+        mEditTextEmail = view.findViewById(R.id.txt_email);
+        mEditTextPhone = view.findViewById(R.id.txt_phone_number);
+
+        btnContinue.setOnClickListener(v -> {
+            String name = mEditTextName.getText().toString();
+            String email = mEditTextEmail.getText().toString();
+            String phonenumber = mEditTextPhone.getText().toString();
+            if (isValidInputData(name, email, phonenumber)) {
+                setData(name, email, phonenumber);
+                openInputAccountRegister();
+            }
+        });
 
         return view;
     }
+
+    // Open InputAccountRegister fragment
+    private void openInputAccountRegister() {
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.input_fragment,
+                        requireActivity().getSupportFragmentManager().findFragmentByTag(InputAccountRegister.TAG))
+                .commit();
+    }
+
+    // Check input data
+    public boolean isValidInputData(String name, String email, String phonenumber) {
+        if (name.isEmpty()) {
+            mEditTextName.setError("Please enter your name");
+            return false;
+        }
+        if (phonenumber.isEmpty()) {
+            mEditTextPhone.setError("Please enter your phone number");
+            return false;
+        }
+        if (!isPhoneNumberValid(phonenumber)) {
+            mEditTextPhone.setError("Please enter a valid phone number");
+            return false;
+        }
+        if (email.isEmpty()) {
+            mEditTextEmail.setError("Please enter your email");
+            return false;
+        }
+        if (!email.contains("@")) {
+            mEditTextEmail.setError("Please enter a valid email");
+            return false;
+        }
+        return true;
+    }
+
+    // is phone number valid
+    private boolean isPhoneNumberValid(String phonenumber) {
+        return phonenumber.length() == 10 && phonenumber.startsWith("0");
+    }
+
+    // set data for new user in registerActivity
+    public void setData(String name, String email, String phonenumber) {
+        RegisterActivity registerActivity = (RegisterActivity) requireActivity();
+        registerActivity.newUser.setFullname(name);
+        registerActivity.newUser.setEmail(email);
+        registerActivity.newUser.setPhoneNumber(phonenumber);
+    }
+
 }

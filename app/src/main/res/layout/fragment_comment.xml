@@ -36,24 +36,37 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ic_refresh"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:padding="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:padding="4dp"
                     android:text="Bình luận"
-                    android:textColor="@color/black" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:alpha="0.1"
-                    android:background="@color/black" />
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
             </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ic_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/header_comment"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/header_comment"
+                app:srcCompat="@drawable/ic_refresh" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:alpha="0.1"
+                android:background="@color/black"
+                app:layout_constraintBottom_toTopOf="@+id/recycler_view_comments"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_comments"

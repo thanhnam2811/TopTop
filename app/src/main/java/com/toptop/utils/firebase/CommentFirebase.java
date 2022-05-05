@@ -19,9 +19,7 @@ public class CommentFirebase {
 		commentRef.child(comment.getCommentId()).setValue(comment);
 
 		// add comment to video
-		DatabaseReference videoRef = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_VIDEOS);
-		videoRef.child(video.getVideoId()).child(FirebaseUtil.TABLE_COMMENTS)
-				.child(comment.getCommentId()).setValue(true);
+		VideoFirebase.addCommentToVideo(comment, video);
 
 		// log
 		Log.i(TAG, "addComment: " + comment.getCommentId() + " added to firebase");

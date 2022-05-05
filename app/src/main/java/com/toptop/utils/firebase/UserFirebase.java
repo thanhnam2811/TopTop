@@ -29,5 +29,4 @@ public class UserFirebase {
 		userRef.child(user.getUsername()).removeValue();
 		Log.i(TAG, "deleteUser: " + user.getUsername() + " deleted from firebase");
 	}
-
 }

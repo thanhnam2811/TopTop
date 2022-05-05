@@ -1,5 +1,6 @@
 package com.toptop.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +31,8 @@ public class VideoFragment extends Fragment {
 	private static final String TAG = "VideoFragment";
 	private ArrayList<Video> videos = new ArrayList<>();
 	DatabaseReference mDatabase;
+	Context context;
+	RecyclerView recyclerView;
 
 	public VideoFragment() {
 		// Required empty public constructor
@@ -45,26 +48,12 @@ public class VideoFragment extends Fragment {
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_video, container, false);
 
-		RecyclerView recyclerView = view.findViewById(R.id.recycler_view_videos);
+		context = view.getContext();
 
-		mDatabase = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_VIDEOS);
-		mDatabase.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				videos.clear();
-				for (DataSnapshot dataSnapshot : snapshot.getChildren())
-					videos.add(new Video(dataSnapshot));
+		recyclerView = view.findViewById(R.id.recycler_view_videos);
+		recyclerView.setHasFixedSize(true);
 
-				VideoFragementAdapter videoFragementAdapter = new VideoFragementAdapter(videos, view.getContext());
-				if (recyclerView.getAdapter() == null)
-					recyclerView.setAdapter(videoFragementAdapter);
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-				Log.e(TAG, "onCancelled: ", error.toException());
-			}
-		});
+		getVideosFromFirebase();
 
 		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
 		linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -86,5 +75,58 @@ public class VideoFragment extends Fragment {
 
 		// Inflate the layout for this fragment
 		return view;
+	}
+
+	private void getVideosFromFirebase() {
+		mDatabase = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_VIDEOS);
+
+		// For first time, get all videos
+		mDatabase.get().addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				videos.clear();
+				DataSnapshot dataSnapshot = task.getResult();
+				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+					Video video = new Video(snapshot);
+					videos.add(video);
+				}
+				if (recyclerView.getAdapter() == null) {
+					VideoFragementAdapter videoFragementAdapter = new VideoFragementAdapter(videos, context);
+					videoFragementAdapter.setHasStableIds(true);
+					recyclerView.setAdapter(videoFragementAdapter);
+				} else {
+					recyclerView.getAdapter().notifyItemRangeChanged(0, videos.size());
+				}
+			}
+		});
+
+		// For everytime, update videos if there is any change
+		mDatabase.addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				int position = 0;
+				VideoFragementAdapter videoFragementAdapter = (VideoFragementAdapter) recyclerView.getAdapter();
+				if (videoFragementAdapter != null) {
+					for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+						Video video = new Video(dataSnapshot);
+						if (videos.size() > position) {
+							if (!videos.get(position).equals(video)) {
+								videos.set(position, video);
+								videoFragementAdapter.notifyItemChanged(position, video);
+							} else {
+								videos.add(video);
+								videoFragementAdapter.notifyItemChanged(position, video);
+							}
+							position++;
+						}
+					}
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				Log.e(TAG, "onCancelled: ", error.toException());
+			}
+		});
+
 	}
 }

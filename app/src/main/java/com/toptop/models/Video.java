@@ -1,23 +1,43 @@
 package com.toptop.models;
 
+import androidx.annotation.Nullable;
+
 import com.google.firebase.database.DataSnapshot;
+import com.toptop.MainActivity;
 
 import java.util.HashMap;
 
 public class Video {
+	// TAG
+	private static final String TAG = "Video";
+
 	private String videoId, preview, username, content, linkVideo;
 	private Long numLikes, numComments, numViews;
 	private String dateUploaded;
 	private HashMap<String, Boolean> likes;
 	private HashMap<String, Boolean> comments;
 
+	@Override
+	public boolean equals(@Nullable Object obj) {
+		boolean isEqual = false;
+		if (obj instanceof Video) {
+			Video video = (Video) obj;
+			isEqual = this.numComments.equals(video.getNumComments())
+					&& this.numLikes.equals(video.getNumLikes())
+					&& this.numViews.equals(video.getNumViews())
+					&& this.content.equals(video.getContent());
+		}
+		return isEqual;
+	}
+
 	public Video() {
 		likes = new HashMap<String, Boolean>();
 		comments = new HashMap<String, Boolean>();
 	}
+
 	public Video(String videoId, String preview, String username,
 	             String content, String linkVideo, Long numLikes,
-	             Long numComments, Long numViews, String dateUploaded){
+	             Long numComments, Long numViews, String dateUploaded) {
 		this.videoId = videoId;
 		this.preview = preview;
 		this.username = username;
@@ -59,6 +79,24 @@ public class Video {
 		this.dateUploaded = (String) data.get("dateUploaded");
 		this.likes = (HashMap<String, Boolean>) data.get("likes");
 		this.comments = (HashMap<String, Boolean>) data.get("comments");
+
+		if (this.likes == null)
+			this.likes = new HashMap<String, Boolean>();
+
+		if (this.comments == null)
+			this.comments = new HashMap<String, Boolean>();
+
+		// If number of likes is not quantity of likes
+		if (this.numLikes != this.likes.size()) {
+			this.numLikes = (long) this.likes.size();
+			dataSnapshot.getRef().child("numLikes").setValue(this.numLikes);
+		}
+
+		// If number of comments is not quantity of comments
+		if (this.numComments != this.comments.size()) {
+			this.numComments = (long) this.comments.size();
+			dataSnapshot.getRef().child("numComments").setValue(this.numComments);
+		}
 	}
 
 	public String getVideoId() {
@@ -164,5 +202,10 @@ public class Video {
 				", likes=" + likes +
 				", comments=" + comments +
 				'}';
+	}
+
+	// Like
+	public boolean isLiked() {
+		return likes != null && MainActivity.getCurrentUser() != null && likes.get(MainActivity.getCurrentUser().getUsername()) != null;
 	}
 }
