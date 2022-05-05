@@ -180,15 +180,20 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			Log.i(TAG, "Video is not downloaded");
 			uri.set(Uri.parse(video.getLinkVideo()));
 			executor.execute(() -> {
+				// Log
+				Log.i(TAG, "Downloading video...");
+
 				// Download video in background
 				MyUtil.downloadFile(video.getLinkVideo(), file);
-				handler.post(() -> {
-					// Set video uri
-					uri.set(Uri.parse(path));
-					videoView.setVideoURI(uri.get());
 
+				// Stream video in main thread
+				handler.post(() -> {
 					// Log
-					Log.i(TAG, "Video is downloaded");
+					Log.i(TAG, "Streaming video...");
+
+					// Set video uri
+					uri.set(Uri.parse(video.getLinkVideo()));
+					videoView.setVideoURI(uri.get());
 				});
 			});
 		} else {
