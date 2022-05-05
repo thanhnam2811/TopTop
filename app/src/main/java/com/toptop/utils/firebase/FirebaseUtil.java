@@ -34,4 +34,10 @@ public class FirebaseUtil {
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
 		return ref.orderByChild("username").equalTo(username).limitToFirst(1);
 	}
+
+	// Get videos by username
+	public static Query getVideosByUsername(String username) {
+		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_VIDEOS);
+		return ref.orderByChild("username").equalTo(username);
+	}
 }

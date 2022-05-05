@@ -1,10 +1,16 @@
 package com.toptop.models;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.Query;
+import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.UserFirebase;
 
 import java.util.HashMap;
 
 public class User {
+	// Tag
+	private static final String TAG = "User";
+
 	private String username, password, fullname, phoneNumber, email, avatar;
 	private Long numFollowers, numFollowing, numLikes;
 	private HashMap<String, Boolean> followings, followers;
@@ -38,23 +44,70 @@ public class User {
 		this.followers = new HashMap<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	public User(DataSnapshot dataSnapshot) {
 		HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.getValue();
-		this.username = (String) data.get("username");
-		this.password = (String) data.get("password");
-		this.fullname = (String) data.get("fullname");
-		this.phoneNumber = (String) data.get("phoneNumber");
-		this.email = (String) data.get("email");
-		this.avatar = (String) data.get("avatar");
-		this.numFollowers = (Long) data.get("numFollowers");
-		this.numFollowing = (Long) data.get("numFollowing");
-		this.numLikes = (Long) data.get("numLikes");
-		followings = (HashMap<String, Boolean>) data.get("followings");
-		followers = (HashMap<String, Boolean>) data.get("followers");
-		/*
-            if (numFollowing != followings.size()) this.numFollowing = (long) followings.size();
-            if (numFollowers != followers.size()) this.numFollowers = (long) followers.size();
-        */
+		if (data != null) {
+			this.username = (String) data.get("username");
+			this.password = (String) data.get("password");
+			this.fullname = (String) data.get("fullname");
+			this.phoneNumber = (String) data.get("phoneNumber");
+			this.email = (String) data.get("email");
+			this.avatar = (String) data.get("avatar");
+			if (data.get("numFollowers") != null)
+				this.numFollowers = (Long) data.get("numFollowers");
+			else
+				this.numFollowers = 0L;
+			if (data.get("numFollowing") != null)
+				this.numFollowing = (Long) data.get("numFollowing");
+			else
+				this.numFollowing = 0L;
+			if (data.get("numLikes") != null)
+				this.numLikes = (Long) data.get("numLikes");
+			else
+				this.numLikes = 0L;
+			if (data.get("followings") != null)
+				this.followings = (HashMap<String, Boolean>) data.get("followings");
+			else
+				this.followings = new HashMap<>();
+			if (data.get("followers") != null)
+				this.followers = (HashMap<String, Boolean>) data.get("followers");
+			else
+				this.followers = new HashMap<>();
+		}
+		// Prepare data
+		boolean hasChanged = false;
+		if (numFollowing != followings.size()) {
+			this.numFollowing = (long) followings.size();
+			hasChanged = true;
+		}
+		if (numFollowers != followers.size()) {
+			this.numFollowers = (long) followers.size();
+			hasChanged = true;
+		}
+		if (numLikes == null) {
+			numLikes = 0L;
+			hasChanged = true;
+		}
+		if (hasChanged)
+			UserFirebase.updateUser(this);
+
+		// Update numLikes if changed
+		Query query = FirebaseUtil.getVideosByUsername(username);
+		query.get().addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				long newNumLikes = 0;
+				DataSnapshot snapshot = task.getResult();
+				if (snapshot.exists())
+					for (DataSnapshot child : snapshot.getChildren()) {
+						Video video = new Video(child);
+						if (video.getNumLikes() != null)
+							newNumLikes = newNumLikes + video.getNumLikes();
+					}
+				if (newNumLikes != numLikes)
+					UserFirebase.updateUser(this);
+			}
+		});
 	}
 
 	public String getUsername() {
@@ -160,5 +213,43 @@ public class User {
 
 	public void setPassword(String password) {
 		if (this.password == null) this.password = password;
+	}
+
+	public boolean isFollowing(String username) {
+		return followings != null && followings.containsKey(username);
+	}
+
+	public void follow(String username) {
+		// Add to followings
+		if (followings == null) followings = new HashMap<>();
+		followings.put(username, true);
+
+		// Update numFollowing
+		numFollowing++;
+	}
+
+	public void unfollow(String username) {
+		// Remove from followings
+		if (followings != null) followings.remove(username);
+
+		// Update numFollowing
+		numFollowing--;
+	}
+
+	public void addFollower(String username) {
+		// Add to followers
+		if (followers == null) followers = new HashMap<>();
+		followers.put(username, true);
+
+		// Update numFollowers
+		numFollowers++;
+	}
+
+	public void removeFollower(String username) {
+		// Remove from followers
+		if (followers != null) followers.remove(username);
+
+		// Update numFollowers
+		numFollowers--;
 	}
 }

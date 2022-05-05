@@ -1,17 +1,27 @@
 package com.toptop.models;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
+import com.toptop.MainActivity;
 import com.toptop.utils.MyUtil;
+import com.toptop.utils.firebase.CommentFirebase;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 public class Comment {
+	// Tag
+	private static final String TAG = "Comment";
 	private String commentId, username, videoId, content, replyToCommentId;
 	private Long numReplies = 0L, numLikes = 0L;
+	private String time;
+	private HashMap<String, Boolean> replies;
+	private HashMap<String, Boolean> likes;
 
 	public Comment(String commentId, String username, String videoId, String content, String replyToCommentId, Long numLikes, String time, HashMap<String, Boolean> likes) {
 		this.commentId = commentId;
@@ -24,10 +34,6 @@ public class Comment {
 		this.likes = likes;
 	}
 
-	private String time;
-	private HashMap<String, Boolean> replies;
-	private HashMap<String, Boolean> likes;
-
 	@Override
 	public boolean equals(@Nullable Object obj) {
 		if (obj instanceof Comment) {
@@ -38,8 +44,8 @@ public class Comment {
 	}
 
 	public Comment() {
-		replies = new HashMap<String, Boolean>();
-		likes = new HashMap<String, Boolean>();
+		replies = new HashMap<>();
+		likes = new HashMap<>();
 	}
 
 	public Comment(String commentId, String username, String videoId, String content, Long numReplies, Long numLikes, String time, HashMap<String, Boolean> replies, HashMap<String, Boolean> likes) {
@@ -54,44 +60,58 @@ public class Comment {
 		this.likes = likes;
 	}
 
+	@SuppressWarnings({"unchecked"})
 	public Comment(DataSnapshot dataSnapshot) {
 		HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.getValue();
-		this.commentId = dataSnapshot.getKey();
-		this.replyToCommentId = (String) data.get("replyToCommentId");
-		this.username = (String) data.get("username");
-		this.videoId = (String) data.get("videoId");
-		this.content = (String) data.get("content");
-		this.numReplies = (Long) data.get("numReplies");
-		this.numLikes = (Long) data.get("numLikes");
-		this.time = (String) data.get("time");
-		this.replies = (HashMap<String, Boolean>) data.get("replies");
-		this.likes = (HashMap<String, Boolean>) data.get("likes");
+		if (data != null) {
+			this.commentId = dataSnapshot.getKey();
+			this.replyToCommentId = (String) data.get("replyToCommentId");
+			this.username = (String) data.get("username");
+			this.videoId = (String) data.get("videoId");
+			this.content = (String) data.get("content");
 
-		if (this.replies == null) {
-			this.replies = new HashMap<String, Boolean>();
+			this.time = data.get("time") == null ? MyUtil.getFormattedDateStringFromDate(new Date()) :
+					(String) data.get("time");
+			if (data.get("numReplies") != null)
+				this.numReplies = (Long) data.get("numReplies");
+			else
+				this.numReplies = 0L;
+			if (data.get("numLikes") != null)
+				this.numLikes = (Long) data.get("numLikes");
+			else
+				this.numLikes = 0L;
+			if (data.get("replies") != null)
+				replies = (HashMap<String, Boolean>) data.get("replies");
+			else
+				replies = new HashMap<>();
+			if (data.get("likes") != null)
+				likes = (HashMap<String, Boolean>) data.get("likes");
+			else
+				likes = new HashMap<>();
 		}
-		if (this.likes == null) {
-			this.likes = new HashMap<String, Boolean>();
-		}
-		if (this.numReplies == null || this.numReplies != replies.size()) {
+
+		boolean hasChanged = false;
+		if (this.numReplies != replies.size()) {
 			this.numReplies = (long) this.replies.size();
-			dataSnapshot.getRef().child("numReplies").setValue(this.numReplies);
+			hasChanged = true;
 		}
-		if (this.numLikes == null || this.numLikes != likes.size()) {
+		if (this.numLikes != likes.size()) {
 			this.numLikes = (long) this.likes.size();
-			dataSnapshot.getRef().child("numLikes").setValue(this.numLikes);
+			hasChanged = true;
 		}
 		if (this.time == null) {
 			this.time = MyUtil.getFormattedDateStringFromDate(new Date());
-			dataSnapshot.getRef().child("time").setValue(this.time);
+			hasChanged = true;
 		}
 
 		// Set no replies if this comment replies to another comment
 		if (this.replyToCommentId != null && this.numReplies != 0 && this.replies.size() != 0) {
-			this.replies = new HashMap<String, Boolean>();
+			this.replies = new HashMap<>();
 			this.numReplies = 0L;
-			dataSnapshot.getRef().setValue(this);
+			hasChanged = true;
 		}
+
+		if (hasChanged) CommentFirebase.updateComment(this);
 	}
 
 	public String getCommentId() {
@@ -179,6 +199,7 @@ public class Comment {
 		});
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return "Comment {" +
@@ -212,5 +233,39 @@ public class Comment {
 
 	public boolean isReply() {
 		return this.replyToCommentId != null;
+	}
+
+	public boolean isLiked() {
+		return likes != null && MainActivity.getCurrentUser() != null
+				&& likes.containsKey(MainActivity.getCurrentUser().getUsername());
+	}
+
+	public boolean isOwner() {
+		if (MainActivity.isLoggedIn()) {
+			if (username.equals(MainActivity.getCurrentUser().getUsername())) {
+				Log.i(TAG, "isOwner for comment \"" + content + "\"" + ": true (owner is: " + username + ")");
+			}
+		}
+		return MainActivity.isLoggedIn() && username.equals(MainActivity.getCurrentUser().getUsername());
+	}
+
+	public void addLikes(String username) {
+		if (likes == null) {
+			likes = new HashMap<>();
+		}
+		likes.put(username, true);
+
+		numLikes++;
+	}
+
+	public void removeLikes(String username) {
+		if (likes != null && likes.containsKey(username)) {
+			likes.remove(username);
+			numLikes--;
+		}
+	}
+
+	public String getInfo() {
+		return "Comment: " + content + " | " + numLikes + " likes | " + numReplies + " replies" + " | " + "Owner: " + username;
 	}
 }

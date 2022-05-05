@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:ignore="HardcodedText,SmallSp">
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/img_avatar"
@@ -26,10 +27,10 @@
         app:layout_constraintTop_toTopOf="@+id/img_avatar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:padding="8dp"
-            android:background="@drawable/bg_comment_display"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_comment_display"
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/textView4"
@@ -47,7 +48,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
                 android:text="username"
-
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/textView4"
@@ -94,12 +94,36 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_reply_comment"
-        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/comment_content"
         app:layout_constraintStart_toStartOf="@+id/comment_content"
         app:layout_constraintTop_toBottomOf="@+id/txt_time_comment" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ic_like_comment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintEnd_toEndOf="@+id/img_avatar"
+        app:layout_constraintStart_toStartOf="@+id/img_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/img_avatar"
+        app:srcCompat="@drawable/ic_like_outline" />
+
+    <TextView
+        android:id="@+id/txt_num_likes_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.6"
+        android:text="0"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/ic_like_comment"
+        app:layout_constraintStart_toStartOf="@+id/ic_like_comment"
+        app:layout_constraintTop_toBottomOf="@+id/ic_like_comment" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

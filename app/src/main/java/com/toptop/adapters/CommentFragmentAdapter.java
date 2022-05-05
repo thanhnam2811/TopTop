@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -24,6 +25,7 @@ import com.toptop.R;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.Comment;
 import com.toptop.utils.MyUtil;
+import com.toptop.utils.firebase.CommentFirebase;
 import com.toptop.utils.firebase.FirebaseUtil;
 
 import java.util.ArrayList;
@@ -53,17 +55,18 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 
 	@Override
 	public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
-		if (payloads.isEmpty()) {
-			super.onBindViewHolder(holder, position, payloads);
-		} else {
-			if (payloads.get(0) instanceof Comment) {
+		if (!payloads.isEmpty()) {
+			if (position >= comments.size())
+				notifyItemChanged(position);
+			else if (payloads.get(0) instanceof Comment) {
 				// Log
 				Log.i(TAG, "Comment is updated at position " + position);
 
 				Comment comment = (Comment) payloads.get(0);
 				holder.txt_content.setText(comment.getContent());
 			}
-		}
+		} else
+			super.onBindViewHolder(holder, position, payloads);
 	}
 
 	@Override
@@ -72,6 +75,7 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 		holder.txt_content.setText(comment.getContent());
 		holder.txt_username.setText(comment.getUsername());
 		holder.txt_time_comment.setText(MyUtil.getTimeAgo(comment.getTime()));
+		holder.txt_num_likes_comment.setText(String.valueOf(comment.getNumLikes()));
 
 		RecyclerView recycler_reply_comment = holder.recycler_reply_comment;
 		recycler_reply_comment.setLayoutManager(new LinearLayoutManager(context));
@@ -79,18 +83,39 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 		// TODO: get replies, do it if have enough time
 		// getReplies(comment, recycler_reply_comment);
 
-		holder.txt_reply_comment.setOnClickListener(view -> {
-			// Set reply to comment id
-			CommentFragment.newComment.setReplyToCommentId(comment.getCommentId());
+		holder.txt_reply_comment.setOnClickListener(view -> handleReplyComment(comment));
 
-			// Show reply comment title in input
-			TextView title = ((MainActivity) context).findViewById(R.id.txt_reply_comment_title);
-			String htmlText = "Trả lời bình luận của <b>@" + comment.getUsername() + "</b>";
-			title.setText(HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_LEGACY));
-			ConstraintLayout layout_reply_comment_title = ((MainActivity) context).findViewById(R.id.layout_reply_comment_title);
-			layout_reply_comment_title.setVisibility(View.VISIBLE);
-		});
+		holder.ic_like_comment.setOnClickListener(view -> handleLikeComment(comment));
 
+		if (comment.isLiked()) {
+			holder.ic_like_comment.setImageResource(R.drawable.ic_liked);
+		} else {
+			holder.ic_like_comment.setImageResource(R.drawable.ic_like_outline);
+		}
+	}
+
+	private void handleLikeComment(Comment comment) {
+		if (MainActivity.isLoggedIn()) {
+			if (comment.isLiked()) {
+				CommentFirebase.unlikeComment(comment);
+			} else {
+				CommentFirebase.likeComment(comment);
+			}
+			notifyItemChanged(comments.indexOf(comment));
+		} else
+			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
+	}
+
+	private void handleReplyComment(Comment comment) {
+		// Set reply to comment id
+		CommentFragment.newComment.setReplyToCommentId(comment.getCommentId());
+
+		// Show reply comment title in input
+		TextView title = ((MainActivity) context).findViewById(R.id.txt_reply_comment_title);
+		String htmlText = "Trả lời bình luận của <b>@" + comment.getUsername() + "</b>";
+		title.setText(HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_LEGACY));
+		ConstraintLayout layout_reply_comment_title = ((MainActivity) context).findViewById(R.id.layout_reply_comment_title);
+		layout_reply_comment_title.setVisibility(View.VISIBLE);
 	}
 
 	private void getReplies(Comment comment, RecyclerView recycler_reply_comment) {
@@ -159,8 +184,8 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
-		TextView txt_username, txt_content, txt_time_comment, txt_reply_comment;
-		ImageView img_avatar, ic_cancel_reply;
+		TextView txt_username, txt_content, txt_time_comment, txt_reply_comment, txt_num_likes_comment;
+		ImageView img_avatar, ic_like_comment;
 		RecyclerView recycler_reply_comment;
 
 		public ViewHolder(View itemView) {
@@ -171,6 +196,8 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 			txt_time_comment = itemView.findViewById(R.id.txt_time_comment);
 			recycler_reply_comment = itemView.findViewById(R.id.recycler_reply_comment);
 			txt_reply_comment = itemView.findViewById(R.id.txt_reply_comment);
+			ic_like_comment = itemView.findViewById(R.id.ic_like_comment);
+			txt_num_likes_comment = itemView.findViewById(R.id.txt_num_likes_comment);
 		}
 	}
 

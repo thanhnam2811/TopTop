@@ -2,7 +2,6 @@ package com.toptop.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -19,13 +18,13 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.toptop.LoginActivity;
 import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.RecyclerViewDisabler;
+import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.io.File;
@@ -40,6 +39,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 
 	private List<Video> videos;
 	Context context;
+	boolean isVideoInitiated = false;
 
 	@Override
 	public void onViewAttachedToWindow(@NonNull VideoViewHolder holder) {
@@ -56,12 +56,6 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		LayoutInflater inflater = LayoutInflater.from(context);
 		View view = inflater.inflate(R.layout.video_layout, parent, false);
-
-		ImageView imgFollow = view.findViewById(R.id.img_follow);
-		imgFollow.setOnClickListener(v -> {
-			Intent intent = new Intent(context, LoginActivity.class);
-			context.startActivity(intent);
-		});
 
 		return new VideoViewHolder(view);
 	}
@@ -80,28 +74,41 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
 		holder.txt_num_comments.setText(String.valueOf(video.getNumComments()));
 
+
+		if (isVideoInitiated)
+			playVideo(holder.videoView, holder.img_pause);
+		else
+			initVideo(holder.videoView, video);
+
+		// Set onClickListener for video
+		holder.videoView.setOnClickListener(v ->
+				handleClickVideo(holder.videoView, holder.img_pause));
+
+
+		// Set onClickListener for img_comment
+		holder.img_comment.setOnClickListener(v ->
+				handleClickComment(video));
+
+		// Set onClickListener for img_like
+		holder.img_like.setOnClickListener(v ->
+				handleClickLike(video));
+
+		// Set onClickListener for img_follow
+		holder.img_follow.setOnClickListener(v ->
+				handleClickFollow(video, holder.img_follow));
+
 		// Check if video is liked or not
 		if (video.isLiked()) {
 			holder.img_like.setImageResource(R.drawable.ic_liked);
+		} else {
+			holder.img_like.setImageResource(R.drawable.ic_like);
 		}
 
-		initVideo(holder.videoView, video);
-		playVideo(holder.videoView, holder.img_pause);
-
-		// Set onClickListener for video
-		holder.videoView.setOnClickListener(v -> {
-			VideoView videoView = holder.videoView;
-			ImageView imgPause = holder.img_pause;
-
-			if (videoView.isPlaying()) {
-				Log.i(TAG, "onClick: pause");
-				pauseVideo(videoView, imgPause);
-			} else {
-				Log.i(TAG, "onClick: play");
-				playVideo(videoView, imgPause);
-			}
-		});
-
+		// Set img_follow
+		if (MainActivity.getCurrentUser().isFollowing(video.getUsername()))  // If user is following the owner of video
+			holder.img_follow.setImageResource(R.drawable.ic_following);
+		else if (video.getUsername().equals(MainActivity.getCurrentUser().getUsername()))  // If user is owner of video
+			holder.img_follow.setVisibility(View.GONE);
 
 		// Set onPreparedListener for video
 		holder.videoView.setOnPreparedListener(mp -> {
@@ -110,28 +117,50 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			Log.i(TAG, "Loading video...");
 			playVideo(holder.videoView, holder.img_pause);
 		});
+	}
 
-		// Set onClickListener for img_comment
-		holder.img_comment.setOnClickListener(v -> {
-			// Add layout_comment to MainActivity
-			((MainActivity) context)
-					.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_comment_container, new CommentFragment(video, context)).commit();
-			((MainActivity) context).findViewById(R.id.fragment_comment_container).setVisibility(View.VISIBLE);
-		});
-
-		// Set onClickListener for img_like
-		holder.img_like.setOnClickListener(v -> {
-			if (MainActivity.getCurrentUser() == null)
-				Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
-			else {
-				// Log
-				Log.i(TAG, "Likes list: " + video.getLikes());
-				if (video.isLiked())
-					VideoFirebase.unlikeVideo(video);
-				else
-					VideoFirebase.likeVideo(video);
+	private void handleClickFollow(Video video, ImageView img_follow) {
+		if (!MainActivity.isLoggedIn())
+			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
+		else {
+			if (MainActivity.getCurrentUser().isFollowing(video.getUsername())) {
+				UserFirebase.unfollowUser(video.getUsername());
+				img_follow.setImageResource(R.drawable.ic_follow);
+			} else {
+				UserFirebase.followUser(video.getUsername());
+				img_follow.setImageResource(R.drawable.ic_following);
 			}
-		});
+		}
+	}
+
+	private void handleClickLike(Video video) {
+		if (MainActivity.isLoggedIn()) {
+			if (video.isLiked())
+				VideoFirebase.unlikeVideo(video);
+			else
+				VideoFirebase.likeVideo(video);
+		} else
+			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
+	}
+
+	private void handleClickComment(Video video) {
+		// Add layout_comment to MainActivity
+		((MainActivity) context).getSupportFragmentManager()
+				.beginTransaction()
+				.replace(R.id.fragment_comment_container, new CommentFragment(video, context)).commit();
+
+		// Show layout_comment
+		((MainActivity) context).findViewById(R.id.fragment_comment_container).setVisibility(View.VISIBLE);
+	}
+
+	private void handleClickVideo(VideoView videoView, ImageView img_pause) {
+		if (videoView.isPlaying()) {
+			Log.i(TAG, "onClick: pause");
+			pauseVideo(videoView, img_pause);
+		} else {
+			Log.i(TAG, "onClick: play");
+			playVideo(videoView, img_pause);
+		}
 	}
 
 	@Override
@@ -147,25 +176,13 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 
 				holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
 				holder.txt_num_comments.setText(String.valueOf(video.getNumComments()));
+
+				// Check if video is liked or not
 				if (video.isLiked()) {
 					holder.img_like.setImageResource(R.drawable.ic_liked);
 				} else {
 					holder.img_like.setImageResource(R.drawable.ic_like);
 				}
-
-				// Set onClickListener for img_like
-				holder.img_like.setOnClickListener(v -> {
-					if (MainActivity.getCurrentUser() == null)
-						Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
-					else {
-						// Log
-						Log.i(TAG, "Likes list: " + video.getLikes());
-						if (video.isLiked())
-							VideoFirebase.unlikeVideo(video);
-						else
-							VideoFirebase.likeVideo(video);
-					}
-				});
 			}
 		}
 	}
@@ -240,7 +257,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	static class VideoViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username, txt_content, txt_num_likes, txt_num_comments;
 		VideoView videoView;
-		ImageView img_comment, img_pause, img_like;
+		ImageView img_comment, img_pause, img_like, img_follow;
 
 		public VideoViewHolder(@NonNull View itemView) {
 			super(itemView);
@@ -252,6 +269,7 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			img_comment = itemView.findViewById(R.id.img_comment);
 			img_pause = itemView.findViewById(R.id.img_pause);
 			img_like = itemView.findViewById(R.id.img_like);
+			img_follow = itemView.findViewById(R.id.img_follow);
 		}
 	}
 

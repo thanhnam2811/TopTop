@@ -123,6 +123,9 @@ public class CommentFragment extends Fragment {
 			// Clear comment input
 			txt_comment_input.setText("");
 
+			// Reset new comment
+			newComment = new Comment();
+
 			// Hide keyboard
 			KeyboardUtils.hideKeyboard(requireActivity());
 		});
@@ -186,7 +189,8 @@ public class CommentFragment extends Fragment {
 					}
 					Comment.sortByTimeNewsest(comments);
 					if (recycler_view_comments.getAdapter() != null)
-						recycler_view_comments.getAdapter().notifyItemRangeChanged(0, comments.size());
+						recycler_view_comments.getAdapter()
+								.notifyItemRangeChanged(0, comments.size());
 					else {
 						// Set adapter for recycler view
 						CommentFragmentAdapter adapter = new CommentFragmentAdapter(comments, context);

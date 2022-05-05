@@ -31,8 +31,8 @@ public class Video {
 	}
 
 	public Video() {
-		likes = new HashMap<String, Boolean>();
-		comments = new HashMap<String, Boolean>();
+		likes = new HashMap<>();
+		comments = new HashMap<>();
 	}
 
 	public Video(String videoId, String preview, String username,
@@ -66,19 +66,22 @@ public class Video {
 		this.comments = comments;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Video(DataSnapshot dataSnapshot) {
 		HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.getValue();
-		this.videoId = dataSnapshot.getKey();
-		this.preview = (String) data.get("preview");
-		this.username = (String) data.get("username");
-		this.content = (String) data.get("content");
-		this.linkVideo = (String) data.get("linkVideo");
-		this.numLikes = (Long) data.get("numLikes");
-		this.numComments = (Long) data.get("numComments");
-		this.numViews = (Long) data.get("numViews");
-		this.dateUploaded = (String) data.get("dateUploaded");
-		this.likes = (HashMap<String, Boolean>) data.get("likes");
-		this.comments = (HashMap<String, Boolean>) data.get("comments");
+		if (data != null) {
+			this.videoId = dataSnapshot.getKey();
+			this.preview = (String) data.get("preview");
+			this.username = (String) data.get("username");
+			this.content = (String) data.get("content");
+			this.linkVideo = (String) data.get("linkVideo");
+			this.numLikes = (Long) data.get("numLikes");
+			this.numComments = (Long) data.get("numComments");
+			this.numViews = (Long) data.get("numViews");
+			this.dateUploaded = (String) data.get("dateUploaded");
+			this.likes = (HashMap<String, Boolean>) data.get("likes");
+			this.comments = (HashMap<String, Boolean>) data.get("comments");
+		}
 
 		if (this.likes == null)
 			this.likes = new HashMap<String, Boolean>();
@@ -207,5 +210,28 @@ public class Video {
 	// Like
 	public boolean isLiked() {
 		return likes != null && MainActivity.getCurrentUser() != null && likes.get(MainActivity.getCurrentUser().getUsername()) != null;
+	}
+
+	public void addComment(Comment comment) {
+		if (comments == null)
+			comments = new HashMap<>();
+
+		comments.put(comment.getCommentId(), true);
+		numComments++;
+	}
+
+	public void addLike(String username) {
+		if (likes == null)
+			likes = new HashMap<>();
+
+		likes.put(username, true);
+		numLikes++;
+	}
+
+	public void removeLike(String username) {
+		if (likes != null && likes.containsKey(username)) {
+			likes.remove(username);
+			numLikes--;
+		}
 	}
 }

@@ -24,69 +24,89 @@ public class LoginActivity extends AppCompatActivity {
 
 	// Tag
 	private static final String TAG = "LoginActivity";
+	EditText username, password;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
-		// Binding
-		TextView register = findViewById(R.id.txtRegister);
-		Button login = findViewById(R.id.btnLogin);
-		EditText username = findViewById(R.id.txtUsername);
-		EditText password = findViewById(R.id.txtPassword);
-
-		// Register
-		register.setOnClickListener(v -> {
-			finish();
-			Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-			startActivity(intent);
-		});
-
 		getWindow().setStatusBarColor(Color.WHITE);
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 
+		// Binding
+		TextView register = findViewById(R.id.txtRegister);
+		Button login = findViewById(R.id.btnLogin);
+		username = findViewById(R.id.txtUsername);
+		password = findViewById(R.id.txtPassword);
+
+		// Register
+		register.setOnClickListener(v -> handleRegister());
+
 		// Login
-		login.setOnClickListener(v -> {
-			String usernameText = username.getText().toString();
-			String passwordText = password.getText().toString();
+		login.setOnClickListener(v -> handleLogin());
+	}
 
-			// Check if username and password are empty
-			if (usernameText.isEmpty() || passwordText.isEmpty()) {
-				if (usernameText.isEmpty()) username.setError("Username is required");
-				if (passwordText.isEmpty()) password.setError("Password is required");
-				Toast.makeText(LoginActivity.this, "Username and password are required", Toast.LENGTH_SHORT).show();
-			} else {
-				// Log
-				Log.i(TAG, "Login with username: " + usernameText + " and password: " + passwordText);
+	// Open RegisterActivity
+	private void handleRegister() {
+		finish();
+		Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+		startActivity(intent);
+	}
 
-				Query query = FirebaseUtil.getUserByUsername(usernameText);
-				query.addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot snapshot) {
-						if (snapshot.exists()) {
-							User user = new User(snapshot.getChildren().iterator().next());
-							if (passwordText.equals(user.getPassword())) {
-								MainActivity.setCurrentUser(user);
-								finish();
-							} else {
-								password.setError("Wrong password");
-								password.requestFocus();
-								Toast.makeText(LoginActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
-							}
-						} else {
-							username.setError("User not found");
-							username.requestFocus();
-							Toast.makeText(LoginActivity.this, "User not found", Toast.LENGTH_SHORT).show();
-						}
+	// Login
+	private void handleLogin() {
+		// Check if username and password are empty
+		if (isValidInput()) {
+			loginFirebase();
+		}
+	}
+
+	private void loginFirebase() {
+		String usernameText = username.getText().toString();
+		String passwordText = password.getText().toString();
+
+		Query query = FirebaseUtil.getUserByUsername(usernameText);
+		query.addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				if (snapshot.exists()) {
+					// Log
+					Log.i(TAG, "Login with username: " + usernameText + " and password: " + passwordText);
+					User user = new User(snapshot.getChildren().iterator().next());
+					if (passwordText.equals(user.getPassword())) {
+						MainActivity.setCurrentUser(user);
+						finish();
+					} else {
+						password.setError("Wrong password");
+						password.requestFocus();
+						Toast.makeText(LoginActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
 					}
+				} else {
+					username.setError("User not found");
+					username.requestFocus();
+					Toast.makeText(LoginActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+				}
+			}
 
-					@Override
-					public void onCancelled(@NonNull DatabaseError error) {
-						Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-					}
-				});
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
+
+	private boolean isValidInput() {
+		if (username.getText().toString().isEmpty()) {
+			username.setError("Username is required");
+			username.requestFocus();
+			return false;
+		} else if (password.getText().toString().isEmpty()) {
+			password.setError("Password is required");
+			password.requestFocus();
+			return false;
+		} else {
+			return true;
+		}
 	}
 }

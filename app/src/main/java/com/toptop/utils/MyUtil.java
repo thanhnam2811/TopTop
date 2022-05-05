@@ -1,5 +1,7 @@
 package com.toptop.utils;
 
+import android.annotation.SuppressLint;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -11,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+@SuppressLint("SimpleDateFormat")
 public class MyUtil {
 	public static Date getDateFromFormattedDateString(String date) {
 		String pattern = "dd-MM-yyyy HH:mm:ss";
@@ -27,17 +30,6 @@ public class MyUtil {
 		String pattern = "dd-MM-yyyy HH:mm:ss";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 		return simpleDateFormat.format(date);
-	}
-
-	// check valid dateString
-	public static boolean isValidDate(String dateString) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		try {
-			sdf.parse(dateString);
-		} catch (ParseException e) {
-			return false;
-		}
-		return true;
 	}
 
 	// get time ago
@@ -73,17 +65,11 @@ public class MyUtil {
 	// get time ago
 	public static String getTimeAgo(String dateString) {
 		Date date = getDateFromFormattedDateString(dateString);
-		return getTimeAgo(date);
-	}
-
-	// generate long id from string
-	public static long generateId(String str) {
-		StringBuilder idStr = new StringBuilder();
-		for (int i = 0; i < str.length(); i++) {
-			long id = str.charAt(i);
-			idStr.append(id);
+		if (date != null) {
+			return getTimeAgo(date);
+		} else {
+			return "Date is null";
 		}
-		return Long.parseLong(idStr.toString());
 	}
 
 	public static void downloadFile(String url, File outputFile) {
