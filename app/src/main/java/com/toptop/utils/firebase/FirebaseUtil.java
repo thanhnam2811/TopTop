@@ -63,6 +63,16 @@ public class FirebaseUtil {
 		return ref.orderByChild("content").startAt(content).endAt(content + "\uf8ff");
 //		return ref.orderByChild("content").startAt("[a-zA-Z0-9]*").endAt(content + "\uf8ff");
 	}
+//	check user is following user
+	public static Boolean checkUserIsFollowingUser(String username, String currentUsername) {
+		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
+		Query query = ref.child(username).child("followers").orderByChild(currentUsername).equalTo(true);
+		//check query is exist
+		if (query == null) {
+			return false;
+		}
+		return true;
+	}
 //	Try fix
 	public interface VideoCallback {
 		void onCallback(Video video);

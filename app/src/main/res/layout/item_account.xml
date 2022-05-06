@@ -8,8 +8,8 @@
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/img_avatarUser"
-        android:layout_width="85dp"
-        android:layout_height="80dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
@@ -44,8 +44,8 @@
         android:id="@+id/txtfollow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="76dp"
         android:text="Followers"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,11 +55,27 @@
         android:id="@+id/number_followerSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="8dp"
         android:text="26"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/txtfollow"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_followSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="28dp"
+        android:backgroundTint="#ED365A"
+        android:drawableTint="#ED365A"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="Follow"
+        android:textColor="#F6F6F6"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 

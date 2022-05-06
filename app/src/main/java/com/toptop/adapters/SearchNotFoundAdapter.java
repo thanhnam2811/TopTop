@@ -46,7 +46,7 @@ public class SearchNotFoundAdapter extends  RecyclerView.Adapter<SearchNotFoundA
         TextView textView;
         public SearchNotFoundViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.txt_timePost);
+            textView = itemView.findViewById(R.id.txt_search_not_found);
         }
         public void bind(String output) {
             textView.setText(output);

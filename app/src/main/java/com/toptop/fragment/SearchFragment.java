@@ -59,7 +59,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
+							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_search, container, false);
 
 		RecyclerView recyclerView = view.findViewById(R.id.recyclerSearchView);
@@ -84,71 +84,71 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 		searchView.setFocusable(true);
 		searchView.requestFocusFromTouch();
 		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-				@Override
-				public boolean onQueryTextSubmit(String query) {
-					Log.d(TAG, "onQueryTextSubmit: " + query);
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				Log.d(TAG, "onQueryTextSubmit: " + query);
 //					reset recyclerView
-					recyclerView.setAdapter(null);
-					recyclerViewForVideo.setAdapter(null);
-					//search for user
-					Query queryUser = FirebaseUtil.getUserByStringLikeUsername(query);
-					queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
-						@Override
-						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-							users.clear();
-							for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-								users.add(new User(snapshot));
-							}
-							System.out.println("users: " + users);
-							SearchFragmentAdapter searchFragmentAdapter = new SearchFragmentAdapter(users,view.getContext());
-							if(recyclerView.getAdapter() == null) {
-								recyclerView.setAdapter(searchFragmentAdapter);
-							}
-							//	search for video
-							Query queryVideo = FirebaseUtil.getVideoByStringLikeContent(query);
-							queryVideo.addListenerForSingleValueEvent(new ValueEventListener() {
-								@Override
-								public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-									videos.clear();
-									for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-										videos.add(new Video(snapshot));
-									}
-									System.out.println("videos: " + videos);
-									SearchFragmentVideoAdapter searchFragmentAdapterForVideo = new SearchFragmentVideoAdapter(videos,view.getContext());
-									if(recyclerViewForVideo.getAdapter() == null) {
-										recyclerViewForVideo.setAdapter(searchFragmentAdapterForVideo);
-									}
-									if(videos.size() == 0 && users.size() == 0) {
-										Toast.makeText(view.getContext(), "No result", Toast.LENGTH_SHORT).show();
-										SearchNotFoundAdapter searchNotFoundAdapter = new SearchNotFoundAdapter(view.getContext(),  query + " không cho ra kết quả tìm kiếm");
-										recyclerView.setAdapter(searchNotFoundAdapter);
-									}
-
+				recyclerView.setAdapter(null);
+				recyclerViewForVideo.setAdapter(null);
+				//search for user
+				Query queryUser = FirebaseUtil.getUserByStringLikeUsername(query);
+				queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+						users.clear();
+						for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+							users.add(new User(snapshot));
+						}
+						System.out.println("users: " + users);
+						SearchFragmentAdapter searchFragmentAdapter = new SearchFragmentAdapter(users,view.getContext());
+						if(recyclerView.getAdapter() == null) {
+							recyclerView.setAdapter(searchFragmentAdapter);
+						}
+						//	search for video
+						Query queryVideo = FirebaseUtil.getVideoByStringLikeContent(query);
+						queryVideo.addListenerForSingleValueEvent(new ValueEventListener() {
+							@Override
+							public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+								videos.clear();
+								for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+									videos.add(new Video(snapshot));
+								}
+								System.out.println("videos: " + videos);
+								SearchFragmentVideoAdapter searchFragmentAdapterForVideo = new SearchFragmentVideoAdapter(videos,view.getContext());
+								if(recyclerViewForVideo.getAdapter() == null) {
+									recyclerViewForVideo.setAdapter(searchFragmentAdapterForVideo);
+								}
+								if(videos.size() == 0 && users.size() == 0) {
+									Toast.makeText(view.getContext(), "No result", Toast.LENGTH_SHORT).show();
+									SearchNotFoundAdapter searchNotFoundAdapter = new SearchNotFoundAdapter(view.getContext(),  query + " không cho ra kết quả tìm kiếm");
+									recyclerView.setAdapter(searchNotFoundAdapter);
 								}
 
-								@Override
-								public void onCancelled(@NonNull DatabaseError error) {
-									Log.d(TAG, "onCancelled: " + error.getMessage());
-								}
-							});
+							}
 
-						}
+							@Override
+							public void onCancelled(@NonNull DatabaseError error) {
+								Log.d(TAG, "onCancelled: " + error.getMessage());
+							}
+						});
 
-						@Override
-						public void onCancelled(@NonNull DatabaseError error) {
-							Log.d(TAG, "onCancelled: " + error.getMessage());
-						}
-					});
+					}
 
-					return true;
-				}
+					@Override
+					public void onCancelled(@NonNull DatabaseError error) {
+						Log.d(TAG, "onCancelled: " + error.getMessage());
+					}
+				});
 
-				@Override
-				public boolean onQueryTextChange(String newText) {
-					Log.d(TAG, "onQueryTextChange: " + newText);
-					return true;
-				}
-			});
+				return true;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				Log.d(TAG, "onQueryTextChange: " + newText);
+				return true;
+			}
+		});
 
 
 
@@ -158,7 +158,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 		recyclerView.setLayoutManager(linearLayoutManager);
 		recyclerViewForVideo.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
 
-//		recyclerView.setNestedScrollingEnabled(false);
+		recyclerView.setNestedScrollingEnabled(false);
 //		recyclerViewForVideo.setNestedScrollingEnabled(false);
 //		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 //			@Override

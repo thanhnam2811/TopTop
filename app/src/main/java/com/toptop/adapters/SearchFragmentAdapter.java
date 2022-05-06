@@ -1,9 +1,11 @@
 package com.toptop.adapters;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import com.toptop.R;
 import com.toptop.models.User;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.RecyclerViewDisabler;
+import com.toptop.utils.firebase.FirebaseUtil;
 
 import java.util.List;
 
@@ -61,7 +64,15 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 			holder.txt_number_follow.setText("0");
 		}
 		else{
-		holder.txt_number_follow.setText(String.valueOf(user.getNumFollowers()));
+			holder.txt_number_follow.setText(String.valueOf(user.getNumFollowers()));
+			if(Integer.valueOf(String.valueOf(user.getNumFollowers()))>0 && FirebaseUtil.checkUserIsFollowingUser(user.getUsername(),"hoaitan")) {
+//				holder.btn_follow.setText("Following");
+//				//set backgroundTint to button
+//				holder.btn_follow.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.teal_200)));
+//				holder.btn_follow.setEnabled(false);
+				//hide button
+				holder.btn_follow.setVisibility(View.GONE);
+			}
 		}
 		if(user.getAvatar() != null && MyUtil.getBitmapFromURL(user.getAvatar()) != null) {
 			holder.img_avatar.setImageBitmap(MyUtil.getBitmapFromURL(user.getAvatar()));
@@ -69,6 +80,7 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 		else{
 			holder.img_avatar.setImageResource(R.drawable.demo_avatar);
 		}
+
 	}
 
 	@Override
@@ -78,6 +90,7 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 
 	static class SearchViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username,txt_fullname,txt_number_follow;
+		Button btn_follow;
 		CircularImageView img_avatar;
 		SearchView searchView;
 
@@ -88,6 +101,7 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 			txt_number_follow = itemView.findViewById(R.id.number_followerSearch);
 			img_avatar = itemView.findViewById(R.id.img_avatarUser);
 			searchView = itemView.findViewById(R.id.searchView);
+			btn_follow = itemView.findViewById(R.id.btn_followSearch);
 		}
 	}
 }
