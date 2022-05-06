@@ -1,11 +1,12 @@
 package com.toptop.models;
 
 import com.google.firebase.database.DataSnapshot;
+import com.toptop.utils.MyUtil;
 
+import java.util.Date;
 import java.util.HashMap;
 
 public class Notification {
-//notification_id,avatar, username, content, time_notification, image_notification
     private String notificationId, username, content, type, time, redirectTo;
     private Boolean seen;
 
@@ -18,6 +19,15 @@ public class Notification {
         this.content = content;
         this.type = type;
         this.time = time;
+        this.redirectTo = redirectTo;
+        this.seen = seen;
+    }
+    public Notification(String notificationId, String username, String content, String type, Date time, String redirectTo, Boolean seen) {
+        this.notificationId = notificationId;
+        this.username = username;
+        this.content = content;
+        this.type = type;
+        this.time = MyUtil.getFormattedDateStringFromDate(time);
         this.redirectTo = redirectTo;
         this.seen = seen;
     }

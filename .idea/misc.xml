@@ -84,6 +84,19 @@
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/toolbar.xml" value="0.21197916666666666" />
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/video_layout.xml" value="0.21197916666666666" />
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/menu/nav_item.xml" value="0.21197916666666666" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/activity_main.xml" value="0.2755208333333333" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/comment_item.xml" value="0.15885416666666666" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/fragment_notification.xml" value="0.19427083333333334" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/fragment_profile.xml" value="0.2826086956521739" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/fragment_search.xml" value="0.2755208333333333" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/fragment_video.xml" value="0.12447916666666667" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/item_account.xml" value="0.21614583333333334" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/item_listinform.xml" value="0.23958333333333334" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/items_listsearch.xml" value="0.2826086956521739" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/items_video.xml" value="0.2826086956521739" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/output_search_not_found.xml" value="0.2879999900124293" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/toolbar.xml" value="0.2755208333333333" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/video_layout.xml" value="0.2755208333333333" />
       </map>
     </option>
   </component>

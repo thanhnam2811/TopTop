@@ -49,14 +49,18 @@ public class User {
 		this.numFollowers = (Long) data.get("numFollowers");
 		this.numFollowing = (Long) data.get("numFollowing");
 		this.numLikes = (Long) data.get("numLikes");
-		followings = (HashMap<String, Boolean>) data.get("followings");
-		followers = (HashMap<String, Boolean>) data.get("followers");
+		this.followings = (HashMap<String, Boolean>) data.get("following");
+		this.followers = (HashMap<String, Boolean>) data.get("followers");
 		/*
             if (numFollowing != followings.size()) this.numFollowing = (long) followings.size();
             if (numFollowers != followers.size()) this.numFollowers = (long) followers.size();
         */
 	}
 
+//	setters password
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	public String getUsername() {
 		return username;
 	}

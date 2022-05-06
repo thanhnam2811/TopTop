@@ -37,23 +37,8 @@
         android:layout_height="1dp"
         android:layout_below="@+id/linear_layout"
         android:background="#6A6868" />
-
-    <FrameLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_notifications"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".fragment.NotificationFragment">
-
-        <!-- TODO: Update blank fragment layout -->
-        <ListView
-            android:id="@+id/listNotification"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@color/teal_200"
-            android:dividerHeight="1dp"
-            android:listSelector="#11EDC2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </FrameLayout>
+        android:layout_height="match_parent"/>
 </LinearLayout>

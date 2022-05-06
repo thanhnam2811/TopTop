@@ -1,5 +1,14 @@
 package com.toptop.utils;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.toptop.MainActivity;
+import com.toptop.R;
+import com.toptop.fragment.SearchFragment;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -69,4 +78,17 @@ public class MyUtil {
 		Date date = getDateFromFormattedDateString(dateString);
 		return getTimeAgo(date);
 	}
+
+	public static Bitmap getBitmapFromURL(String linkAvatar) {
+		System.out.println("linkAvatar: " + linkAvatar);
+		try {
+			return Bitmap.createScaledBitmap(
+					Bitmap.createBitmap(BitmapFactory.decodeStream(new java.net.URL(linkAvatar).openConnection().getInputStream())),
+					100, 100, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }

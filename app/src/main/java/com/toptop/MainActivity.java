@@ -10,6 +10,8 @@ import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.toptop.adapters.VideoFragementAdapter;
 import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
@@ -49,6 +51,7 @@ public class MainActivity extends FragmentActivity {
 		// Bind the view using the id
 		CurvedBottomNavigationView nav = findViewById(R.id.nav);
 
+
 		// Set list of items
 		CbnMenuItem[] items = new CbnMenuItem[]{
 				new CbnMenuItem(R.drawable.ic_video, R.drawable.ic_video_avd, 0),
@@ -74,6 +77,14 @@ public class MainActivity extends FragmentActivity {
 
 		// Set the items
 		nav.setMenuItems(items, 0);
+
+//		//set badge for notification
+//		BottomNavigationView navView = findViewById(R.id.nav);
+////		add badge to the bottom navigation view
+//		BadgeDrawable badge = navView.getOrCreateBadge(R.id.img_Notification);
+//		badge.setVisible(true);
+//		badge.setBackgroundColor(Color.RED);
+//		badge.setNumber(10);
 
 		// Set the listener
 		nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> {
