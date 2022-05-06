@@ -15,6 +15,7 @@ import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -61,25 +62,17 @@ public class MainActivity extends FragmentActivity {
 		if (username != null && password != null) {
 			// Set current user
 			Query query = FirebaseUtil.getUserByUsername(username);
-			query.addListenerForSingleValueEvent(new ValueEventListener() {
-				@Override
-				public void onDataChange(@NonNull DataSnapshot snapshot) {
-					if (snapshot.exists()) {
-						User user = new User(snapshot.getChildren().iterator().next());
-						if (user.getPassword().equals(password)) {
-							setCurrentUser(user);
-							// Log
-							Log.i(TAG, "getUserFromMemory: " + user.getUsername());
-						} else {
-							// Log
-							Log.i(TAG, "getUserFromMemory: Password is not correct");
-						}
+			query.get().addOnSuccessListener(dataSnapshot -> {
+				if (dataSnapshot.exists()) {
+					User user = new User(dataSnapshot.getChildren().iterator().next());
+					if (user.getPassword().equals(password)) {
+						setCurrentUser(user);
+						// Log
+						Log.i(TAG, "getUserFromMemory: " + user.getUsername());
+					} else {
+						// Log
+						Log.i(TAG, "getUserFromMemory: Password is not correct");
 					}
-				}
-
-				@Override
-				public void onCancelled(@NonNull DatabaseError error) {
-					Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
 				}
 			});
 		} else

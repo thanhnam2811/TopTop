@@ -7,22 +7,21 @@
     tools:context=".editinfouser">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnLogout"
+        android:id="@+id/btnUpdateInfo"
         android:layout_width="165dp"
         android:layout_height="44dp"
-        android:layout_marginTop="556dp"
+        android:layout_marginTop="524dp"
         android:background="@drawable/button_background"
         android:drawableEnd="@drawable/ic_logout"
         android:fontFamily="@font/varela_round"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="Đăng xuất"
+        android:text="Cập nhật"
         android:textColor="@color/main_color"
         android:textSize="14sp"
 
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.816"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="68dp"
         android:text="Email"
         android:textSize="16dp"
         android:textStyle="normal"
@@ -48,81 +47,57 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
-    <TextView
+    <EditText
         android:id="@+id/txtEmail"
-        android:layout_width="196dp"
+        android:layout_width="191dp"
         android:layout_height="68dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="368dp"
         android:text="ngoctrung0962@gmail.com"
         android:textSize="16dp"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.588"
+        app:layout_constraintHorizontal_bias="0.713"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSDT" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/editEmail"
-        android:layout_width="23dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.612"
-        app:layout_constraintStart_toEndOf="@+id/txtEmail"
-        app:layout_constraintTop_toBottomOf="@+id/editSDT"
-        app:srcCompat="@drawable/ic_edit" />
-
-    <TextView
+    <EditText
         android:id="@+id/txtSDT"
-        android:layout_width="192dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="191dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="156dp"
+        android:layout_marginTop="296dp"
         android:text="09999999"
         android:textSize="16dp"
         android:textStyle="normal"
-        app:layout_constraintStart_toEndOf="@+id/txt3"
-        app:layout_constraintTop_toBottomOf="@+id/txtFullnameUser" />
-
-    <ImageView
-        android:id="@+id/editSDT"
-        android:layout_width="23dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.62"
-        app:layout_constraintStart_toEndOf="@+id/txtSDT"
-        app:layout_constraintTop_toBottomOf="@+id/editFullnameUser"
-        app:srcCompat="@drawable/ic_edit" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txt3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="56dp"
         android:text="Số điện thoại"
         android:textSize="16dp"
         android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt" />
 
-    <TextView
+    <EditText
         android:id="@+id/txtFullnameUser"
         android:layout_width="191dp"
         android:layout_height="50dp"
-        android:layout_marginStart="148dp"
-        android:layout_marginTop="236dp"
+        android:layout_marginStart="156dp"
+        android:layout_marginTop="216dp"
         android:text="Trung Nguyen"
-        android:textSize="16dp"
+        android:textSize="14dp"
         android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/btnBackToProfile"
         android:layout_width="39dp"
         android:layout_height="42dp"
         android:layout_marginTop="4dp"
@@ -137,15 +112,15 @@
         android:layout_width="98dp"
         android:layout_height="38dp"
         android:layout_marginTop="4dp"
+        android:gravity="center"
         android:text="Edit Profile"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.429"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
-        app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center"/>
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/circularImageView"
@@ -158,18 +133,6 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
-
-    <ImageView
-        android:id="@+id/editFullnameUser"
-        android:layout_width="23dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="236dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.648"
-        app:layout_constraintStart_toEndOf="@+id/txtFullnameUser"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_edit" />
 
     <TextView
         android:id="@+id/txt"
@@ -185,22 +148,24 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnForgotPass"
-        android:layout_width="165dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="556dp"
+        android:layout_width="114dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="2dp"
         android:background="@drawable/button_background"
         android:drawableEnd="@drawable/ic_edit"
         android:fontFamily="@font/varela_round"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
         android:text="Đổi mật khẩu"
         android:textColor="@color/main_color"
-        android:textSize="14sp"
 
+        android:textSize="10sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.132"
+        app:layout_constraintHorizontal_bias="0.983"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.017" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

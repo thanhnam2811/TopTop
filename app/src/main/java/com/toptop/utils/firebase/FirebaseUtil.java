@@ -40,4 +40,10 @@ public class FirebaseUtil {
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_VIDEOS);
 		return ref.orderByChild("username").equalTo(username);
 	}
+
+	// Get comments by video id
+	public static Query getUserByusername(String username) {
+		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
+		return ref.orderByChild("username").equalTo(username);
+	}
 }

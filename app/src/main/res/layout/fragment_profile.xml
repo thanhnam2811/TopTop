@@ -41,7 +41,9 @@
             android:text="Trung Nguyễn"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:id="@+id/fullname"/>
+
 
     </LinearLayout>
 
@@ -68,6 +70,7 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/follow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -99,6 +102,7 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/follower"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -129,6 +133,7 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/liketotal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
