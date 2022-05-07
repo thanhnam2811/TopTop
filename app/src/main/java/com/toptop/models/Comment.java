@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.Exclude;
 import com.toptop.MainActivity;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
@@ -231,15 +232,18 @@ public class Comment {
 		this.replyToCommentId = replyToCommentId;
 	}
 
+	@Exclude
 	public boolean isReply() {
 		return this.replyToCommentId != null;
 	}
 
+	@Exclude
 	public boolean isLiked() {
 		return likes != null && MainActivity.getCurrentUser() != null
 				&& likes.containsKey(MainActivity.getCurrentUser().getUsername());
 	}
 
+	@Exclude
 	public boolean isOwner() {
 		if (MainActivity.isLoggedIn()) {
 			if (username.equals(MainActivity.getCurrentUser().getUsername())) {
@@ -265,6 +269,7 @@ public class Comment {
 		}
 	}
 
+	@Exclude
 	public String getInfo() {
 		return "Comment: " + content + " | " + numLikes + " likes | " + numReplies + " replies" + " | " + "Owner: " + username;
 	}

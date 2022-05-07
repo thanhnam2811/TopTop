@@ -1,6 +1,7 @@
 package com.toptop.models;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.Query;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
@@ -215,6 +216,7 @@ public class User {
 		if (this.password == null) this.password = password;
 	}
 
+	@Exclude
 	public boolean isFollowing(String username) {
 		return followings != null && followings.containsKey(username);
 	}

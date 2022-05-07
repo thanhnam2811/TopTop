@@ -3,6 +3,7 @@ package com.toptop.models;
 import androidx.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.Exclude;
 import com.toptop.MainActivity;
 
 import java.util.HashMap;
@@ -207,6 +208,8 @@ public class Video {
 				'}';
 	}
 
+
+	@Exclude
 	// Like
 	public boolean isLiked() {
 		return likes != null && MainActivity.getCurrentUser() != null && likes.get(MainActivity.getCurrentUser().getUsername()) != null;

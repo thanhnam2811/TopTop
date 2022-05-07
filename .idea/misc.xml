@@ -43,6 +43,7 @@
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/font/aclonica.xml" value="0.26180555555555557" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/font/lobster.xml" value="0.14375" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout-v28/activity_login.xml" value="0.3625" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_editinfouser.xml" value="0.1326388888888889" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_login.xml" value="0.24166666666666667" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_main.xml" value="0.20694444444444443" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_register.xml" value="0.24166666666666667" />
@@ -88,10 +89,6 @@
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/toolbar.xml" value="0.21197916666666666" />
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/video_layout.xml" value="0.21197916666666666" />
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/menu/nav_item.xml" value="0.21197916666666666" />
-        <entry key="..\:/Users/ADMIN/AndroidStudioProjects/TopTop2/app/src/main/res/layout/activity_editinfouser.xml" value="0.264" />
-        <entry key="..\:/Users/ADMIN/AndroidStudioProjects/TopTop2/app/src/main/res/layout/activity_form_edit_iprofile.xml" value="0.12360688956433637" />
-        <entry key="..\:/Users/ADMIN/AndroidStudioProjects/TopTop2/app/src/main/res/layout/fragment_profile.xml" value="0.264" />
-        <entry key="..\:/Users/ADMIN/AndroidStudioProjects/TopTop2/app/src/main/res/layout/toolbar.xml" value="0.1802536231884058" />
       </map>
     </option>
   </component>

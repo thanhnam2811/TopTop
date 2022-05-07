@@ -8,18 +8,12 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.toptop.adapters.VideoFragementAdapter;
 import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
@@ -39,6 +33,8 @@ public class MainActivity extends FragmentActivity {
 	private static SharedPreferences mAppPreferences;
 	private static SharedPreferences.Editor mEditor;
 	private static User currentUser;
+	CurvedBottomNavigationView nav;
+	CbnMenuItem[] items;
 
 	public static User getCurrentUser() {
 		return currentUser;
@@ -113,10 +109,10 @@ public class MainActivity extends FragmentActivity {
 		StrictMode.setThreadPolicy(policy);
 
 		// Bind the view using the id
-		CurvedBottomNavigationView nav = findViewById(R.id.nav);
+		nav = findViewById(R.id.nav);
 
 		// Set list of items
-		CbnMenuItem[] items = new CbnMenuItem[]{
+		items = new CbnMenuItem[]{
 				new CbnMenuItem(R.drawable.ic_video, R.drawable.ic_video_avd, 0),
 				new CbnMenuItem(R.drawable.ic_search, R.drawable.ic_search_avd, 0),
 				new CbnMenuItem(R.drawable.ic_notification, R.drawable.ic_notification_avd, 0),
@@ -206,6 +202,10 @@ public class MainActivity extends FragmentActivity {
 			getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 			Log.i(TAG, "setStatusBarColor: LIGHT MODE");
 		}
+	}
+
+	public void changeNavItem(int position) {
+		nav.setMenuItems(items, position);
 	}
 
 	@Override
