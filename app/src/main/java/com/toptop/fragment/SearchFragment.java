@@ -6,9 +6,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +44,8 @@ import com.toptop.utils.firebase.FirebaseUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+
 
 public class SearchFragment extends Fragment implements SearchView.OnQueryTextListener{
 	private static final String TAG = "SearchFragment";
@@ -65,7 +69,13 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 		RecyclerView recyclerView = view.findViewById(R.id.recyclerSearchView);
 		RecyclerView recyclerViewForVideo = view.findViewById(R.id.recyclerSearchViewforVideo);
 		SearchView searchView = view.findViewById(R.id.searchView);
+		ScrollView scrollView = view.findViewById(R.id.scrollViewSearch);
 		TextView txtSearch = view.findViewById(R.id.txtSearch);
+		TextView lblAccount = view.findViewById(R.id.labelAccounts);
+		TextView lblVideo = view.findViewById(R.id.labelVideos);
+		//set animation for scrollview
+//		scrollView.setAnimation();
+		//handle click Search
 		txtSearch.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -74,12 +84,12 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 				System.out.println(input);
 				if(input.length() <= 0) {
 					searchView.setQuery("", false);
+					Toast.makeText(getContext(), "Please enter a keyword", Toast.LENGTH_SHORT).show();
 				}else {
 					searchView.setQuery(input, true);
 				}
 			}
 		});
-//		searchView.setOnQueryTextListener(this);
 		searchView.setQueryHint("Search");
 		searchView.setFocusable(true);
 		searchView.requestFocusFromTouch();
@@ -87,9 +97,12 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 			@Override
 			public boolean onQueryTextSubmit(String query) {
 				Log.d(TAG, "onQueryTextSubmit: " + query);
-//					reset recyclerView
+//				reset recyclerView
 				recyclerView.setAdapter(null);
 				recyclerViewForVideo.setAdapter(null);
+				//reset label
+				lblAccount.setVisibility(View.GONE);
+				lblVideo.setVisibility(View.GONE);
 				//search for user
 				Query queryUser = FirebaseUtil.getUserByStringLikeUsername(query);
 				queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -101,8 +114,9 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 						}
 						System.out.println("users: " + users);
 						SearchFragmentAdapter searchFragmentAdapter = new SearchFragmentAdapter(users,view.getContext());
-						if(recyclerView.getAdapter() == null) {
+						if(recyclerView.getAdapter() == null && users.size() > 0) {
 							recyclerView.setAdapter(searchFragmentAdapter);
+							lblAccount.setVisibility(View.VISIBLE);
 						}
 						//	search for video
 						Query queryVideo = FirebaseUtil.getVideoByStringLikeContent(query);
@@ -115,7 +129,8 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 								}
 								System.out.println("videos: " + videos);
 								SearchFragmentVideoAdapter searchFragmentAdapterForVideo = new SearchFragmentVideoAdapter(videos,view.getContext());
-								if(recyclerViewForVideo.getAdapter() == null) {
+								if(recyclerViewForVideo.getAdapter() == null && videos.size() > 0) {
+									lblVideo.setVisibility(View.VISIBLE);
 									recyclerViewForVideo.setAdapter(searchFragmentAdapterForVideo);
 								}
 								if(videos.size() == 0 && users.size() == 0) {
@@ -123,15 +138,12 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 									SearchNotFoundAdapter searchNotFoundAdapter = new SearchNotFoundAdapter(view.getContext(),  query + " không cho ra kết quả tìm kiếm");
 									recyclerView.setAdapter(searchNotFoundAdapter);
 								}
-
 							}
-
 							@Override
 							public void onCancelled(@NonNull DatabaseError error) {
 								Log.d(TAG, "onCancelled: " + error.getMessage());
 							}
 						});
-
 					}
 
 					@Override
@@ -160,12 +172,6 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
 		recyclerView.setNestedScrollingEnabled(false);
 //		recyclerViewForVideo.setNestedScrollingEnabled(false);
-//		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//			@Override
-//			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//				super.onScrollStateChanged(recyclerView, newState);
-//			}
-//		});
 
 		// Set status bar color
 		((MainActivity) requireActivity()).setStatusBarColor(MainActivity.STATUS_BAR_DARK_MODE);

@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.toptop.models.User;
 import com.toptop.models.Video;
 
 import java.util.concurrent.CountDownLatch;
@@ -66,7 +67,22 @@ public class FirebaseUtil {
 //	check user is following user
 	public static Boolean checkUserIsFollowingUser(String username, String currentUsername) {
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
-		Query query = ref.child(username).child("followers").orderByChild(currentUsername).equalTo(true);
+		Query query = ref.orderByChild("username").equalTo(username);
+		query.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+					User user = new User(snapshot);
+					if (user.getFollowers().containsValue(currentUsername)) {
+						Log.d(TAG, "checkUserIsFollowingUser: " + true);
+					}
+				}
+			}
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+				Log.d(TAG, "checkUserIsFollowingUser: " + false);
+			}
+		});
 		//check query is exist
 		if (query == null) {
 			return false;

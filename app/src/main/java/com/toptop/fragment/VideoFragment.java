@@ -30,6 +30,7 @@ public class VideoFragment extends Fragment {
 	private static final String TAG = "VideoFragment";
 	private ArrayList<Video> videos = new ArrayList<>();
 	DatabaseReference mDatabase;
+	RecyclerView recyclerView;
 
 	public VideoFragment() {
 		// Required empty public constructor
@@ -45,7 +46,7 @@ public class VideoFragment extends Fragment {
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_video, container, false);
 
-		RecyclerView recyclerView = view.findViewById(R.id.recycler_view_videos);
+		 recyclerView = view.findViewById(R.id.recycler_view_videos);
 
 		mDatabase = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_VIDEOS);
 		mDatabase.addValueEventListener(new ValueEventListener() {
@@ -86,5 +87,16 @@ public class VideoFragment extends Fragment {
 
 		// Inflate the layout for this fragment
 		return view;
+	}
+
+	public void goToVideo(Video video) {
+		for (int i = 0; i < videos.size(); i++) {
+			if (videos.get(i).getVideoId().equals(video.getVideoId())) {
+				// Log
+				Log.d(TAG, "goToVideo: " + i);
+				recyclerView.smoothScrollToPosition(i);
+				break;
+			}
+		}
 	}
 }
