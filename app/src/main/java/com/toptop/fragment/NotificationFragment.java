@@ -17,7 +17,9 @@ import java.util.ArrayList;
 
 public class NotificationFragment extends Fragment {
 
-    public NotificationFragment() {
+	public static final String TAG = "NotificationFragment";
+
+	public NotificationFragment() {
         // Required empty public constructor
     }
 

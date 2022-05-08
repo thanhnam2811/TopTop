@@ -65,9 +65,7 @@ public class InputAccountRegister extends Fragment {
 					} else {
 						if (isValidInput(username, password, confirmPassword)) {
 							setData(username, password);
-							((RegisterActivity) requireActivity()).createUser();
-
-							requireActivity().finish();
+							((RegisterActivity) requireActivity()).finishRegister(true);
 						}
 					}
 				}

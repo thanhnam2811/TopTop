@@ -27,6 +27,7 @@
         tools:layout_editor_absoluteX="16dp">
 
         <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/img_avatar"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"

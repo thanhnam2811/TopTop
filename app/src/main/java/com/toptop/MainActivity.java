@@ -1,5 +1,6 @@
 package com.toptop;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -8,12 +9,18 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.toptop.adapters.VideoFragementAdapter;
 import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
@@ -29,10 +36,16 @@ import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem;
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView;
 
 public class MainActivity extends FragmentActivity {
-	private static final String TAG = "MainActivity", NAV_TAG = "Navigation", SAVE_USER = "SaveUser", SAVE_PASSWORD = "SavePassword";
+	public static final String EXTRA_REGISTER = "register";
+	public static final String EXTRA_LOGIN = "login";
+	private static final String TAG = "MainActivity", NAV_TAG = "Navigation", SAVE_USER = "SaveUser";
+	private static final int LOGIN_REQUEST_CODE = 1;
+	private static final int REGISTER_REQUEST_CODE = 2;
 	private static SharedPreferences mAppPreferences;
 	private static SharedPreferences.Editor mEditor;
-	private static User currentUser;
+	private static User currentUser = null;
+
+	@SuppressLint("StaticFieldLeak")
 	CurvedBottomNavigationView nav;
 	CbnMenuItem[] items;
 
@@ -40,54 +53,96 @@ public class MainActivity extends FragmentActivity {
 		return currentUser;
 	}
 
-	public static void setCurrentUser(User currentUser) {
+	public void setCurrentUser(User currentUser) {
 		// Log
 		Log.i(TAG, "setCurrentUser: " + currentUser.getUsername());
-		MainActivity.currentUser = currentUser;
+
+		// Set current user
+		Query query = FirebaseUtil.getUserByUsername(currentUser.getUsername());
+		query.addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				if (snapshot.exists()) {
+					// Set current user
+					User user = new User(snapshot.getChildren().iterator().next());
+					MainActivity.currentUser = user;
+					ProfileFragment profileFragment =
+							(ProfileFragment) getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG);
+					if (profileFragment != null)
+						profileFragment.updateUI(user);
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+
+			}
+		});
 
 		// Save user to memory
 		mEditor.putString(SAVE_USER, currentUser.getUsername());
-		mEditor.putString(SAVE_PASSWORD, currentUser.getPassword());
 		mEditor.apply();
 	}
 
 	private void getUserFromMemory() {
 		// Get user from memory
 		String username = mAppPreferences.getString(SAVE_USER, null);
-		String password = mAppPreferences.getString(SAVE_PASSWORD, null);
-		if (username != null && password != null) {
-			// Set current user
+		if (username != null) {
 			Query query = FirebaseUtil.getUserByUsername(username);
-			query.get().addOnSuccessListener(dataSnapshot -> {
-				if (dataSnapshot.exists()) {
-					User user = new User(dataSnapshot.getChildren().iterator().next());
-					if (user.getPassword().equals(password)) {
-						setCurrentUser(user);
-						// Log
-						Log.i(TAG, "getUserFromMemory: " + user.getUsername());
-					} else {
-						// Log
-						Log.i(TAG, "getUserFromMemory: Password is not correct");
-					}
+			query.get().addOnSuccessListener(documentSnapshot -> {
+				if (documentSnapshot.exists()) {
+					User user = new User(documentSnapshot.getChildren().iterator().next());
+					setCurrentUser(user);
+				} else {
+					Log.i(TAG, "getUserFromMemory: User not found");
 				}
 			});
-		} else
+		} else {
+			currentUser = null;
 			// Log
 			Log.i(TAG, "getUserFromMemory: User is not found");
+		}
 	}
 
 	public static final String
 			STATUS_BAR_LIGHT_MODE = "status_bar_light_mode",
 			STATUS_BAR_DARK_MODE = "status_bar_dark_mode";
 
-	public static final String
-			VIDEO_FRAGMENT_TAG = "video",
-			SEARCH_FRAGMENT_TAG = "search",
-			NOTIFICATION_FRAGMENT_TAG = "notification",
-			PROFILE_FRAGMENT_TAG = "profile";
-
 	public static boolean isLoggedIn() {
 		return currentUser != null;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == LOGIN_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				User user = (User) data.getSerializableExtra(LoginActivity.USER);
+				setCurrentUser(user);
+			} else {
+				if (data.getBooleanExtra(EXTRA_REGISTER, false)) {
+					openRegisterActivity();
+				} else {
+					Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
+				}
+			}
+		} else if (requestCode == REGISTER_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				User user = (User) data.getSerializableExtra(RegisterActivity.USER);
+				setCurrentUser(user);
+			} else {
+				if (data.getBooleanExtra(EXTRA_LOGIN, false)) {
+					openLoginActivity();
+				} else {
+					Toast.makeText(this, "Register failed", Toast.LENGTH_SHORT).show();
+				}
+			}
+		}
+	}
+
+	private void openRegisterActivity() {
+		Intent intent = new Intent(this, RegisterActivity.class);
+		startActivityForResult(intent, REGISTER_REQUEST_CODE);
 	}
 
 	@Override
@@ -98,10 +153,10 @@ public class MainActivity extends FragmentActivity {
 		mAppPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		mEditor = mAppPreferences.edit();
 
+		init();
+
 		// Get user from memory
 		getUserFromMemory();
-
-		init();
 	}
 
 	private void init() {
@@ -121,15 +176,16 @@ public class MainActivity extends FragmentActivity {
 
 		// Add fragment to the container
 		getSupportFragmentManager().beginTransaction()
-				.add(R.id.fragment_container, new SearchFragment(), SEARCH_FRAGMENT_TAG)
-				.addToBackStack(SEARCH_FRAGMENT_TAG)
-				.add(R.id.fragment_container, new NotificationFragment(), NOTIFICATION_FRAGMENT_TAG)
-				.addToBackStack(NOTIFICATION_FRAGMENT_TAG)
-				.add(R.id.fragment_container, new ProfileFragment(), PROFILE_FRAGMENT_TAG)
-				.addToBackStack(PROFILE_FRAGMENT_TAG)
-				.add(R.id.fragment_container, new VideoFragment(), VIDEO_FRAGMENT_TAG)
-				.addToBackStack(VIDEO_FRAGMENT_TAG)
+				.add(R.id.fragment_container, new SearchFragment(), SearchFragment.TAG)
+				.addToBackStack(SearchFragment.TAG)
+				.add(R.id.fragment_container, new NotificationFragment(), NotificationFragment.TAG)
+				.addToBackStack(NotificationFragment.TAG)
+				.add(R.id.fragment_container, new ProfileFragment(), ProfileFragment.TAG)
+				.addToBackStack(ProfileFragment.TAG)
+				.add(R.id.fragment_container, new VideoFragment(), VideoFragment.TAG)
+				.addToBackStack(VideoFragment.TAG)
 				.commit();
+
 
 		// Execute transaction
 		getSupportFragmentManager().executePendingTransactions();
@@ -143,28 +199,32 @@ public class MainActivity extends FragmentActivity {
 				case R.drawable.ic_video:
 					getSupportFragmentManager().beginTransaction()
 							.replace(R.id.fragment_container,
-									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VIDEO_FRAGMENT_TAG)))
+									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
 							.commit();
 					Log.i(NAV_TAG, "Change to video fragment");
 					break;
 				case R.drawable.ic_search:
 					getSupportFragmentManager().beginTransaction()
 							.replace(R.id.fragment_container,
-									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(SEARCH_FRAGMENT_TAG)))
+									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(SearchFragment.TAG)))
 							.commit();
 					Log.i(NAV_TAG, "Change to search fragment");
 					break;
 				case R.drawable.ic_notification:
 					getSupportFragmentManager().beginTransaction()
 							.replace(R.id.fragment_container,
-									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(NOTIFICATION_FRAGMENT_TAG)))
+									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(NotificationFragment.TAG)))
 							.commit();
 					Log.i(NAV_TAG, "Change to notification fragment");
 					break;
 				case R.drawable.ic_profile:
+					if (!isLoggedIn()) {
+						Toast.makeText(MainActivity.this, "Please login first", Toast.LENGTH_SHORT).show();
+						openLoginActivity();
+					}
 					getSupportFragmentManager().beginTransaction()
 							.replace(R.id.fragment_container,
-									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(PROFILE_FRAGMENT_TAG)))
+									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG)))
 							.commit();
 					Log.i(NAV_TAG, "Change to profile fragment");
 					break;
@@ -175,7 +235,7 @@ public class MainActivity extends FragmentActivity {
 		// Set the default fragment
 		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.fragment_container,
-						Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VIDEO_FRAGMENT_TAG)))
+						Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
 				.commit();
 
 		// Set navigation bar color
@@ -227,6 +287,6 @@ public class MainActivity extends FragmentActivity {
 	// Open login activity
 	public void openLoginActivity() {
 		Intent intent = new Intent(this, LoginActivity.class);
-		startActivity(intent);
+		startActivityForResult(intent, LOGIN_REQUEST_CODE);
 	}
 }

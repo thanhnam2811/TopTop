@@ -6,9 +6,10 @@ import com.google.firebase.database.Query;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class User {
+public class User implements Serializable {
 	// Tag
 	private static final String TAG = "User";
 
@@ -55,6 +56,7 @@ public class User {
 			this.phoneNumber = (String) data.get("phoneNumber");
 			this.email = (String) data.get("email");
 			this.avatar = (String) data.get("avatar");
+
 			if (data.get("numFollowers") != null)
 				this.numFollowers = (Long) data.get("numFollowers");
 			else
@@ -124,7 +126,7 @@ public class User {
 	}
 
 	public String getPhoneNumber() {
-		return phoneNumber;
+		return phoneNumber == null ? "" : phoneNumber;
 	}
 
 	public void setPhoneNumber(String phoneNumber) {

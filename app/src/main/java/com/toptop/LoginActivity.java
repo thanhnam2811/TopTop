@@ -7,23 +7,41 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.models.User;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.UserFirebase;
 
 public class LoginActivity extends AppCompatActivity {
 
+	public static final String USER = "user";
 	// Tag
 	private static final String TAG = "LoginActivity";
+
+	private static final String GOOGLE_CLIENT_TOKEN = "409625614338-2nmpv2j05vqnno51icu7jfes7udn5l4k.apps.googleusercontent.com";
+
+	private static final int LOGIN_GOOGLE = 1;
+	private static final int LOGIN_FACEBOOK = 2;
+	private static final boolean LOGIN_SUCCESS = true;
+
+
 	EditText username, password;
 
 	@Override
@@ -37,21 +55,87 @@ public class LoginActivity extends AppCompatActivity {
 		// Binding
 		TextView register = findViewById(R.id.txtRegister);
 		Button login = findViewById(R.id.btnLogin);
+		ImageView loginGoogle = findViewById(R.id.loginGoogle);
+		ImageView loginFacebook = findViewById(R.id.loginFacebook);
 		username = findViewById(R.id.txtUsername);
 		password = findViewById(R.id.txtPassword);
+
+		// Configure sign-in to request the user's ID, email address, and basic
+		// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+				.requestIdToken(GOOGLE_CLIENT_TOKEN)
+				.requestEmail()
+				.requestProfile()
+				.build();
+
+		GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
+
+		// Check for existing Google Sign In account, if the user is already signed in
+		// the GoogleSignInAccount will be non-null.
+		GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+		if (account != null) {
+			// Log out
+			googleSignInClient.signOut();
+		}
 
 		// Register
 		register.setOnClickListener(v -> handleRegister());
 
 		// Login
 		login.setOnClickListener(v -> handleLogin());
+
+		// Login with Google
+		loginGoogle.setOnClickListener(v -> {
+			Intent signInIntent = googleSignInClient.getSignInIntent();
+			startActivityForResult(signInIntent, LOGIN_GOOGLE);
+		});
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == LOGIN_GOOGLE) {
+			Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+			handleSignInResult(task);
+		}
+	}
+
+	private void handleSignInResult(Task<GoogleSignInAccount> task) {
+		try {
+			GoogleSignInAccount account = task.getResult(ApiException.class);
+			if (account != null) {
+				String id = account.getId();
+				Query query = FirebaseUtil.getUserByUsername(id);
+				query.get().addOnSuccessListener(snapshot -> {
+					User user = new User();
+					if (snapshot.exists()) {
+						user = new User(snapshot.getChildren().iterator().next());
+						Toast.makeText(LoginActivity.this, "Welcome back " + user.getFullname(), Toast.LENGTH_SHORT).show();
+					} else {
+						user.setUsername(id);
+						user.setFullname(account.getDisplayName());
+						user.setEmail(account.getEmail());
+						if (account.getPhotoUrl() != null) {
+							user.setAvatar(account.getPhotoUrl().toString());
+						}
+						UserFirebase.addUser(user);
+						Toast.makeText(LoginActivity.this, "Welcome " + user.getFullname(), Toast.LENGTH_SHORT).show();
+					}
+					finishLogin(LOGIN_SUCCESS, user);
+				});
+			}
+
+		} catch (ApiException e) {
+			Log.e(TAG, "Google sign in failed, error code: " + e.getStatusCode());
+		}
 	}
 
 	// Open RegisterActivity
 	private void handleRegister() {
+		Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+		intent.putExtra(MainActivity.EXTRA_REGISTER, true);
+		setResult(RESULT_CANCELED, intent);
 		finish();
-		Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-		startActivity(intent);
 	}
 
 	// Login
@@ -75,8 +159,7 @@ public class LoginActivity extends AppCompatActivity {
 					Log.i(TAG, "Login with username: " + usernameText + " and password: " + passwordText);
 					User user = new User(snapshot.getChildren().iterator().next());
 					if (passwordText.equals(user.getPassword())) {
-						MainActivity.setCurrentUser(user);
-						finish();
+						finishLogin(LOGIN_SUCCESS, user);
 					} else {
 						password.setError("Wrong password");
 						password.requestFocus();
@@ -91,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError error) {
-				Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+				Log.e(TAG, error.getMessage());
 			}
 		});
 	}
@@ -108,5 +191,17 @@ public class LoginActivity extends AppCompatActivity {
 		} else {
 			return true;
 		}
+	}
+
+	// Finish activity
+	private void finishLogin(boolean isLogin, User user) {
+		Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+		if (isLogin == LOGIN_SUCCESS) {
+			setResult(RESULT_OK, intent);
+			intent.putExtra(USER, user);
+		} else {
+			setResult(RESULT_CANCELED, intent);
+		}
+		finish();
 	}
 }

@@ -1,23 +1,13 @@
 package com.toptop;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.toptop.fragment.ProfileFragment;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.toptop.models.User;
-import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 
 public class editinfouser extends AppCompatActivity {
@@ -37,9 +27,9 @@ public class editinfouser extends AppCompatActivity {
 
         User currentUser= MainActivity.getCurrentUser();
 
-        txtFullnameUser.setText(currentUser.getFullname().toString());
-        txtSDT.setText(currentUser.getPhoneNumber().toString());
-        txtEmail.setText(currentUser.getEmail().toString());
+        txtFullnameUser.setText(currentUser.getFullname());
+        txtSDT.setText(currentUser.getPhoneNumber());
+        txtEmail.setText(currentUser.getEmail());
 
 //        User newUser = new  User(currentUser.getUsername().toString(),currentUser.getPassword().toString()
 //                ,txtFullnameUser.getText().toString(),

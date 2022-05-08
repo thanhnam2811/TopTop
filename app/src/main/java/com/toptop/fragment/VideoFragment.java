@@ -28,7 +28,7 @@ import com.toptop.utils.firebase.FirebaseUtil;
 import java.util.ArrayList;
 
 public class VideoFragment extends Fragment {
-	private static final String TAG = "VideoFragment";
+	public static final String TAG = "VideoFragment";
 	private ArrayList<Video> videos = new ArrayList<>();
 	DatabaseReference mDatabase;
 	Context context;
