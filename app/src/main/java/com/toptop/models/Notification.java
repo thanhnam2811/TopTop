@@ -5,9 +5,10 @@ import com.google.firebase.database.DataSnapshot;
 import java.util.HashMap;
 
 public class Notification {
-//notification_id,avatar, username, content, time_notification, image_notification
+    public static final String TYPE_FOLLOW = "follow";
+    //notification_id,avatar, username, content, time_notification, image_notification
     private String notificationId, username, content, type, time, redirectTo;
-    private Boolean seen;
+    private Boolean seen = false;
 
     public Notification() {
     }

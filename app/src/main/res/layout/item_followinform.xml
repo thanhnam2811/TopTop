@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".fragment.NotificationFragment">
-
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/img_avatarNotification"
         android:layout_width="74dp"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
-        android:text="Đã thích bài viết của bạn"
+        android:text="đã bắt đầu theo dõi bạn"
         android:textColor="#0E0E0E"
         android:textSize="12sp"
         android:textStyle="italic"
@@ -47,25 +47,31 @@
     <TextView
         android:id="@+id/txt_timeNotification"
         android:layout_width="40dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="32dp"
-
-        android:layout_marginEnd="8dp"
+        android:layout_height="10dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="36dp"
         android:gravity="center"
+
         android:text="10 phút"
         android:textAlignment="center"
         android:textColor="#0E0E0E"
         android:textSize="10sp"
-        app:layout_constraintEnd_toStartOf="@+id/img_Notification"
+        app:layout_constraintStart_toEndOf="@+id/txt_contentNotification"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/img_Notification"
-        android:layout_width="44dp"
-        android:layout_height="61dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:src="@drawable/avatar"
+    <Button
+        android:id="@+id/btn_followBack"
+        android:layout_width="115dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="#ED365A"
+        android:drawableTint="#ED365A"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="Follow back"
+        android:textColor="#F6F6F6"
+        android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

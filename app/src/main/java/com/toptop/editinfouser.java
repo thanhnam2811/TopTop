@@ -44,8 +44,6 @@ public class editinfouser extends AppCompatActivity {
 
 
 
-
-
         //Event
         btnUpdateInfo.setOnClickListener(view -> {
             User user = MainActivity.getCurrentUser();

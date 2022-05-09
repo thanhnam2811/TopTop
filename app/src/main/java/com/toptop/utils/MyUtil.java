@@ -107,4 +107,10 @@ public class MyUtil {
 			return null;
 		}
 	}
+
+    public static String getCurrentTime() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date now = new Date();
+		return sdf.format(now);
+    }
 }

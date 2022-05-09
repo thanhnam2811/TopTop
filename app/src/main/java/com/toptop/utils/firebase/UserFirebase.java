@@ -76,11 +76,36 @@ public class UserFirebase {
 		});
 	}
 
+	// Get user by username
+	public interface UserCallback {
+		void onCallBack(User user);
+	}
+	public static void getUserByUsername( UserCallback callback, String username) {
+		Query query = userRef.orderByChild("username").equalTo(username);
+		query.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				if (dataSnapshot.exists()) {
+					User user = new User(dataSnapshot.getChildren().iterator().next());
+					callback.onCallBack(user);
+				} else {
+					callback.onCallBack(null);
+
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				callback.onCallBack(null);
+			}
+		});
+	}
+
 	public interface MyCallback {
 		void onCallback(String value);
 	}
 	public static void readDataUser(MyCallback myCallback,String username) {
-		Query myQuery = getUserByUsername(username);
+		Query myQuery = QuerygetUserByUsername(username);
 		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
@@ -93,6 +118,10 @@ public class UserFirebase {
 				Log.e(TAG, "onCancelled: ", databaseError.toException());
 			}
 		});
+	}
+
+	private static Query QuerygetUserByUsername(String username) {
+		return userRef.orderByChild("username").equalTo(username);
 	}
 
 
