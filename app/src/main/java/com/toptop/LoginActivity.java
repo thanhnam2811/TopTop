@@ -115,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
 						user.setUsername(id);
 						user.setFullname(account.getDisplayName());
 						user.setEmail(account.getEmail());
+						user.setPhoneNumber("");
 						if (account.getPhotoUrl() != null) {
 							user.setAvatar(account.getPhotoUrl().toString());
 						}

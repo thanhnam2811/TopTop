@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +32,7 @@ import com.toptop.utils.firebase.FirebaseUtil;
 
 import java.util.Objects;
 
+import kotlin.Unit;
 import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem;
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView;
 
@@ -44,7 +44,7 @@ public class MainActivity extends FragmentActivity {
 	private static final int REGISTER_REQUEST_CODE = 2;
 	private static SharedPreferences mAppPreferences;
 	private static SharedPreferences.Editor mEditor;
-	private static User currentUser = null;
+	private static User currentUser;
 
 	@SuppressLint("StaticFieldLeak")
 	CurvedBottomNavigationView nav;
@@ -54,60 +54,52 @@ public class MainActivity extends FragmentActivity {
 		return currentUser;
 	}
 
-	public void setCurrentUser(User currentUser) {
-		// Log
-		Log.i(TAG, "setCurrentUser: " + currentUser.getUsername());
-
-		// Set current user
-		Query query = FirebaseUtil.getUserByUsername(currentUser.getUsername());
-		query.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				if (snapshot.exists()) {
-					// Set current user
-					User user = new User(snapshot.getChildren().iterator().next());
-					MainActivity.currentUser = user;
-					ProfileFragment profileFragment =
-							(ProfileFragment) getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG);
-					if (profileFragment != null)
-						profileFragment.updateUI(user);
-				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-
-			}
-		});
-
-		// Save user to memory
-		mEditor.putString(SAVE_USER, currentUser.getUsername());
-		mEditor.apply();
+	public void updateUI() {
+		ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG);
+		if (profileFragment != null) {
+			profileFragment.updateUI();
+		}
 	}
 
-	private void getUserFromMemory() {
-		// Get user from memory
-		String username = mAppPreferences.getString(SAVE_USER, null);
-		if (username != null) {
-			Query query = FirebaseUtil.getUserByUsername(username);
-			query.get().addOnSuccessListener(documentSnapshot -> {
-				if (documentSnapshot.exists()) {
-					User user = new User(documentSnapshot.getChildren().iterator().next());
-					setCurrentUser(user);
-				} else {
-					Log.i(TAG, "getUserFromMemory: User not found");
+	public void setCurrentUser(User user) {
+		// Log
+		Log.i(TAG, "setCurrentUser: " + user.getUsername());
+
+		// If first time login or change user
+		if (currentUser == null || !currentUser.getUsername().equals(user.getUsername())) {
+			// Set current user
+			Query query = FirebaseUtil.getUserByUsername(user.getUsername());
+			query.addValueEventListener(new ValueEventListener() {
+				@Override
+				public void onDataChange(@NonNull DataSnapshot snapshot) {
+					if (snapshot.exists()) {
+						currentUser = new User(snapshot.getChildren().iterator().next());
+						updateUI();
+					}
+
+					if (!currentUser.getUsername().equals(mAppPreferences.getString(SAVE_USER, ""))) {
+						// Save user to memory
+						mEditor.putString(SAVE_USER, currentUser.getUsername());
+						mEditor.apply();
+					}
+				}
+
+				@Override
+				public void onCancelled(@NonNull DatabaseError error) {
+
 				}
 			});
-		} else {
-			currentUser = null;
-			// Log
-			Log.i(TAG, "getUserFromMemory: User is not found");
 		}
 	}
 
 	public static final String
 			STATUS_BAR_LIGHT_MODE = "status_bar_light_mode",
 			STATUS_BAR_DARK_MODE = "status_bar_dark_mode";
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+	}
 
 	public static boolean isLoggedIn() {
 		return currentUser != null;
@@ -118,8 +110,10 @@ public class MainActivity extends FragmentActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == LOGIN_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
-				User user = (User) data.getSerializableExtra(LoginActivity.USER);
-				setCurrentUser(user);
+				if (data != null) {
+					User user = (User) data.getSerializableExtra(LoginActivity.USER);
+					setCurrentUser(user);
+				}
 			} else {
 				if (data.getBooleanExtra(EXTRA_REGISTER, false)) {
 					openRegisterActivity();
@@ -157,13 +151,22 @@ public class MainActivity extends FragmentActivity {
 		init();
 
 		// Get user from memory
-		getUserFromMemory();
+		String username = mAppPreferences.getString(SAVE_USER, null);
+		if (username != null) {
+			Query query = FirebaseUtil.getUserByUsername(username);
+			query.get().addOnSuccessListener(documentSnapshot -> {
+				if (documentSnapshot.exists()) {
+					User user = new User(documentSnapshot.getChildren().iterator().next());
+					setCurrentUser(user);
+				} else {
+					Log.i(TAG, "getUserFromMemory: User not found");
+				}
+				init();
+			});
+		}
 	}
 
 	private void init() {
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-		StrictMode.setThreadPolicy(policy);
-
 		// Bind the view using the id
 		nav = findViewById(R.id.nav);
 
@@ -174,6 +177,7 @@ public class MainActivity extends FragmentActivity {
 				new CbnMenuItem(R.drawable.ic_notification, R.drawable.ic_notification_avd, 0),
 				new CbnMenuItem(R.drawable.ic_profile, R.drawable.ic_profile_avd, 0)
 		};
+
 
 		// Add fragment to the container
 		getSupportFragmentManager().beginTransaction()
@@ -187,7 +191,6 @@ public class MainActivity extends FragmentActivity {
 				.addToBackStack(VideoFragment.TAG)
 				.commit();
 
-
 		// Execute transaction
 		getSupportFragmentManager().executePendingTransactions();
 
@@ -195,43 +198,7 @@ public class MainActivity extends FragmentActivity {
 		nav.setMenuItems(items, 0);
 
 		// Set the listener
-		nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> {
-			switch (cbnMenuItem.getIcon()) {
-				case R.drawable.ic_video:
-					getSupportFragmentManager().beginTransaction()
-							.replace(R.id.fragment_container,
-									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
-							.commit();
-					Log.i(NAV_TAG, "Change to video fragment");
-					break;
-				case R.drawable.ic_search:
-					getSupportFragmentManager().beginTransaction()
-							.replace(R.id.fragment_container,
-									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(SearchFragment.TAG)))
-							.commit();
-					Log.i(NAV_TAG, "Change to search fragment");
-					break;
-				case R.drawable.ic_notification:
-					getSupportFragmentManager().beginTransaction()
-							.replace(R.id.fragment_container,
-									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(NotificationFragment.TAG)))
-							.commit();
-					Log.i(NAV_TAG, "Change to notification fragment");
-					break;
-				case R.drawable.ic_profile:
-					if (!isLoggedIn()) {
-						Toast.makeText(MainActivity.this, "Please login first", Toast.LENGTH_SHORT).show();
-						openLoginActivity();
-					}
-					getSupportFragmentManager().beginTransaction()
-							.replace(R.id.fragment_container,
-									Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG)))
-							.commit();
-					Log.i(NAV_TAG, "Change to profile fragment");
-					break;
-			}
-			return null;
-		});
+		nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> handleMenuItemClick(cbnMenuItem));
 
 		// Set the default fragment
 		getSupportFragmentManager().beginTransaction()
@@ -243,6 +210,44 @@ public class MainActivity extends FragmentActivity {
 		getWindow().setNavigationBarColor(Color.WHITE);
 
 		getPermission();
+	}
+
+	private Unit handleMenuItemClick(CbnMenuItem cbnMenuItem) {
+		switch (cbnMenuItem.getIcon()) {
+			case R.drawable.ic_video:
+				getSupportFragmentManager().beginTransaction()
+						.replace(R.id.fragment_container,
+								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
+						.commit();
+				Log.i(NAV_TAG, "Change to video fragment");
+				break;
+			case R.drawable.ic_search:
+				getSupportFragmentManager().beginTransaction()
+						.replace(R.id.fragment_container,
+								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(SearchFragment.TAG)))
+						.commit();
+				Log.i(NAV_TAG, "Change to search fragment");
+				break;
+			case R.drawable.ic_notification:
+				getSupportFragmentManager().beginTransaction()
+						.replace(R.id.fragment_container,
+								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(NotificationFragment.TAG)))
+						.commit();
+				Log.i(NAV_TAG, "Change to notification fragment");
+				break;
+			case R.drawable.ic_profile:
+				if (!isLoggedIn()) {
+					Toast.makeText(MainActivity.this, "Please login first", Toast.LENGTH_SHORT).show();
+					openLoginActivity();
+				}
+				getSupportFragmentManager().beginTransaction()
+						.replace(R.id.fragment_container,
+								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG)))
+						.commit();
+				Log.i(NAV_TAG, "Change to profile fragment");
+				break;
+		}
+		return null;
 	}
 
 	private void getPermission() {
@@ -268,20 +273,13 @@ public class MainActivity extends FragmentActivity {
 	public void changeNavItem(int position) {
 		nav.onMenuItemClick(position);
 	}
+
 	public void goToVideo(Video video) {
 		VideoFragment videoFragment =
 				(VideoFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG));
 		videoFragment.goToVideo(video);
 		changeNavItem(0);
 		Log.d(TAG, "goToVideoFragment: ");
-	}
-	public void goToUser(User user) {
-		ProfileFragment profileFragment =
-				(ProfileFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG));
-		System.out.println("goToUser: " + user.getUsername());
-		changeNavItem(3);
-		profileFragment.updateUI(user);
-		Log.d(TAG, "goToUserFragment: ");
 	}
 
 	@Override

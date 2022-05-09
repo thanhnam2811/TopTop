@@ -1,7 +1,6 @@
 package com.toptop.adapters;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,9 @@ import com.toptop.R;
 import com.toptop.models.User;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.RecyclerViewDisabler;
-import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 
 public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentAdapter.SearchViewHolder>  {
@@ -101,7 +97,7 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				((MainActivity) context).goToUser(user);
+
 			}
 		});
 
