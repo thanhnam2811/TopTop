@@ -31,15 +31,20 @@ public class ProfileFragment extends Fragment {
 	}
 
 	@SuppressLint("SetTextI18n")
-	public void updateUI(User user) {
-		Log.i(TAG, "updateUI: " + user.toString());
-		fullname.setText(user.getFullname());
-		follow.setText(user.getNumFollowing().toString());
-		follower.setText(user.getNumFollowers().toString());
-		liketotal.setText(user.getNumLikes().toString());
-		Glide.with(context)
-				.load(user.getAvatar())
-				.into(avatar);
+	public void updateUI() {
+		if (MainActivity.isLoggedIn()) {
+			User user = MainActivity.getCurrentUser();
+			Log.i(TAG, "updateUI: " + user.toString());
+			fullname.setText(user.getFullname());
+			follow.setText(user.getNumFollowing().toString());
+			follower.setText(user.getNumFollowers().toString());
+			liketotal.setText(user.getNumLikes().toString());
+			Glide.with(context)
+					.load(user.getAvatar())
+					.into(avatar);
+		} else {
+			Log.e(TAG, "updateUI: User is null");
+		}
 	}
 
 
@@ -64,14 +69,12 @@ public class ProfileFragment extends Fragment {
 		ImageView btnGetToEditUserInfo = view.findViewById(R.id.btnGetToEditUserInfo);
 
 		//event get to Edit User Info
-		btnGetToEditUserInfo.setOnClickListener(view1 -> {
+		btnGetToEditUserInfo.setOnClickListener(v -> {
 			Intent intent = new Intent(requireActivity(), editinfouser.class);
 			startActivity(intent);
 		});
 
-		if (MainActivity.isLoggedIn()) {
-			updateUI(MainActivity.getCurrentUser());
-		}
+		updateUI();
 
 		((MainActivity) requireActivity()).setStatusBarColor(MainActivity.STATUS_BAR_LIGHT_MODE);
 

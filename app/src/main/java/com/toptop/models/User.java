@@ -1,5 +1,7 @@
 package com.toptop.models;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.Query;
@@ -92,8 +94,11 @@ public class User implements Serializable {
 			numLikes = 0L;
 			hasChanged = true;
 		}
-		if (hasChanged)
+		if (hasChanged) {
+			// TODO: delete log in User class
+			Log.w(TAG, "User: " + username + " has changed");
 			UserFirebase.updateUser(this);
+		}
 
 		// Update numLikes if changed
 		Query query = FirebaseUtil.getVideosByUsername(username);
@@ -107,8 +112,10 @@ public class User implements Serializable {
 						if (video.getNumLikes() != null)
 							newNumLikes = newNumLikes + video.getNumLikes();
 					}
-				if (newNumLikes != numLikes)
+				if (newNumLikes != numLikes) {
+					this.numLikes = newNumLikes;
 					UserFirebase.updateUser(this);
+				}
 			}
 		});
 	}
@@ -255,5 +262,24 @@ public class User implements Serializable {
 
 		// Update numFollowers
 		numFollowers--;
+	}
+
+	public boolean hasChangedInfo(User user) {
+		return  !fullname.equals(user.fullname) ||
+				!phoneNumber.equals(user.phoneNumber) ||
+				!email.equals(user.email) ||
+				!avatar.equals(user.avatar) ||
+				!numLikes.equals(user.numLikes) ||
+				!numFollowers.equals(user.numFollowers) ||
+				!numFollowing.equals(user.numFollowing);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof User) {
+			User user = (User) o;
+			return username.equals(user.username);
+		}
+		return false;
 	}
 }
