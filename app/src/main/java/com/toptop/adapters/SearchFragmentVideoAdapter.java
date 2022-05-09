@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -29,6 +30,8 @@ import java.util.List;
 
 public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragmentVideoAdapter.SearchViewHolder> {
 	private static final String TAG = "SearchFragementAdapter";
+	private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
+
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
 
 	private List<Video> videos;
@@ -64,32 +67,22 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 	public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
 		Video video = videos.get(position);
 		System.out.println("video: " + video);
+		holder.txt_timePost.setText(MyUtil.getTimeAgo(video.getDateUploaded()));
+		holder.txt_content.setText(video.getContent());
+		holder.img_video.setImageBitmap(MyUtil.getBitmapFromURL(video.getPreview()));
+		//load image priview
+		Glide.with(context).load(video.getPreview()).into(holder.img_video);
+		holder.txt_username.setText(video.getUsername());
+		// Load avatar
 		Query query = FirebaseUtil.getUserByUsername(video.getUsername());
-		query.addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
-				holder.txt_timePost.setText(MyUtil.getTimeAgo(video.getDateUploaded()));
-				holder.txt_content.setText(video.getContent());
-				holder.img_video.setImageBitmap(MyUtil.getBitmapFromURL(video.getPreview()));
-				holder.txt_username.setText(video.getUsername());
-				User user = new User();
-
-				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-					user = new User(snapshot);
+		query.get().addOnSuccessListener(documentSnapshot -> {
+			if (documentSnapshot.exists()) {
+				User author = new User(documentSnapshot.getChildren().iterator().next());
+				if (author.getAvatar() != null) {
+					Glide.with(context).load(author.getAvatar()).into(holder.img_avatar);
+				} else {
+					Glide.with(context).load(DEF_AVATAR).into(holder.img_avatar);
 				}
-				if (user != null) {
-					System.out.println("avatar: " + user.getAvatar());
-					if (user.getAvatar() != null && MyUtil.getBitmapFromURL(user.getAvatar()) != null) {
-						holder.img_avatar.setImageBitmap(MyUtil.getBitmapFromURL(user.getAvatar()));
-					} else {
-						holder.img_avatar.setImageResource(R.drawable.demo_avatar);
-					}
-				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-				Log.d(TAG, "onCancelled: " + error.getMessage());
 			}
 		});
 		holder.itemView.setOnClickListener(v -> ((MainActivity) context).goToVideo(video));

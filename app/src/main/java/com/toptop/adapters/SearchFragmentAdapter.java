@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.database.Query;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.toptop.MainActivity;
 import com.toptop.R;
@@ -33,6 +35,8 @@ import java.util.logging.LogRecord;
 
 public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentAdapter.SearchViewHolder>  {
 	private static final String TAG = "SearchFragementAdapter";
+	private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
+
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
 	public List<User> getUsers() {
 		return users;
@@ -85,12 +89,18 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 				holder.btn_follow.setVisibility(View.GONE);
 			}
 		}
-		if(user.getAvatar() != null && MyUtil.getBitmapFromURL(user.getAvatar()) != null) {
-			holder.img_avatar.setImageBitmap(MyUtil.getBitmapFromURL(user.getAvatar()));
-		}
-		else{
-			holder.img_avatar.setImageResource(R.drawable.demo_avatar);
-		}
+		// Load avatar
+		Query query = FirebaseUtil.getUserByUsername(user.getUsername());
+		query.get().addOnSuccessListener(documentSnapshot -> {
+			if (documentSnapshot.exists()) {
+				User author = new User(documentSnapshot.getChildren().iterator().next());
+				if (author.getAvatar() != null) {
+					Glide.with(context).load(author.getAvatar()).into(holder.img_avatar);
+				} else {
+					Glide.with(context).load(DEF_AVATAR).into(holder.img_avatar);
+				}
+			}
+		});
 		//handle follow button
 		holder.btn_follow.setOnClickListener(new View.OnClickListener() {
 			@Override

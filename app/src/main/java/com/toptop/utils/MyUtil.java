@@ -99,9 +99,10 @@ public class MyUtil {
 	public static Bitmap getBitmapFromURL(String linkImage) {
 		System.out.println("linkImage: " + linkImage);
 		try {
-			return Bitmap.createScaledBitmap(
-					Bitmap.createBitmap(BitmapFactory.decodeStream(new java.net.URL(linkImage).openConnection().getInputStream())),
-					100, 100, true);
+			URL url = new URL(linkImage);
+			URLConnection connection = url.openConnection();
+			connection.connect();
+			return BitmapFactory.decodeStream(connection.getInputStream());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

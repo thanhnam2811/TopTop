@@ -19,6 +19,7 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -44,6 +45,8 @@ import java.util.List;
 
 public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "NotificationFragementAdapter";
+    private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
+
     private final int VIEW_TYPE_ITEM_1 = 1;
     private final int VIEW_TYPE_ITEM_2 = 2;
     private final LayoutInflater inflater;
@@ -98,33 +101,41 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 
         if (holder instanceof NotificationViewHolder) {
             NotificationViewHolder notificationViewHolder = (NotificationViewHolder) holder;
-            UserFirebase.readDataUser(new UserFirebase.MyCallback() {
+            notificationViewHolder.txt_username.setText(notification.getUsername());
+            notificationViewHolder.txt_content.setText(notification.getContent());
+            notificationViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
+            //get video from video id
+            VideoFirebase.getPreviewVideo(new VideoFirebase.MyCallback() {
                 @Override
                 public void onCallback(String value) {
                     if (value != null) {
-                        Log.d(TAG, "onCallback: " + value);
-                        notificationViewHolder.txt_username.setText(notification.getUsername());
-                        notificationViewHolder.txt_content.setText(notification.getContent());
-                        notificationViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
-                        // Set image profile
-                        if (MyUtil.getBitmapFromURL(value) != null) {
-                            notificationViewHolder.img_profile.setImageBitmap(MyUtil.getBitmapFromURL(value));
-                        } else {
-                            notificationViewHolder.img_profile.setImageResource(R.drawable.demo_avatar);
-                        }
-                        // Set image preview ... will handle later
-                        VideoFirebase.getPreviewVideo(new VideoFirebase.MyCallback() {
-                            @Override
-                            public void onCallback(String value) {
-                                if (value != null) {
-                                    Log.d(TAG, "onCallback Video: " + value);
-                                    notificationViewHolder.privew_img.setImageBitmap(MyUtil.getBitmapFromURL(value));
-                                }
-                            }
-                        }, notification.getRedirectTo());
+                        Log.d(TAG, "onCallback Video: " + value);
+                        Glide.with(context).load(value).into(((NotificationViewHolder) holder).privew_img);
                     }
                 }
-            }, notification.getUsername());
+            }, notification.getRedirectTo());
+            //get user from video id
+            VideoFirebase.getVideoFromCommentId( new VideoFirebase.VideoCallback() {
+                @Override
+                public void onCallback(Video video) {
+                    if (video != null) {
+                        Log.d(TAG, "onCallback Video: " + video.getVideoId());
+                        Query query = FirebaseUtil.getUserByUsername(video.getUsername());
+                        query.get().addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                User author = new User(documentSnapshot.getChildren().iterator().next());
+                                if (author.getAvatar() != null) {
+                                    Glide.with(context).load(author.getAvatar()).into(((NotificationViewHolder) holder).img_profile);
+                                } else {
+                                    Glide.with(context).load(DEF_AVATAR).into(((NotificationViewHolder) holder).img_profile);
+                                }
+                            }
+                        });
+                    }
+                }
+            }, notification.getRedirectTo());
+
+
             //set onclick listener for item
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -145,29 +156,27 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 
         } else if(holder instanceof FollowViewHolder) {
             FollowViewHolder followViewHolder = (FollowViewHolder) holder;
-            UserFirebase.readDataUser(new UserFirebase.MyCallback() {
-                @Override
-                public void onCallback(String value) {
-                    if (value != null) {
-                        Log.d(TAG, "onCallback: " + value);
-                        followViewHolder.txt_username.setText(notification.getUsername());
-                        followViewHolder.txt_content.setText(notification.getContent());
-                        followViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
-                        // Set image profile
-                        if (MyUtil.getBitmapFromURL(value) != null) {
-                            followViewHolder.img_profile.setImageBitmap(MyUtil.getBitmapFromURL(value));
-                        } else {
-                            followViewHolder.img_profile.setImageResource(R.drawable.demo_avatar);
-                        }
-                        // Set image preview ... will handle later
-                        if (MainActivity.getCurrentUser().isFollowing(notification.getUsername())) {
-                            followViewHolder.btn_follow.setVisibility(View.GONE);
-                        } else {
-                            followViewHolder.btn_follow.setVisibility(View.VISIBLE);
-                        }
+
+            followViewHolder.txt_username.setText(notification.getUsername());
+            followViewHolder.txt_content.setText(notification.getContent());
+            followViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
+            //get user from usernam
+            Query query = FirebaseUtil.getUserByUsername(notification.getRedirectTo());
+            query.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    User author = new User(documentSnapshot.getChildren().iterator().next());
+                    if (author.getAvatar() != null) {
+                        Glide.with(context).load(author.getAvatar()).into(((FollowViewHolder) holder).img_profile);
+                    } else {
+                        Glide.with(context).load(DEF_AVATAR).into(((FollowViewHolder) holder).img_profile);
                     }
                 }
-            }, notification.getUsername());
+            });
+            if (MainActivity.getCurrentUser().isFollowing(notification.getUsername())) {
+                followViewHolder.btn_follow.setVisibility(View.GONE);
+            } else {
+                followViewHolder.btn_follow.setVisibility(View.VISIBLE);
+            }
             //set onclick listener for item
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
