@@ -1,6 +1,8 @@
 package com.toptop.utils;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -92,6 +94,17 @@ public class MyUtil {
 			fos.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	public static Bitmap getBitmapFromURL(String linkImage) {
+		System.out.println("linkImage: " + linkImage);
+		try {
+			return Bitmap.createScaledBitmap(
+					Bitmap.createBitmap(BitmapFactory.decodeStream(new java.net.URL(linkImage).openConnection().getInputStream())),
+					100, 100, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 }

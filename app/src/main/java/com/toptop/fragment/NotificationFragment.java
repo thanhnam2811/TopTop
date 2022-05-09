@@ -1,57 +1,116 @@
 package com.toptop.fragment;
 
+import static android.content.ContentValues.TAG;
+
+import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
 import com.toptop.R;
-import com.toptop.adapters.NotificationAdapter;
+import com.toptop.adapters.NotificationFragmentAdapter;
+import com.toptop.adapters.VideoFragementAdapter;
 import com.toptop.models.Notification;
+import com.toptop.models.*;
+import com.toptop.utils.MyUtil;
+import com.toptop.utils.firebase.NotificationFirebase;
+import com.toptop.utils.firebase.FirebaseUtil;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 
 import java.util.ArrayList;
 
+
 public class NotificationFragment extends Fragment {
+    public static final String TAG = "NotificationFragment";
+    private ArrayList<Notification> notifications = new ArrayList<>();
+    DatabaseReference mDatabase;
 
-	public static final String TAG = "NotificationFragment";
-
-	public NotificationFragment() {
+    public NotificationFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
 
-        //        1. create notification data
-        ArrayList<Notification> notifications = new ArrayList<>();
-//        notifications.add(new Notification(1, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
-//        notifications.add(new Notification(2, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước", R.drawable.avatar));
-//        notifications.add(new Notification(3, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
-//        notifications.add(new Notification(4, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
-//        notifications.add(new Notification(5, R.drawable.demo_avatar, "Thái Thành Nam", "Đẹp gái quá.. Làm ny mình nha","10p trước",R.drawable.avatar));
-        // 2 binding listview
-        ListView listView = view.findViewById(R.id.listNotification);
-        //  3. create adapter
-        NotificationAdapter adapter = new NotificationAdapter(this, R.layout.item_listinform);
-        // 4. set adapter for listview
-        adapter.addAll(notifications);
-        listView.setAdapter(adapter);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_notifications);
+
+        if(MainActivity.isLoggedIn()) {
+            User usercurrent = MainActivity.getCurrentUser();
+            if (usercurrent != null) {
+                Query query = FirebaseUtil.getNotificationsByUsername(usercurrent.getUsername());
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        notifications.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            notifications.add(new Notification(snapshot));
+                        }
+                        System.out.println("notifications: " + notifications.size());
+                        NotificationFragmentAdapter notificationFragmentAdapter = new NotificationFragmentAdapter(notifications, view.getContext());
+                        if (recyclerView.getAdapter() == null)
+                            recyclerView.setAdapter(notificationFragmentAdapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        System.out.println("error: " + error.getMessage());
+                    }
+                });
+            } else {
+                Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
 
         // Set status bar color
-        ((MainActivity) requireActivity()).setStatusBarColor(MainActivity.STATUS_BAR_LIGHT_MODE);
+        ((MainActivity) requireActivity()).setStatusBarColor(MainActivity.STATUS_BAR_DARK_MODE);
 
         // Inflate the layout for this fragment
         return view;

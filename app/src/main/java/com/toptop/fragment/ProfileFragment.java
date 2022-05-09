@@ -69,12 +69,14 @@ public class ProfileFragment extends Fragment {
 			startActivity(intent);
 		});
 
-		if (MainActivity.isLoggedIn())
+		if (MainActivity.isLoggedIn()) {
 			updateUI(MainActivity.getCurrentUser());
+		}
 
 		((MainActivity) requireActivity()).setStatusBarColor(MainActivity.STATUS_BAR_LIGHT_MODE);
 
 		// Inflate the layout for this fragment
 		return view;
 	}
+
 }

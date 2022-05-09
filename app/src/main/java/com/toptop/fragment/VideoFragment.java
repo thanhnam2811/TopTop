@@ -93,6 +93,7 @@ public class VideoFragment extends Fragment {
 					VideoFragementAdapter videoFragementAdapter = new VideoFragementAdapter(videos, context);
 					videoFragementAdapter.setHasStableIds(true);
 					recyclerView.setAdapter(videoFragementAdapter);
+//					recyclerView.smoothScrollToPosition(2);
 				} else {
 					recyclerView.getAdapter().notifyItemRangeChanged(0, videos.size());
 				}
@@ -127,6 +128,16 @@ public class VideoFragment extends Fragment {
 				Log.e(TAG, "onCancelled: ", error.toException());
 			}
 		});
+	}
 
+	public void goToVideo(Video video) {
+		for (int i = 0; i < videos.size(); i++) {
+			if (videos.get(i).getVideoId().equals(video.getVideoId())) {
+				// Log
+				Log.d(TAG, "goToVideo: " + i);
+				recyclerView.smoothScrollToPosition(i);
+				break;
+			}
+		}
 	}
 }

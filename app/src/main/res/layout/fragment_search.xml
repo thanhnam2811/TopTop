@@ -1,51 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragment.SearchFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <LinearLayout
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="317dp"
+        android:layout_height="42dp"
+        android:background="#F3ECEC"
+        android:backgroundTint="#F6F0F0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></SearchView>
+
+    <View
+        android:id="@+id/view3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/layout_search"
+        android:background="#6A6868"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchView"
+        tools:ignore="UnknownId" />
+
+    <TextView
+        android:id="@+id/txtSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="13dp"
+        android:text="Search"
+        android:textColor="#FB0505"
+        android:textStyle="bold|italic"
+        app:layout_constraintStart_toEndOf="@+id/searchView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollViewSearch"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchView"
+        app:layout_constraintVertical_bias="0.0">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:id="@+id/search_bar"
-            android:orientation="horizontal">
-            <SearchView
-                android:id="@+id/search"
-                android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/labelAccounts"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:queryHint="Search"
-                android:iconifiedByDefault="false">
-                <requestFocus />
-            </SearchView>
-            <Button
-                android:id="@+id/search_button"
-                android:layout_weight="25"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="13dp"
+                android:text="Accounts"
+                android:visibility="invisible"
+                android:textColor="#4C4848"
+                android:textStyle="bold|italic" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerSearchView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="@color/white"
-                android:backgroundTint="#0FADEC"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:text="Tìm kiếm"/>
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="234dp" />
+            <TextView
+                android:id="@+id/labelVideos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="13dp"
+                android:text="Videos"
+                android:visibility="invisible"
+                android:textColor="#4C4848"
+                android:textStyle="bold|italic" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerSearchViewforVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteY="449dp" />
+
         </LinearLayout>
-        <ListView
-            android:id="@+id/listsearch"
-            android:divider="@color/teal_200"
-            android:dividerHeight="1dp"
-            android:listSelector="#11EDC2"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@+id/search_bar" />
 
-    </LinearLayout>
+    </ScrollView>
 
-
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,17 @@
 package com.toptop.utils.firebase;
 
+import static com.toptop.utils.firebase.FirebaseUtil.getUserByUsername;
+
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
 import com.toptop.models.User;
 
@@ -64,6 +73,25 @@ public class UserFirebase {
 			User userToUnfollow = new User(dataSnapshot);
 			userToUnfollow.removeFollower(user.getUsername());
 			updateUser(userToUnfollow);
+		});
+	}
+
+	public interface MyCallback {
+		void onCallback(String value);
+	}
+	public static void readDataUser(MyCallback myCallback,String username) {
+		Query myQuery = getUserByUsername(username);
+		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				String value = dataSnapshot.getChildren().iterator().next().child("avatar").getValue(String.class);
+				System.out.println(value);
+				myCallback.onCallback(value);
+			}
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+				Log.e(TAG, "onCancelled: ", databaseError.toException());
+			}
 		});
 	}
 

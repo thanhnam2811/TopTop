@@ -27,6 +27,7 @@ import com.toptop.fragment.ProfileFragment;
 import com.toptop.fragment.SearchFragment;
 import com.toptop.fragment.VideoFragment;
 import com.toptop.models.User;
+import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.firebase.FirebaseUtil;
 
@@ -265,7 +266,22 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void changeNavItem(int position) {
-		nav.setMenuItems(items, position);
+		nav.onMenuItemClick(position);
+	}
+	public void goToVideo(Video video) {
+		VideoFragment videoFragment =
+				(VideoFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG));
+		videoFragment.goToVideo(video);
+		changeNavItem(0);
+		Log.d(TAG, "goToVideoFragment: ");
+	}
+	public void goToUser(User user) {
+		ProfileFragment profileFragment =
+				(ProfileFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG));
+		System.out.println("goToUser: " + user.getUsername());
+		changeNavItem(3);
+		profileFragment.updateUI(user);
+		Log.d(TAG, "goToUserFragment: ");
 	}
 
 	@Override
