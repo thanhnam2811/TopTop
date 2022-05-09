@@ -176,7 +176,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                         @Override
                         public void onCallBack(User user) {
                             if (user != null) {
-                                ((MainActivity) context).goToUser(user);
+//                                ((MainActivity) context).goToUser(user);
                             }
                         }
                     }, notification.getUsername());

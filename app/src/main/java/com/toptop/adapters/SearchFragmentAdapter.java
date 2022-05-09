@@ -113,7 +113,7 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				((MainActivity) context).goToUser(user);
+//				((MainActivity) context).goToUser(user);
 			}
 		});
 
