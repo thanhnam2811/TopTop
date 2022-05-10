@@ -1,8 +1,11 @@
 package com.toptop.models;
 
 import com.google.firebase.database.DataSnapshot;
+import com.toptop.utils.MyUtil;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class Notification {
     public static final String TYPE_FOLLOW = "follow";
@@ -88,6 +91,18 @@ public class Notification {
 
     public void setSeen(Boolean seen) {
         this.seen = seen;
+    }
+
+    //sort by time
+    public static void sortByTimeNewest(List<Notification> notifications) {
+        notifications.sort((o1, o2) -> {
+            Date time1 = MyUtil.getDateFromFormattedDateString(o1.getTime());
+            Date time2 = MyUtil.getDateFromFormattedDateString(o2.getTime());
+            if (time1 != null && time2 != null) {
+                return time2.compareTo(time1);
+            }
+            return 0;
+        });
     }
 
     @Override

@@ -181,6 +181,26 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             } else {
                 followViewHolder.btn_follow.setVisibility(View.VISIBLE);
             }
+            //handle follow button
+            ((FollowViewHolder) holder).btn_follow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UserFirebase.followUser(notification.getRedirectTo());
+                    //Add notification for user
+                    Notification notification = new Notification();
+                    notification.setUsername(notification.getRedirectTo());
+                    notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã theo dõi bạn");
+                    notification.setType("follow");
+                    notification.setTime(MyUtil.getCurrentTime());
+                    notification.setRedirectTo(MainActivity.getCurrentUser().getUsername());
+                    NotificationFirebase.addNotification(notification);
+
+                    //hide follow button
+                    ((FollowViewHolder) holder).btn_follow.setVisibility(View.GONE);
+                    Toast.makeText(context, "Đã theo dõi " + notification.getRedirectTo(), Toast.LENGTH_SHORT).show();
+
+                }
+            });
             //set onclick listener for item
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

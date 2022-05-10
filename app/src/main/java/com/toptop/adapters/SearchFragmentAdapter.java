@@ -116,7 +116,7 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 				NotificationFirebase.addNotification(notification);
 //				//hide button
 				holder.btn_follow.setVisibility(View.GONE);
-				Toast.makeText(context, "Followed " + user.getUsername(), Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, "Đã theo dõi " + user.getUsername(), Toast.LENGTH_SHORT).show();
 			}
 		});
 		//handle click item
