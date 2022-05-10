@@ -66,18 +66,21 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 		holder.txt_content.setText(video.getContent());
 		holder.img_video.setImageBitmap(MyUtil.getBitmapFromURL(video.getPreview()));
 		//load image priview
-		Glide.with(context).load(video.getPreview()).into(holder.img_video);
+		Glide.with(context)
+				.load(video.getPreview())
+				.error(R.drawable.avatar)
+				.into(holder.img_video);
 		holder.txt_username.setText(video.getUsername());
 		// Load avatar
 		Query query = FirebaseUtil.getUserByUsername(video.getUsername());
 		query.get().addOnSuccessListener(documentSnapshot -> {
 			if (documentSnapshot.exists()) {
 				User author = new User(documentSnapshot.getChildren().iterator().next());
-				if (author.getAvatar() != null) {
-					Glide.with(context).load(author.getAvatar()).into(holder.img_avatar);
-				} else {
-					Glide.with(context).load(DEF_AVATAR).into(holder.img_avatar);
-				}
+				Glide.with(context)
+						.load(author.getAvatar())
+						.error(R.drawable.default_avatar)
+						.into(holder.img_avatar);
+
 			}
 		});
 		holder.itemView.setOnClickListener(v -> MyUtil.goToVideo((Activity) context, video));

@@ -51,27 +51,27 @@ public class MyUtil {
 		long diff = now.getTime() - date.getTime();
 		// if less than 1 minute
 		if (diff < TimeUnit.MINUTES.toMillis(1)) {
-			return "Vừa xong";
+			return "just now";
 		}
 		// if less than 1 hour
 		else if (diff < TimeUnit.HOURS.toMillis(1)) {
-			return TimeUnit.MILLISECONDS.toMinutes(diff) + " phút trước";
+			return TimeUnit.MILLISECONDS.toMinutes(diff) + "m";
 		}
 		// if less than 1 day
 		else if (diff < TimeUnit.DAYS.toMillis(1)) {
-			return TimeUnit.MILLISECONDS.toHours(diff) + " giờ trước";
+			return TimeUnit.MILLISECONDS.toHours(diff) + "h";
 		}
 		// if less than 1 month
 		else if (diff < TimeUnit.DAYS.toMillis(30)) {
-			return TimeUnit.MILLISECONDS.toDays(diff) + " ngày trước";
+			return TimeUnit.MILLISECONDS.toDays(diff) + "d";
 		}
 		// if less than 1 year
 		else if (diff < TimeUnit.DAYS.toMillis(365)) {
-			return TimeUnit.MILLISECONDS.toDays(diff) / 30 + " tháng trước";
+			return TimeUnit.MILLISECONDS.toDays(diff) / 7 + "w";
 		}
 		// if more than 1 year
 		else {
-			return TimeUnit.MILLISECONDS.toDays(diff) / 365 + " năm trước";
+			return TimeUnit.MILLISECONDS.toDays(diff) / 365 + "y";
 		}
 	}
 
@@ -147,7 +147,7 @@ public class MyUtil {
 	}
 
 	public static String getCurrentTime() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		Date now = new Date();
 		return sdf.format(now);
 	}

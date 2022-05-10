@@ -47,12 +47,12 @@
     <TextView
         android:id="@+id/txt_timeNotification"
         android:layout_width="40dp"
-        android:layout_height="10dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="36dp"
         android:gravity="center"
 
-        android:text="10 phút"
+        android:text="10m"
         android:textAlignment="center"
         android:textColor="#0E0E0E"
         android:textSize="10sp"

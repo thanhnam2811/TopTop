@@ -88,11 +88,11 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 		query.get().addOnSuccessListener(documentSnapshot -> {
 			if (documentSnapshot.exists()) {
 				User author = new User(documentSnapshot.getChildren().iterator().next());
-				if (author.getAvatar() != null) {
-					Glide.with(context).load(author.getAvatar()).into(holder.img_avatar);
-				} else {
-					Glide.with(context).load(DEF_AVATAR).into(holder.img_avatar);
-				}
+				Glide.with(context)
+						.load(author.getAvatar())
+						.error(R.drawable.default_avatar)
+						.into(holder.img_avatar);
+
 			}
 		});
 		//handle follow button

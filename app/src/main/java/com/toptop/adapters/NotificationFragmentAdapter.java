@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -113,7 +114,11 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                 public void onCallback(String value) {
                     if (value != null) {
                         Log.d(TAG, "onCallback Video: " + value);
-                        Glide.with(context).load(value).into(((NotificationViewHolder) holder).privew_img);
+                        Glide.with(context)
+                                .load(value)
+                                .error(R.drawable.avatar)
+                                .into(((NotificationViewHolder) holder).privew_img);
+
                     }
                 }
             }, notification.getRedirectTo());
@@ -129,11 +134,10 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                         query.get().addOnSuccessListener(documentSnapshot -> {
                             if (documentSnapshot.exists()) {
                                 User author = new User(documentSnapshot.getChildren().iterator().next());
-                                if (author.getAvatar() != null) {
-                                    Glide.with(context).load(author.getAvatar()).into(((NotificationViewHolder) holder).img_profile);
-                                } else {
-                                    Glide.with(context).load(DEF_AVATAR).into(((NotificationViewHolder) holder).img_profile);
-                                }
+                                Glide.with(context)
+                                        .load(author.getAvatar())
+                                        .error(R.drawable.default_avatar)
+                                        .into(((NotificationViewHolder) holder).img_profile);
                             }
                         });
                     }
@@ -150,7 +154,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                         public void onCallback(Video value) {
                             if (value != null) {
                                 Log.d(TAG, "onCallback Video: " + value);
-                                ((MainActivity) context).goToVideo(value);
+                                MyUtil.goToVideo((Activity) context, value);
                             }
                         }
                     }, notification.getRedirectTo());
@@ -169,11 +173,10 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             query.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     User author = new User(documentSnapshot.getChildren().iterator().next());
-                    if (author.getAvatar() != null) {
-                        Glide.with(context).load(author.getAvatar()).into(((FollowViewHolder) holder).img_profile);
-                    } else {
-                        Glide.with(context).load(DEF_AVATAR).into(((FollowViewHolder) holder).img_profile);
-                    }
+                        Glide.with(context)
+                                .load(author.getAvatar())
+                                .error(R.drawable.default_avatar)
+                                .into(((FollowViewHolder) holder).img_profile);
                 }
             });
             if (MainActivity.getCurrentUser().isFollowing(notification.getUsername())) {
