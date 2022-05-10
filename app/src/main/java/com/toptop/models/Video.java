@@ -7,9 +7,10 @@ import com.google.firebase.database.Exclude;
 import com.toptop.MainActivity;
 import com.toptop.utils.firebase.VideoFirebase;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Video {
+public class Video implements Serializable {
 	// TAG
 	public static final String TAG = "Video";
 
@@ -18,25 +19,6 @@ public class Video {
 	private String dateUploaded;
 	private HashMap<String, Boolean> likes;
 	private HashMap<String, Boolean> comments;
-
-	@Override
-	public boolean equals(@Nullable Object obj) {
-		boolean isEqual = false;
-		if (obj instanceof Video) {
-			Video video = (Video) obj;
-			isEqual = this.videoId.equals(video.getVideoId());
-		}
-		return isEqual;
-	}
-
-	public boolean hasChanged(Video video) {
-		boolean hasChanged = false;
-		hasChanged = !this.content.equals(video.getContent()) ||
-				!this.likes.equals(video.getLikes()) ||
-				!this.comments.equals(video.getComments()) ||
-				!this.numViews.equals(video.getNumViews());
-		return hasChanged;
-	}
 
 	public Video() {
 		likes = new HashMap<>();
@@ -100,13 +82,13 @@ public class Video {
 		}
 
 		// If number of likes is not quantity of likes
-		if (this.numLikes != this.likes.size()) {
+		if (this.numLikes == null || this.numLikes != this.likes.size()) {
 			this.numLikes = (long) this.likes.size();
 			hasChanged = true;
 		}
 
 		// If number of comments is not quantity of comments
-		if (this.numComments != this.comments.size()) {
+		if (this.numComments == null || this.numComments != this.comments.size()) {
 			this.numComments = (long) this.comments.size();
 			hasChanged = true;
 		}
@@ -117,6 +99,25 @@ public class Video {
 		}
 
 		if (hasChanged) VideoFirebase.updateVideo(this);
+	}
+
+	@Override
+	public boolean equals(@Nullable Object obj) {
+		boolean isEqual = false;
+		if (obj instanceof Video) {
+			Video video = (Video) obj;
+			isEqual = this.videoId.equals(video.getVideoId());
+		}
+		return isEqual;
+	}
+
+	public boolean hasChanged(Video video) {
+		boolean hasChanged = false;
+		hasChanged = !this.content.equals(video.getContent()) ||
+				!this.likes.equals(video.getLikes()) ||
+				!this.comments.equals(video.getComments()) ||
+				!this.numViews.equals(video.getNumViews());
+		return hasChanged;
 	}
 
 	public String getVideoId() {
@@ -228,7 +229,7 @@ public class Video {
 	@Exclude
 	// Like
 	public boolean isLiked() {
-		return likes != null && MainActivity.getCurrentUser() != null && likes.containsKey(MainActivity.getCurrentUser().getUsername());
+		return likes != null && likes.containsKey(MainActivity.getCurrentUser().getUsername());
 	}
 
 	public void addComment(Comment comment) {

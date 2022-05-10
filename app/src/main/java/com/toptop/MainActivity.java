@@ -20,13 +20,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.toptop.adapters.VideoFragementAdapter;
+import com.toptop.adapters.VideoFragmentAdapter;
 import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
 import com.toptop.fragment.SearchFragment;
 import com.toptop.fragment.VideoFragment;
 import com.toptop.models.User;
-import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.firebase.FirebaseUtil;
 
@@ -52,13 +51,6 @@ public class MainActivity extends FragmentActivity {
 
 	public static User getCurrentUser() {
 		return currentUser;
-	}
-
-	public void updateUI() {
-		ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG);
-		if (profileFragment != null) {
-			profileFragment.updateUI();
-		}
 	}
 
 	public void setCurrentUser(User user) {
@@ -92,17 +84,20 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	public static final String
-			STATUS_BAR_LIGHT_MODE = "status_bar_light_mode",
-			STATUS_BAR_DARK_MODE = "status_bar_dark_mode";
+	public static boolean isLoggedIn() {
+		return currentUser != null;
+	}
+
+	public void updateUI() {
+		ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG);
+		if (profileFragment != null) {
+			profileFragment.updateUI();
+		}
+	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-	}
-
-	public static boolean isLoggedIn() {
-		return currentUser != null;
 	}
 
 	@Override
@@ -257,44 +252,23 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
-	// Set status bar color mode
-	public void setStatusBarColor(String mode) {
-		if (mode.equals(STATUS_BAR_DARK_MODE)) {
-			getWindow().setStatusBarColor(Color.BLACK);
-			getWindow().getDecorView().setSystemUiVisibility(0);
-			Log.i(TAG, "setStatusBarColor: DARK MODE");
-		} else if (mode.equals(STATUS_BAR_LIGHT_MODE)) {
-			getWindow().setStatusBarColor(Color.WHITE);
-			getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-			Log.i(TAG, "setStatusBarColor: LIGHT MODE");
-		}
-	}
-
 	public void changeNavItem(int position) {
 		nav.onMenuItemClick(position);
 	}
 
-	public void goToVideo(Video video) {
-		VideoFragment videoFragment =
-				(VideoFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG));
-		videoFragment.goToVideo(video);
-		changeNavItem(0);
-		Log.d(TAG, "goToVideoFragment: ");
+	public void goToProfileUser(String username) {
+		Intent intent = new Intent(this, WatchProfileActivity.class);
+		intent.putExtra(User.TAG, username);
+		startActivity(intent);
 	}
 
 	@Override
 	public void onBackPressed() {
 		Log.i(TAG, "onBackPressed: fragment_comment_container shown? " + (findViewById(R.id.fragment_comment_container) != null && findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE));
 		// Set onBackPressed when fragment_comment_container is showing
-		if (findViewById(R.id.fragment_comment_container) != null && findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE) {
-			Log.i(TAG, "onBackPressed: HIDE KEYBOARD");
-			KeyboardUtils.hideKeyboard(this);
-			Log.i(TAG, "onBackPressed: HIDE LAYOUT_COMMENT");
-			findViewById(R.id.fragment_comment_container).setVisibility(View.GONE);
-
-			// Enable scroll
-			RecyclerView recycler_view_videos = findViewById(R.id.recycler_view_videos);
-			recycler_view_videos.removeOnItemTouchListener(VideoFragementAdapter.disableTouchListener);
+		if (findViewById(R.id.fragment_comment_container) != null &&
+				findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE) {
+			hideCommentFragment();
 		} else super.onBackPressed();
 	}
 
@@ -302,5 +276,16 @@ public class MainActivity extends FragmentActivity {
 	public void openLoginActivity() {
 		Intent intent = new Intent(this, LoginActivity.class);
 		startActivityForResult(intent, LOGIN_REQUEST_CODE);
+	}
+
+	public void hideCommentFragment() {
+		Log.i(TAG, "onBackPressed: HIDE KEYBOARD");
+		KeyboardUtils.hideKeyboard(this);
+		Log.i(TAG, "onBackPressed: HIDE LAYOUT_COMMENT");
+		findViewById(R.id.fragment_comment_container).setVisibility(View.GONE);
+
+		// Enable scroll
+		RecyclerView recycler_view_videos = findViewById(R.id.recycler_view_videos);
+		recycler_view_videos.removeOnItemTouchListener(VideoFragmentAdapter.disableTouchListener);
 	}
 }

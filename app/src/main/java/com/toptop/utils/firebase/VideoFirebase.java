@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
@@ -75,16 +74,7 @@ public class VideoFirebase {
 		updateVideo(video);
 	}
 
-	//	Try fix
-	public interface MyCallback {
-		void onCallback(String value);
-	}
-	public interface VideoCallback {
-		void onCallback(Video video);
-	}
-
-
-	public static void getDataVideoId(MyCallback myCallback ,String commentId) {
+	public static void getDataVideoId(MyCallback myCallback, String commentId) {
 		Query myQuery = FirebaseUtil.getCommentById(commentId);
 		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
@@ -93,6 +83,7 @@ public class VideoFirebase {
 				System.out.println(value);
 				myCallback.onCallback(value);
 			}
+
 			@Override
 			public void onCancelled(DatabaseError databaseError) {
 				Log.e(TAG, "onCancelled: ", databaseError.toException());
@@ -100,10 +91,9 @@ public class VideoFirebase {
 		});
 	}
 
-
 	//	get video by id from commentId
-	public static void getVideoFromCommentId(VideoCallback videoCallback ,String commentId) {
-		getDataVideoId(new MyCallback(){
+	public static void getVideoFromCommentId(VideoCallback videoCallback, String commentId) {
+		getDataVideoId(new MyCallback() {
 			@Override
 			public void onCallback(String value) {
 				Query myQuery = FirebaseUtil.getVideoById(value);
@@ -121,9 +111,10 @@ public class VideoFirebase {
 					}
 				});
 			}
-		},commentId);
+		}, commentId);
 	}
-	public static void getPreviewVideo(MyCallback myCallback ,String commentId) {
+
+	public static void getPreviewVideo(MyCallback myCallback, String commentId) {
 		getDataVideoId(new MyCallback() {
 			@Override
 			public void onCallback(String value) {
@@ -135,13 +126,24 @@ public class VideoFirebase {
 						System.out.println(value);
 						myCallback.onCallback(value);
 					}
+
 					@Override
 					public void onCancelled(DatabaseError databaseError) {
 						Log.e(TAG, "onCancelled: ", databaseError.toException());
 					}
 				});
 			}
-		},commentId);
+		}, commentId);
 
+	}
+
+
+	//	Try fix
+	public interface MyCallback {
+		void onCallback(String value);
+	}
+
+	public interface VideoCallback {
+		void onCallback(Video video);
 	}
 }

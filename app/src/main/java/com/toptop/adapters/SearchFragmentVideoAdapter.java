@@ -1,7 +1,7 @@
 package com.toptop.adapters;
 
+import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
-import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.models.User;
 import com.toptop.models.Video;
@@ -33,26 +29,25 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 	private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
 
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
-
-	private List<Video> videos;
 	Context context;
-
-	@Override
-	public void onViewAttachedToWindow(@NonNull SearchViewHolder holder) {
-		super.onViewAttachedToWindow(holder);
-	}
+	private List<Video> videos;
 
 	public SearchFragmentVideoAdapter(List<Video> videos, Context context) {
 		this.videos = videos;
 		this.context = context;
 	}
 
-	public void setVideos(List<Video> videos) {
-		this.videos = videos;
+	@Override
+	public void onViewAttachedToWindow(@NonNull SearchViewHolder holder) {
+		super.onViewAttachedToWindow(holder);
 	}
 
 	public List<Video> getVideos() {
 		return videos;
+	}
+
+	public void setVideos(List<Video> videos) {
+		this.videos = videos;
 	}
 
 	@NonNull
@@ -85,7 +80,7 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 				}
 			}
 		});
-		holder.itemView.setOnClickListener(v -> ((MainActivity) context).goToVideo(video));
+		holder.itemView.setOnClickListener(v -> MyUtil.goToVideo((Activity) context, video));
 	}
 
 	@Override

@@ -11,25 +11,26 @@ import com.toptop.models.User;
 import com.toptop.utils.firebase.UserFirebase;
 
 public class editinfouser extends AppCompatActivity {
-    public static final String TAG = "UserFirebase";
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_editinfouser);
+	public static final String TAG = "UserFirebase";
 
-        //binding
-        EditText txtFullnameUser = findViewById(R.id.txtFullnameUser);
-        EditText txtSDT = findViewById(R.id.txtSDT);
-        EditText txtEmail = findViewById(R.id.txtEmail);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_editinfouser);
 
-        ImageView btnBackToProfile= findViewById(R.id.btnBackToProfile);
-        Button btnUpdateInfo= findViewById(R.id.btnUpdateInfo);
+		//binding
+		EditText txtFullnameUser = findViewById(R.id.txtFullnameUser);
+		EditText txtSDT = findViewById(R.id.txtSDT);
+		EditText txtEmail = findViewById(R.id.txtEmail);
 
-        User currentUser= MainActivity.getCurrentUser();
+		ImageView btnBackToProfile = findViewById(R.id.btnBackToProfile);
+		Button btnUpdateInfo = findViewById(R.id.btnUpdateInfo);
 
-        txtFullnameUser.setText(currentUser.getFullname());
-        txtSDT.setText(currentUser.getPhoneNumber());
-        txtEmail.setText(currentUser.getEmail());
+		User currentUser = MainActivity.getCurrentUser();
+
+		txtFullnameUser.setText(currentUser.getFullname());
+		txtSDT.setText(currentUser.getPhoneNumber());
+		txtEmail.setText(currentUser.getEmail());
 
 //        User newUser = new  User(currentUser.getUsername().toString(),currentUser.getPassword().toString()
 //                ,txtFullnameUser.getText().toString(),
@@ -43,20 +44,19 @@ public class editinfouser extends AppCompatActivity {
 //                currentUser.getFollowers());
 
 
+		//Event
+		btnUpdateInfo.setOnClickListener(view -> {
+			User user = MainActivity.getCurrentUser();
+			user.setFullname(txtFullnameUser.getText().toString());
+			user.setPhoneNumber(txtSDT.getText().toString());
+			user.setEmail(txtEmail.getText().toString());
 
-        //Event
-        btnUpdateInfo.setOnClickListener(view -> {
-            User user = MainActivity.getCurrentUser();
-            user.setFullname(txtFullnameUser.getText().toString());
-            user.setPhoneNumber(txtSDT.getText().toString());
-            user.setEmail(txtEmail.getText().toString());
-
-            UserFirebase.updateUser(user);
-            finish();
-        });
-        btnBackToProfile.setOnClickListener(view -> {
-            finish();
-        });
-    }
+			UserFirebase.updateUser(user);
+			finish();
+		});
+		btnBackToProfile.setOnClickListener(view -> {
+			finish();
+		});
+	}
 
 }
