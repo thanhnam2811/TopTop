@@ -76,12 +76,6 @@ public class ProfileFragment extends Fragment {
 					Video video = new Video(dataSnapshot);
 					videos.add(video);
 				}
-				videos.addAll(videos);
-				videos.addAll(videos);
-				videos.addAll(videos);
-				videos.addAll(videos);
-				videos.addAll(videos);
-				videos.addAll(videos);
 				VideoGridAdapter adapter = new VideoGridAdapter(videos, context);
 				recyclerView.setAdapter(adapter);
 

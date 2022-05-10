@@ -122,6 +122,7 @@ public class WatchProfileActivity extends AppCompatActivity {
 		setFollowStatus(MainActivity.getCurrentUser().isFollowing(user.getUsername()));
 		Glide.with(getApplicationContext())
 				.load(user.getAvatar())
+				.error(R.drawable.default_avatar)
 				.into(avatar);
 		prepareRecyclerView(user);
 	}
