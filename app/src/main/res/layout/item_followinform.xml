@@ -61,9 +61,9 @@
 
     <Button
         android:id="@+id/btn_followBack"
-        android:layout_width="115dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="#ED365A"
         android:drawableTint="#ED365A"
@@ -71,7 +71,7 @@
         android:insetBottom="0dp"
         android:text="Follow back"
         android:textColor="#F6F6F6"
-        android:textSize="10sp"
+        android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

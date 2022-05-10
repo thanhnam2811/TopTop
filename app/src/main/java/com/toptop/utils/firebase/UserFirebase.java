@@ -13,7 +13,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
+import com.toptop.models.Comment;
 import com.toptop.models.User;
+import com.toptop.models.Video;
 
 public class UserFirebase {
 	// Tag
@@ -97,6 +99,29 @@ public class UserFirebase {
 			@Override
 			public void onCancelled(@NonNull DatabaseError error) {
 				callback.onCallBack(null);
+			}
+		});
+	}
+
+	//get username by comment id
+	public static void getUsernameByCommentId(String commentId, MyCallback callback) {
+		Query query = FirebaseUtil.getCommentById(commentId);
+		query.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				if (dataSnapshot.exists()) {
+					Comment comment = dataSnapshot.getChildren().iterator().next().getValue(Comment.class);
+					Log.i(TAG, "getUsernameByCommentId: " + dataSnapshot);
+					callback.onCallback(comment.getUsername());
+				} else {
+					Log.i(TAG, "getUsernameByCommentId: " + "comment not found");
+					callback.onCallback(null);
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				callback.onCallback(null);
 			}
 		});
 	}

@@ -74,7 +74,8 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public int getItemViewType(int position) {
         Notification notification = notifications.get(position);
-        if(notification.getType() == Notification.TYPE_FOLLOW){
+        Log.d(TAG, Notification.TYPE_FOLLOW + "---" + notification.getType());
+        if(notification.getType().equals(Notification.TYPE_FOLLOW)){
             return VIEW_TYPE_ITEM_2;
         }else{
             return VIEW_TYPE_ITEM_1;
@@ -85,12 +86,14 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        if (viewType == VIEW_TYPE_ITEM_1) {
-            View view = inflater.inflate(R.layout.item_listinform, parent, false);
-            return new NotificationViewHolder(view);
-        } else if(viewType == VIEW_TYPE_ITEM_2) {
+        if(viewType == VIEW_TYPE_ITEM_2) {
+            Log.d(TAG, "onCreateViewHolder: VIEW_TYPE_ITEM_2");
             View view = inflater.inflate(R.layout.item_followinform, parent, false);
             return new FollowViewHolder(view);
+        } else if (viewType == VIEW_TYPE_ITEM_1) {
+                Log.d(TAG, "onCreateViewHolder: VIEW_TYPE_ITEM_1");
+                View view = inflater.inflate(R.layout.item_listinform, parent, false);
+                return new NotificationViewHolder(view);
         }
         return null;
     }
@@ -101,7 +104,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 
         if (holder instanceof NotificationViewHolder) {
             NotificationViewHolder notificationViewHolder = (NotificationViewHolder) holder;
-            notificationViewHolder.txt_username.setText(notification.getUsername());
+
             notificationViewHolder.txt_content.setText(notification.getContent());
             notificationViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
             //get video from video id
@@ -114,13 +117,15 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                     }
                 }
             }, notification.getRedirectTo());
-            //get user from video id
-            VideoFirebase.getVideoFromCommentId( new VideoFirebase.VideoCallback() {
+
+            //get user from notification
+            UserFirebase.getUsernameByCommentId(notification.getRedirectTo(), new UserFirebase.MyCallback() {
                 @Override
-                public void onCallback(Video video) {
-                    if (video != null) {
-                        Log.d(TAG, "onCallback Video: " + video.getVideoId());
-                        Query query = FirebaseUtil.getUserByUsername(video.getUsername());
+                public void onCallback(String value) {
+                    if (value != null) {
+                        Log.d(TAG, "onCallback User: " + value);
+                        notificationViewHolder.txt_username.setText(value);
+                        Query query= FirebaseUtil.getUserByUsername(value);
                         query.get().addOnSuccessListener(documentSnapshot -> {
                             if (documentSnapshot.exists()) {
                                 User author = new User(documentSnapshot.getChildren().iterator().next());
@@ -133,8 +138,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                         });
                     }
                 }
-            }, notification.getRedirectTo());
-
+            });
 
             //set onclick listener for item
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -157,10 +161,10 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
         } else if(holder instanceof FollowViewHolder) {
             FollowViewHolder followViewHolder = (FollowViewHolder) holder;
 
-            followViewHolder.txt_username.setText(notification.getUsername());
+            followViewHolder.txt_username.setText(notification.getRedirectTo());
             followViewHolder.txt_content.setText(notification.getContent());
             followViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
-            //get user from usernam
+            //get user from username
             Query query = FirebaseUtil.getUserByUsername(notification.getRedirectTo());
             query.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {

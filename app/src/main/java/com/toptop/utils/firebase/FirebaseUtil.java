@@ -56,6 +56,7 @@ public class FirebaseUtil {
 	}
 	//	get comment by id
 	public static Query getCommentById(String commentId) {
+		Log.d(TAG, "getCommentById: " + commentId);
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_COMMENTS);
 		return ref.orderByChild("commentId").equalTo(commentId);
 	}
