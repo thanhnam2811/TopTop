@@ -80,7 +80,6 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 						.load(author.getAvatar())
 						.error(R.drawable.default_avatar)
 						.into(holder.img_avatar);
-
 			}
 		});
 		holder.itemView.setOnClickListener(v -> MyUtil.goToVideo((Activity) context, video));

@@ -1,5 +1,6 @@
 package com.toptop.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,7 +118,7 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-//				((MainActivity) context).goToUser(user);
+				MyUtil.goToUser((Activity) context, user.getUsername());
 			}
 		});
 

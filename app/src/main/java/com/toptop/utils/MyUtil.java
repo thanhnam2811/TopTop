@@ -8,7 +8,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.View;
 
+import com.toptop.WatchProfileActivity;
 import com.toptop.WatchVideoActivity;
+import com.toptop.models.User;
 import com.toptop.models.Video;
 
 import java.io.DataInputStream;
@@ -156,6 +158,11 @@ public class MyUtil {
 	public static void goToVideo(Activity activity, Video video) {
 		Intent intent = new Intent(activity, WatchVideoActivity.class);
 		intent.putExtra(Video.TAG, video);
+		activity.startActivity(intent);
+	}
+	public static void goToUser(Activity activity, String username) {
+		Intent intent = new Intent(activity, WatchProfileActivity.class);
+		intent.putExtra(User.TAG, username);
 		activity.startActivity(intent);
 	}
 }

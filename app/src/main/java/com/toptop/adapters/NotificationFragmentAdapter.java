@@ -201,24 +201,15 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                     //hide follow button
                     ((FollowViewHolder) holder).btn_follow.setVisibility(View.GONE);
                     Toast.makeText(context, "Đã theo dõi " + notification.getRedirectTo(), Toast.LENGTH_SHORT).show();
-
                 }
             });
             //set onclick listener for item
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UserFirebase.getUserByUsername(new UserFirebase.UserCallback() {
-                        @Override
-                        public void onCallBack(User user) {
-                            if (user != null) {
-//                                ((MainActivity) context).goToUser(user);
-                            }
-                        }
-                    }, notification.getUsername());
+                    MyUtil.goToUser((Activity)context, notification.getRedirectTo());
                 }
             });
-
         }
     }
 
@@ -226,8 +217,6 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
     public int getItemCount() {
         return notifications.size();
     }
-
-
     class NotificationViewHolder extends RecyclerView.ViewHolder {
         TextView txt_username, txt_content, tx_time;
         CircularImageView img_profile;
@@ -257,8 +246,6 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             btn_follow = itemView.findViewById(R.id.btn_followBack);
 
         }
-
-
         // Get position of video by video ID
         public int getPosition(String notificationId) {
             for (int i = 0; i < notifications.size(); i++) {
@@ -268,8 +255,6 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             }
             return -1;
         }
-
-
     }
 }
 
