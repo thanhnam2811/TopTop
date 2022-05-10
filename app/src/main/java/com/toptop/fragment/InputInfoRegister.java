@@ -14,87 +14,87 @@ import com.toptop.RegisterActivity;
 
 
 public class InputInfoRegister extends Fragment {
-    public final static String TAG = "InputInfoRegister";
-    EditText mEditTextName, mEditTextEmail, mEditTextPhone;
+	public final static String TAG = "InputInfoRegister";
+	EditText mEditTextName, mEditTextEmail, mEditTextPhone;
 
-    public InputInfoRegister() {
-        // Required empty public constructor
-    }
+	public InputInfoRegister() {
+		// Required empty public constructor
+	}
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_input_info_register, container, false);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	                         Bundle savedInstanceState) {
+		// Inflate the layout for this fragment
+		View view = inflater.inflate(R.layout.fragment_input_info_register, container, false);
 
-        // Binding
-        Button btnContinue = view.findViewById(R.id.btn_continue_register);
-        mEditTextName = view.findViewById(R.id.txt_fullname);
-        mEditTextEmail = view.findViewById(R.id.txt_email);
-        mEditTextPhone = view.findViewById(R.id.txt_phone_number);
+		// Binding
+		Button btnContinue = view.findViewById(R.id.btn_continue_register);
+		mEditTextName = view.findViewById(R.id.txt_fullname);
+		mEditTextEmail = view.findViewById(R.id.txt_email);
+		mEditTextPhone = view.findViewById(R.id.txt_phone_number);
 
-        btnContinue.setOnClickListener(v -> {
-            String name = mEditTextName.getText().toString();
-            String email = mEditTextEmail.getText().toString();
-            String phonenumber = mEditTextPhone.getText().toString();
-            if (isValidInputData(name, email, phonenumber)) {
-                setData(name, email, phonenumber);
-                openInputAccountRegister();
-            }
-        });
+		btnContinue.setOnClickListener(v -> {
+			String name = mEditTextName.getText().toString();
+			String email = mEditTextEmail.getText().toString();
+			String phonenumber = mEditTextPhone.getText().toString();
+			if (isValidInputData(name, email, phonenumber)) {
+				setData(name, email, phonenumber);
+				openInputAccountRegister();
+			}
+		});
 
-        return view;
-    }
+		return view;
+	}
 
-    // Open InputAccountRegister fragment
-    private void openInputAccountRegister() {
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.input_fragment,
-                        requireActivity().getSupportFragmentManager().findFragmentByTag(InputAccountRegister.TAG))
-                .commit();
-    }
+	// Open InputAccountRegister fragment
+	private void openInputAccountRegister() {
+		requireActivity().getSupportFragmentManager().beginTransaction()
+				.replace(R.id.input_fragment,
+						requireActivity().getSupportFragmentManager().findFragmentByTag(InputAccountRegister.TAG))
+				.commit();
+	}
 
-    // Check input data
-    public boolean isValidInputData(String name, String email, String phonenumber) {
-        if (name.isEmpty()) {
-            mEditTextName.setError("Please enter your name");
-            return false;
-        }
-        if (phonenumber.isEmpty()) {
-            mEditTextPhone.setError("Please enter your phone number");
-            return false;
-        }
-        if (!isPhoneNumberValid(phonenumber)) {
-            mEditTextPhone.setError("Please enter a valid phone number");
-            return false;
-        }
-        if (email.isEmpty()) {
-            mEditTextEmail.setError("Please enter your email");
-            return false;
-        }
-        if (!email.contains("@")) {
-            mEditTextEmail.setError("Please enter a valid email");
-            return false;
-        }
-        return true;
-    }
+	// Check input data
+	public boolean isValidInputData(String name, String email, String phonenumber) {
+		if (name.isEmpty()) {
+			mEditTextName.setError("Please enter your name");
+			return false;
+		}
+		if (phonenumber.isEmpty()) {
+			mEditTextPhone.setError("Please enter your phone number");
+			return false;
+		}
+		if (!isPhoneNumberValid(phonenumber)) {
+			mEditTextPhone.setError("Please enter a valid phone number");
+			return false;
+		}
+		if (email.isEmpty()) {
+			mEditTextEmail.setError("Please enter your email");
+			return false;
+		}
+		if (!email.contains("@")) {
+			mEditTextEmail.setError("Please enter a valid email");
+			return false;
+		}
+		return true;
+	}
 
-    // is phone number valid
-    private boolean isPhoneNumberValid(String phonenumber) {
-        return phonenumber.length() == 10 && phonenumber.startsWith("0");
-    }
+	// is phone number valid
+	private boolean isPhoneNumberValid(String phonenumber) {
+		return phonenumber.length() == 10 && phonenumber.startsWith("0");
+	}
 
-    // set data for new user in registerActivity
-    public void setData(String name, String email, String phonenumber) {
-        RegisterActivity registerActivity = (RegisterActivity) requireActivity();
-        registerActivity.newUser.setFullname(name);
-        registerActivity.newUser.setEmail(email);
-        registerActivity.newUser.setPhoneNumber(phonenumber);
-    }
+	// set data for new user in registerActivity
+	public void setData(String name, String email, String phonenumber) {
+		RegisterActivity registerActivity = (RegisterActivity) requireActivity();
+		registerActivity.newUser.setFullname(name);
+		registerActivity.newUser.setEmail(email);
+		registerActivity.newUser.setPhoneNumber(phonenumber);
+	}
 
 }

@@ -35,9 +35,9 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 	// tag'
 	private static final String TAG = "CommentFragmentAdapter";
 	private final DatabaseReference mDB_comment;
-	private List<Comment> comments;
-	private List<Comment> replies = new ArrayList<>();
 	Context context;
+	private final List<Comment> comments;
+	private List<Comment> replies = new ArrayList<>();
 
 	public CommentFragmentAdapter(List<Comment> comments, Context context) {
 		mDB_comment = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
@@ -183,6 +183,14 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 		return comments.size();
 	}
 
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public int getPosition(Comment comment) {
+		return comments.indexOf(comment);
+	}
+
 	public static class ViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username, txt_content, txt_time_comment, txt_reply_comment, txt_num_likes_comment;
 		ImageView img_avatar, ic_like_comment;
@@ -199,13 +207,5 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 			ic_like_comment = itemView.findViewById(R.id.ic_like_comment);
 			txt_num_likes_comment = itemView.findViewById(R.id.txt_num_likes_comment);
 		}
-	}
-
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public int getPosition(Comment comment) {
-		return comments.indexOf(comment);
 	}
 }

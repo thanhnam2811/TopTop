@@ -84,6 +84,14 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
 		return replies.size();
 	}
 
+	public List<Comment> getReplies() {
+		return replies;
+	}
+
+	public int getPosition(Comment comment) {
+		return replies.indexOf(comment);
+	}
+
 	public static class ViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username, txt_content, txt_time_comment, txt_reply_comment;
 		ImageView img_avatar;
@@ -96,13 +104,5 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
 			txt_time_comment = itemView.findViewById(R.id.txt_time_comment);
 			txt_reply_comment = itemView.findViewById(R.id.txt_reply_comment);
 		}
-	}
-
-	public List<Comment> getReplies() {
-		return replies;
-	}
-
-	public int getPosition(Comment comment) {
-		return replies.indexOf(comment);
 	}
 }

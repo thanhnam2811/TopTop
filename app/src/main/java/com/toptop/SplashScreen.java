@@ -10,18 +10,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash_screen);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_splash_screen);
 
-        new Handler().postDelayed(() -> {
-            // Start the next activity
-            Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }, 1000);
+		new Handler().postDelayed(() -> {
+			// Start the next activity
+			Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+			startActivity(intent);
+			finish();
+		}, 1000);
 
-        getWindow().setStatusBarColor(Color.BLACK);
-    }
+		getWindow().setStatusBarColor(Color.BLACK);
+	}
 }

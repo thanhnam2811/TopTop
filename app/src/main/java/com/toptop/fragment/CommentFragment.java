@@ -25,8 +25,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.toptop.MainActivity;
 import com.toptop.R;
+import com.toptop.WatchVideoActivity;
 import com.toptop.adapters.CommentFragmentAdapter;
-import com.toptop.adapters.VideoFragementAdapter;
+import com.toptop.adapters.VideoFragmentAdapter;
 import com.toptop.models.Comment;
 import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
@@ -39,14 +40,13 @@ import java.util.Date;
 import java.util.List;
 
 public class CommentFragment extends Fragment {
-	private DatabaseReference mDB_comment;
 	public static final String TAG = "CommentFragment";
-
+	public static Comment newComment = new Comment();
 	private final Video video;
 	Context context;
 	RecyclerView recycler_view_comments, recycler_view_videos;
 	List<Comment> comments = new ArrayList<>();
-	public static Comment newComment = new Comment();
+	private final DatabaseReference mDB_comment;
 
 	public CommentFragment(Video video, Context context) {
 		mDB_comment = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
@@ -73,7 +73,7 @@ public class CommentFragment extends Fragment {
 		// Disable scrollable when layout comment is visible
 		recycler_view_comments = view.findViewById(R.id.recycler_view_comments);
 		recycler_view_videos = requireActivity().findViewById(R.id.recycler_view_videos);
-		recycler_view_videos.addOnItemTouchListener(VideoFragementAdapter.disableTouchListener);
+		recycler_view_videos.addOnItemTouchListener(VideoFragmentAdapter.disableTouchListener);
 		recycler_view_comments.setLayoutManager(new LinearLayoutManager(context));
 
 		// Get comments from firebase by video id
@@ -100,41 +100,16 @@ public class CommentFragment extends Fragment {
 		});
 
 		// Set onClickListener for ic_send_comment
-		ic_send_comment.setOnClickListener(v -> {
-			// Get comment content
-			String content = txt_comment_input.getText().toString().trim();
-			newComment.setContent(content);
-			newComment.setTime(MyUtil.getFormattedDateStringFromDate(new Date()));
-			newComment.setUsername(MainActivity.getCurrentUser().getUsername());
-			newComment.setVideoId(video.getVideoId());
-
-			// Add comment to firebase
-			CommentFirebase.addCommentToVideo(newComment, video);
-
-			// Toast message
-			Toast.makeText(context, "Comment success", Toast.LENGTH_SHORT).show();
-
-			// Refresh comments
-			getCommentsFromFirebase();
-
-			// Scroll to top
-			recycler_view_comments.scrollToPosition(0);
-
-			// Clear comment input
-			txt_comment_input.setText("");
-
-			// Reset new comment
-			newComment = new Comment();
-
-			// Hide keyboard
-			KeyboardUtils.hideKeyboard(requireActivity());
-		});
+		ic_send_comment.setOnClickListener(v -> handleSendComment(txt_comment_input));
 
 		View layout_comment_header = view.findViewById(R.id.layout_comment_header);
 		layout_comment_header.setOnClickListener(v -> {
-			Log.i(TAG, "CLICK COMMENT HEADER");
-			if (((MainActivity) context).findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE)
-				((MainActivity) context).onBackPressed();
+			// Hide this fragment
+			if (requireActivity() instanceof MainActivity) {
+				((MainActivity) requireActivity()).hideCommentFragment();
+			} else if (requireActivity() instanceof WatchVideoActivity) {
+				((WatchVideoActivity) requireActivity()).hideCommentFragment();
+			}
 		});
 
 		// Disable comment input if user is not logged in
@@ -172,6 +147,36 @@ public class CommentFragment extends Fragment {
 		});
 
 		return view;
+	}
+
+	private void handleSendComment(EditText txt_comment_input) {
+		// Get comment content
+		String content = txt_comment_input.getText().toString().trim();
+		newComment.setContent(content);
+		newComment.setTime(MyUtil.getFormattedDateStringFromDate(new Date()));
+		newComment.setUsername(MainActivity.getCurrentUser().getUsername());
+		newComment.setVideoId(video.getVideoId());
+
+		// Add comment to firebase
+		CommentFirebase.addCommentToVideo(newComment, video);
+
+		// Toast message
+		Toast.makeText(context, "Comment success", Toast.LENGTH_SHORT).show();
+
+		// Refresh comments
+		getCommentsFromFirebase();
+
+		// Scroll to top
+		recycler_view_comments.scrollToPosition(0);
+
+		// Clear comment input
+		txt_comment_input.setText("");
+
+		// Reset new comment
+		newComment = new Comment();
+
+		// Hide keyboard
+		KeyboardUtils.hideKeyboard(requireActivity());
 	}
 
 	private void getCommentsFromFirebase() {

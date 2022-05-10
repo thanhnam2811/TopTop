@@ -35,15 +35,6 @@ public class Comment {
 		this.likes = likes;
 	}
 
-	@Override
-	public boolean equals(@Nullable Object obj) {
-		if (obj instanceof Comment) {
-			Comment comment = (Comment) obj;
-			return comment.getCommentId().equals(this.getCommentId());
-		}
-		return false;
-	}
-
 	public Comment() {
 		replies = new HashMap<>();
 		likes = new HashMap<>();
@@ -113,6 +104,28 @@ public class Comment {
 		}
 
 		if (hasChanged) CommentFirebase.updateComment(this);
+	}
+
+	// Sort by time
+	public static void sortByTimeNewsest(List<Comment> comments) {
+		// Sort comments by time
+		comments.sort((o1, o2) -> {
+			Date time1 = MyUtil.getDateFromFormattedDateString(o1.getTime());
+			Date time2 = MyUtil.getDateFromFormattedDateString(o2.getTime());
+			if (time1 != null && time2 != null) {
+				return time2.compareTo(time1);
+			}
+			return 0;
+		});
+	}
+
+	@Override
+	public boolean equals(@Nullable Object obj) {
+		if (obj instanceof Comment) {
+			Comment comment = (Comment) obj;
+			return comment.getCommentId().equals(this.getCommentId());
+		}
+		return false;
 	}
 
 	public String getCommentId() {
@@ -185,19 +198,6 @@ public class Comment {
 
 	public void setLikes(HashMap<String, Boolean> likes) {
 		this.likes = likes;
-	}
-
-	// Sort by time
-	public static void sortByTimeNewsest(List<Comment> comments) {
-		// Sort comments by time
-		comments.sort((o1, o2) -> {
-			Date time1 = MyUtil.getDateFromFormattedDateString(o1.getTime());
-			Date time2 = MyUtil.getDateFromFormattedDateString(o2.getTime());
-			if (time1 != null && time2 != null) {
-				return time2.compareTo(time1);
-			}
-			return 0;
-		});
 	}
 
 	@NonNull

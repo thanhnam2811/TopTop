@@ -1,8 +1,15 @@
 package com.toptop.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.view.View;
+
+import com.toptop.WatchVideoActivity;
+import com.toptop.models.Video;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -17,6 +24,10 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressLint("SimpleDateFormat")
 public class MyUtil {
+	public static final String
+			STATUS_BAR_LIGHT_MODE = "status_bar_light_mode",
+			STATUS_BAR_DARK_MODE = "status_bar_dark_mode";
+
 	public static Date getDateFromFormattedDateString(String date) {
 		String pattern = "dd-MM-yyyy HH:mm:ss";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -64,6 +75,20 @@ public class MyUtil {
 		}
 	}
 
+	// get number to text if large
+	@SuppressLint("DefaultLocale")
+	public static String getNumberToText(long number) {
+		if (number > 999 && number < 1000000) {
+			return String.format("%.2f", number / 1000.0) + "K";
+		} else if (number > 999999) {
+			return String.format("%.2f", number / 1000000.0) + "M";
+		} else if (number > 9999999) {
+			return String.format("%.2f", number / 1000000000.0) + "B";
+		} else {
+			return String.valueOf(number);
+		}
+	}
+
 	// get time ago
 	public static String getTimeAgo(String dateString) {
 		Date date = getDateFromFormattedDateString(dateString);
@@ -96,6 +121,7 @@ public class MyUtil {
 			e.printStackTrace();
 		}
 	}
+
 	public static Bitmap getBitmapFromURL(String linkImage) {
 		System.out.println("linkImage: " + linkImage);
 		try {
@@ -109,9 +135,27 @@ public class MyUtil {
 		}
 	}
 
-    public static String getCurrentTime() {
+	// Set status bar color mode
+	public static void setStatusBarColor(String mode, Activity activity) {
+		if (mode.equals(STATUS_BAR_DARK_MODE)) {
+			activity.getWindow().setStatusBarColor(Color.BLACK);
+			activity.getWindow().getDecorView().setSystemUiVisibility(0);
+		} else if (mode.equals(STATUS_BAR_LIGHT_MODE)) {
+			activity.getWindow().setStatusBarColor(Color.WHITE);
+			activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+		}
+	}
+
+	public static String getCurrentTime() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
 		return sdf.format(now);
-    }
+	}
+
+
+	public static void goToVideo(Activity activity, Video video) {
+		Intent intent = new Intent(activity, WatchVideoActivity.class);
+		intent.putExtra(Video.TAG, video);
+		activity.startActivity(intent);
+	}
 }

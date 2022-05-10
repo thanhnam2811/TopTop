@@ -13,6 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RemoveSplashScreenTheme">
         <activity
+            android:name=".WatchProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WatchVideoActivity"
+            android:exported="false" />
+        <activity
             android:name=".formEditIProfile"
             android:exported="false" />
         <activity

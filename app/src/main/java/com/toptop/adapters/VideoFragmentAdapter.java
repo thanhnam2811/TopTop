@@ -16,6 +16,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -37,23 +38,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAdapter.VideoViewHolder> {
+public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdapter.VideoViewHolder> {
 	private static final String TAG = "VideoFragementAdapter";
 	private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
-
-	private List<Video> videos;
 	Context context;
 	boolean isVideoInitiated = false;
+	private final List<Video> videos;
+
+	public VideoFragmentAdapter(List<Video> videos, Context context) {
+		this.videos = videos;
+		this.context = context;
+	}
 
 	@Override
 	public void onViewAttachedToWindow(@NonNull VideoViewHolder holder) {
 		super.onViewAttachedToWindow(holder);
-	}
-
-	public VideoFragementAdapter(List<Video> videos, Context context) {
-		this.videos = videos;
-		this.context = context;
 	}
 
 	@NonNull
@@ -104,6 +104,19 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			Log.i(TAG, "Loading video...");
 			playVideo(holder.videoView, holder.img_pause);
 		});
+
+		// Set onClickListener for img_avatar
+		holder.img_avatar.setOnClickListener(v -> handleClickAvatar(video));
+	}
+
+	private void handleClickAvatar(Video video) {
+		if (context instanceof MainActivity) {
+			MainActivity mainActivity = (MainActivity) context;
+			if (MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
+				mainActivity.changeNavItem(3);
+			} else
+				mainActivity.goToProfileUser(video.getUsername());
+		}
 	}
 
 	private void updateUI(VideoViewHolder holder, Video video) {
@@ -130,10 +143,10 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		}
 
 		// Check if video is liked or not
-		if (video.isLiked()) {
-			holder.img_like.setImageResource(R.drawable.ic_liked);
-		} else {
+		if (!MainActivity.isLoggedIn() || !video.isLiked()) {
 			holder.img_like.setImageResource(R.drawable.ic_like);
+		} else {
+			holder.img_like.setImageResource(R.drawable.ic_liked);
 		}
 
 		// Load avatar
@@ -176,13 +189,16 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	}
 
 	private void handleClickComment(Video video) {
+		FragmentActivity activity = (FragmentActivity) context;
+
 		// Add layout_comment to MainActivity
-		((MainActivity) context).getSupportFragmentManager()
+		activity.getSupportFragmentManager()
 				.beginTransaction()
-				.replace(R.id.fragment_comment_container, new CommentFragment(video, context)).commit();
+				.replace(R.id.fragment_comment_container, new CommentFragment(video, context))
+				.commit();
 
 		// Show layout_comment
-		((MainActivity) context).findViewById(R.id.fragment_comment_container).setVisibility(View.VISIBLE);
+		activity.findViewById(R.id.fragment_comment_container).setVisibility(View.VISIBLE);
 	}
 
 	private void handleClickVideo(VideoView videoView, ImageView img_pause) {
@@ -211,9 +227,13 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 	}
 
 	private void initVideo(VideoView videoView, Video video) {
-		videoView.setVideoURI(Uri.parse(video.getLinkVideo()));
-		videoView.requestFocus();
-		Log.i(TAG, "initVideo: " + video.getVideoId());
+		if (video.getLinkVideo() != null) {
+			videoView.setVideoURI(Uri.parse(video.getLinkVideo()));
+			videoView.requestFocus();
+			Log.i(TAG, "initVideo: " + video.getVideoId());
+		} else {
+			Toast.makeText(context, "Video không tồn tại", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	private void initVideoAndDownload(VideoView videoView, Video video) {
@@ -293,6 +313,12 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 		}
 	}
 
+	@Override
+	public long getItemId(int position) {
+		Video video = videos.get(position);
+		return video.getVideoId().hashCode();
+	}
+
 	static class VideoViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username, txt_content, txt_num_likes, txt_num_comments;
 		VideoView videoView;
@@ -311,11 +337,5 @@ public class VideoFragementAdapter extends RecyclerView.Adapter<VideoFragementAd
 			img_follow = itemView.findViewById(R.id.img_follow);
 			img_avatar = itemView.findViewById(R.id.img_avatar);
 		}
-	}
-
-	@Override
-	public long getItemId(int position) {
-		Video video = videos.get(position);
-		return video.getVideoId().hashCode();
 	}
 }

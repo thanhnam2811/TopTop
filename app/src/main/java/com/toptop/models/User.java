@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class User implements Serializable {
 	// Tag
-	private static final String TAG = "User";
+	public static final String TAG = "User";
 
 	private String username, password, fullname, phoneNumber, email, avatar;
 	private Long numFollowers, numFollowing, numLikes;
@@ -80,6 +80,7 @@ public class User implements Serializable {
 			else
 				this.followers = new HashMap<>();
 		}
+
 		// Prepare data
 		boolean hasChanged = false;
 		if (numFollowing != followings.size()) {
@@ -122,6 +123,10 @@ public class User implements Serializable {
 
 	public String getUsername() {
 		return username;
+	}
+
+	public void setUsername(String username) {
+		if (this.username == null) this.username = username;
 	}
 
 	public String getFullname() {
@@ -217,10 +222,6 @@ public class User implements Serializable {
 		return password;
 	}
 
-	public void setUsername(String username) {
-		if (this.username == null) this.username = username;
-	}
-
 	public void setPassword(String password) {
 		if (this.password == null) this.password = password;
 	}
@@ -265,7 +266,7 @@ public class User implements Serializable {
 	}
 
 	public boolean hasChangedInfo(User user) {
-		return  !fullname.equals(user.fullname) ||
+		return !fullname.equals(user.fullname) ||
 				!phoneNumber.equals(user.phoneNumber) ||
 				!email.equals(user.email) ||
 				!avatar.equals(user.avatar) ||

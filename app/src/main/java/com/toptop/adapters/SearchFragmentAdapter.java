@@ -1,9 +1,6 @@
 package com.toptop.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +17,6 @@ import com.google.firebase.database.Query;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.toptop.MainActivity;
 import com.toptop.R;
-import com.toptop.SplashScreen;
 import com.toptop.models.Notification;
 import com.toptop.models.User;
 import com.toptop.utils.MyUtil;
@@ -30,14 +26,21 @@ import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.UserFirebase;
 
 import java.util.List;
-import java.util.logging.LogRecord;
 
 
-public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentAdapter.SearchViewHolder>  {
+public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAdapter.SearchViewHolder> {
 	private static final String TAG = "SearchFragementAdapter";
 	private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
 
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
+	Context context;
+	private List<User> users;
+
+	public SearchFragmentAdapter(List<User> users, Context context) {
+		this.users = users;
+		this.context = context;
+	}
+
 	public List<User> getUsers() {
 		return users;
 	}
@@ -46,17 +49,9 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 		this.users = users;
 	}
 
-	private List<User> users;
-	Context context;
-
 	@Override
 	public void onViewAttachedToWindow(@NonNull SearchViewHolder holder) {
 		super.onViewAttachedToWindow(holder);
-	}
-
-	public SearchFragmentAdapter(List<User> users, Context context) {
-		this.users = users;
-		this.context = context;
 	}
 
 	@NonNull
@@ -73,14 +68,13 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 		System.out.println("position: " + position);
 		holder.txt_username.setText(user.getUsername());
 		holder.txt_fullname.setText(user.getFullname());
-		if(user.getNumFollowers()==null) {
+		if (user.getNumFollowers() == null) {
 			holder.txt_number_follow.setText("0");
-		}
-		else{
+		} else {
 			holder.txt_number_follow.setText(String.valueOf(user.getNumFollowers()));
 			//get user current
 			User currentUser = MainActivity.getCurrentUser();
-			if(Integer.valueOf(String.valueOf(user.getNumFollowers()))>0 && currentUser.isFollowing(user.getUsername())){
+			if (Integer.valueOf(String.valueOf(user.getNumFollowers())) > 0 && currentUser.isFollowing(user.getUsername())) {
 //				holder.btn_follow.setText("Following");
 //				//set backgroundTint to button
 //				holder.btn_follow.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.teal_200)));
@@ -135,7 +129,7 @@ public class SearchFragmentAdapter extends  RecyclerView.Adapter<SearchFragmentA
 	}
 
 	static class SearchViewHolder extends RecyclerView.ViewHolder {
-		TextView txt_username,txt_fullname,txt_number_follow;
+		TextView txt_username, txt_fullname, txt_number_follow;
 		Button btn_follow;
 		CircularImageView img_avatar;
 		SearchView searchView;

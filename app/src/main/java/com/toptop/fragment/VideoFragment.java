@@ -18,10 +18,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.toptop.MainActivity;
 import com.toptop.R;
-import com.toptop.adapters.VideoFragementAdapter;
+import com.toptop.adapters.VideoFragmentAdapter;
 import com.toptop.models.Video;
+import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
 
 import java.util.ArrayList;
@@ -29,10 +29,10 @@ import java.util.List;
 
 public class VideoFragment extends Fragment {
 	public static final String TAG = "VideoFragment";
-	private List<Video> videos = new ArrayList<>();
 	DatabaseReference mDatabase;
 	Context context;
 	RecyclerView recyclerView;
+	private List<Video> videos = new ArrayList<>();
 
 	public VideoFragment() {
 		// Required empty public constructor
@@ -67,7 +67,7 @@ public class VideoFragment extends Fragment {
 		snapHelper.attachToRecyclerView(recyclerView);
 
 		// Set status bar color
-		((MainActivity) requireActivity()).setStatusBarColor(MainActivity.STATUS_BAR_DARK_MODE);
+		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_DARK_MODE, requireActivity());
 
 		// Inflate the layout for this fragment
 		return view;
@@ -87,9 +87,9 @@ public class VideoFragment extends Fragment {
 						videos.add(video);
 					}
 					if (recyclerView.getAdapter() == null) {
-						VideoFragementAdapter videoFragementAdapter = new VideoFragementAdapter(videos, context);
-						videoFragementAdapter.setHasStableIds(true);
-						recyclerView.setAdapter(videoFragementAdapter);
+						VideoFragmentAdapter videoFragmentAdapter = new VideoFragmentAdapter(videos, context);
+						videoFragmentAdapter.setHasStableIds(true);
+						recyclerView.setAdapter(videoFragmentAdapter);
 //					recyclerView.smoothScrollToPosition(2);
 					} else {
 						recyclerView.getAdapter().notifyItemRangeChanged(0, videos.size());
@@ -101,9 +101,9 @@ public class VideoFragment extends Fragment {
 			mDatabase.addValueEventListener(new ValueEventListener() {
 				@Override
 				public void onDataChange(@NonNull DataSnapshot snapshot) {
-					VideoFragementAdapter videoFragementAdapter = (VideoFragementAdapter) recyclerView.getAdapter();
-					if (videoFragementAdapter != null) {
-						videos = videoFragementAdapter.getVideos();
+					VideoFragmentAdapter videoFragmentAdapter = (VideoFragmentAdapter) recyclerView.getAdapter();
+					if (videoFragmentAdapter != null) {
+						videos = videoFragmentAdapter.getVideos();
 						for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 							Video video = new Video(dataSnapshot);
 							if (videos.contains(video)) {
@@ -112,7 +112,7 @@ public class VideoFragment extends Fragment {
 								videos.add(video);
 							}
 						}
-						videoFragementAdapter.setVideos(videos);
+						videoFragmentAdapter.setVideos(videos);
 					}
 				}
 
@@ -130,7 +130,7 @@ public class VideoFragment extends Fragment {
 
 	public void updateUI() {
 		if (recyclerView.getAdapter() != null) {
-			videos = ((VideoFragementAdapter) recyclerView.getAdapter()).getVideos();
+			videos = ((VideoFragmentAdapter) recyclerView.getAdapter()).getVideos();
 			recyclerView.getAdapter().notifyItemRangeChanged(0, videos.size());
 		}
 	}
