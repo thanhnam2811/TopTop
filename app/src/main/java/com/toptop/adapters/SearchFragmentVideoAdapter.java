@@ -63,6 +63,7 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 		System.out.println("video: " + video);
 		holder.txt_timePost.setText(MyUtil.getTimeAgo(video.getDateUploaded()));
 		holder.txt_content.setText(video.getContent());
+		holder.img_video.setImageBitmap(MyUtil.getBitmapFromURL(video.getPreview()));
 		//load image priview
 		Glide.with(context)
 				.load(video.getPreview())

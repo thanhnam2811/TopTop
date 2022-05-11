@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 
+import com.toptop.WatchProfileActivity;
 import com.toptop.WatchVideoActivity;
+import com.toptop.models.User;
 import com.toptop.models.Video;
 
 import java.io.DataInputStream;
@@ -51,27 +54,27 @@ public class MyUtil {
 		long diff = now.getTime() - date.getTime();
 		// if less than 1 minute
 		if (diff < TimeUnit.MINUTES.toMillis(1)) {
-			return "Vừa xong";
+			return "just now";
 		}
 		// if less than 1 hour
 		else if (diff < TimeUnit.HOURS.toMillis(1)) {
-			return TimeUnit.MILLISECONDS.toMinutes(diff) + " phút trước";
+			return TimeUnit.MILLISECONDS.toMinutes(diff) + "m";
 		}
 		// if less than 1 day
 		else if (diff < TimeUnit.DAYS.toMillis(1)) {
-			return TimeUnit.MILLISECONDS.toHours(diff) + " giờ trước";
+			return TimeUnit.MILLISECONDS.toHours(diff) + "h";
 		}
 		// if less than 1 month
 		else if (diff < TimeUnit.DAYS.toMillis(30)) {
-			return TimeUnit.MILLISECONDS.toDays(diff) + " ngày trước";
+			return TimeUnit.MILLISECONDS.toDays(diff) + "d";
 		}
 		// if less than 1 year
 		else if (diff < TimeUnit.DAYS.toMillis(365)) {
-			return TimeUnit.MILLISECONDS.toDays(diff) / 30 + " tháng trước";
+			return TimeUnit.MILLISECONDS.toDays(diff) / 7 + "w";
 		}
 		// if more than 1 year
 		else {
-			return TimeUnit.MILLISECONDS.toDays(diff) / 365 + " năm trước";
+			return TimeUnit.MILLISECONDS.toDays(diff) / 365 + "y";
 		}
 	}
 
@@ -147,7 +150,7 @@ public class MyUtil {
 	}
 
 	public static String getCurrentTime() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		Date now = new Date();
 		return sdf.format(now);
 	}
@@ -156,6 +159,12 @@ public class MyUtil {
 	public static void goToVideo(Activity activity, Video video) {
 		Intent intent = new Intent(activity, WatchVideoActivity.class);
 		intent.putExtra(Video.TAG, video);
+		activity.startActivity(intent);
+	}
+	public static void goToUser(Activity activity, String username) {
+		Intent intent = new Intent(activity, WatchProfileActivity.class);
+		Log.d("forward to profile ", username);
+		intent.putExtra(User.TAG, username);
 		activity.startActivity(intent);
 	}
 }

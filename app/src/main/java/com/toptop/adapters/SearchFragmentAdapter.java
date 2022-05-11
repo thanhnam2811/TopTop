@@ -1,5 +1,6 @@
 package com.toptop.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,11 +89,11 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 		query.get().addOnSuccessListener(documentSnapshot -> {
 			if (documentSnapshot.exists()) {
 				User author = new User(documentSnapshot.getChildren().iterator().next());
-				if (author.getAvatar() != null) {
-					Glide.with(context).load(author.getAvatar()).into(holder.img_avatar);
-				} else {
-					Glide.with(context).load(DEF_AVATAR).into(holder.img_avatar);
-				}
+				Glide.with(context)
+						.load(author.getAvatar())
+						.error(R.drawable.default_avatar)
+						.into(holder.img_avatar);
+
 			}
 		});
 		//handle follow button
@@ -110,14 +111,14 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 				NotificationFirebase.addNotification(notification);
 //				//hide button
 				holder.btn_follow.setVisibility(View.GONE);
-				Toast.makeText(context, "Followed " + user.getUsername(), Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, "Đã theo dõi " + user.getUsername(), Toast.LENGTH_SHORT).show();
 			}
 		});
 		//handle click item
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-//				((MainActivity) context).goToUser(user);
+				MyUtil.goToUser((Activity) context, user.getUsername());
 			}
 		});
 

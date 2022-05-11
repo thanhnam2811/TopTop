@@ -105,6 +105,11 @@
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/toolbar.xml" value="0.21197916666666666" />
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/layout/video_layout.xml" value="0.21197916666666666" />
         <entry key="..\:/Java/TokTok_Project/TopTop/app/src/main/res/menu/nav_item.xml" value="0.21197916666666666" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/activity_watch_profile.xml" value="0.2911458333333333" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/item_account.xml" value="0.17617753623188406" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/item_followinform.xml" value="0.2911458333333333" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/item_listinform.xml" value="0.2911458333333333" />
+        <entry key="..\:/TopTop/app/src/main/res/layout/items_video.xml" value="0.17617753623188406" />
       </map>
     </option>
   </component>
