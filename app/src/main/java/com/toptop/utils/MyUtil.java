@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 
 import com.toptop.WatchProfileActivity;
@@ -162,6 +163,7 @@ public class MyUtil {
 	}
 	public static void goToUser(Activity activity, String username) {
 		Intent intent = new Intent(activity, WatchProfileActivity.class);
+		Log.d("forward to profile ", username);
 		intent.putExtra(User.TAG, username);
 		activity.startActivity(intent);
 	}

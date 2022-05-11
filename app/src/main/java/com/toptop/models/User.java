@@ -266,10 +266,11 @@ public class User implements Serializable {
 	}
 
 	public boolean hasChangedInfo(User user) {
+		if(user.getAvatar() !=null)
+			return !user.getAvatar().equals(avatar);
 		return !fullname.equals(user.fullname) ||
 				!phoneNumber.equals(user.phoneNumber) ||
 				!email.equals(user.email) ||
-				!avatar.equals(user.avatar) ||
 				!numLikes.equals(user.numLikes) ||
 				!numFollowers.equals(user.numFollowers) ||
 				!numFollowing.equals(user.numFollowing);

@@ -173,13 +173,13 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             query.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     User author = new User(documentSnapshot.getChildren().iterator().next());
-                        Glide.with(context)
-                                .load(author.getAvatar())
-                                .error(R.drawable.default_avatar)
-                                .into(((FollowViewHolder) holder).img_profile);
+                    Glide.with(context)
+                            .load(author.getAvatar())
+                            .error(R.drawable.default_avatar)
+                            .into(((FollowViewHolder) holder).img_profile);
                 }
             });
-            if (MainActivity.getCurrentUser().isFollowing(notification.getUsername())) {
+            if (MainActivity.getCurrentUser().isFollowing(notification.getRedirectTo())) {
                 followViewHolder.btn_follow.setVisibility(View.GONE);
             } else {
                 followViewHolder.btn_follow.setVisibility(View.VISIBLE);
@@ -207,6 +207,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d(TAG, "forward: " + notification.getRedirectTo());
                     MyUtil.goToUser((Activity)context, notification.getRedirectTo());
                 }
             });
@@ -246,15 +247,16 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             btn_follow = itemView.findViewById(R.id.btn_followBack);
 
         }
-        // Get position of video by video ID
-        public int getPosition(String notificationId) {
-            for (int i = 0; i < notifications.size(); i++) {
-                if (notifications.get(i).getNotificationId().equals(notificationId)) {
-                    return i;
-                }
+
+    }
+    // Get position of video by video ID
+    public int getPosition(String notificationId) {
+        for (int i = 0; i < notifications.size(); i++) {
+            if (notifications.get(i).getNotificationId().equals(notificationId)) {
+                return i;
             }
-            return -1;
         }
+        return -1;
     }
 }
 
