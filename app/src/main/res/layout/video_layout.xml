@@ -54,10 +54,11 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginBottom="40dp"
-        android:src="@drawable/demo_avatar"
+        android:src="@drawable/default_avatar"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toTopOf="@+id/img_like"
         app:layout_constraintEnd_toEndOf="@+id/img_like"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="@+id/img_like" />
 
     <ImageView

@@ -112,8 +112,10 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 	private void handleClickAvatar(Video video) {
 		if (context instanceof MainActivity) {
 			MainActivity mainActivity = (MainActivity) context;
-			if (MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
-				mainActivity.changeNavItem(3);
+			if (MainActivity.isLoggedIn()) {
+				if (MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
+					mainActivity.changeNavItem(3);
+				}
 			} else
 				mainActivity.goToProfileUser(video.getUsername());
 		}
@@ -154,10 +156,10 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		query.get().addOnSuccessListener(documentSnapshot -> {
 			if (documentSnapshot.exists()) {
 				User author = new User(documentSnapshot.getChildren().iterator().next());
-					Glide.with(context)
-							.load(author.getAvatar())
-							.error(R.drawable.default_avatar)
-							.into(holder.img_avatar);
+				Glide.with(context)
+						.load(author.getAvatar())
+						.error(R.drawable.default_avatar)
+						.into(holder.img_avatar);
 			}
 		});
 	}

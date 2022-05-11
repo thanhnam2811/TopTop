@@ -29,7 +29,7 @@ public class VideoFirebase {
 	// Update video to firebase
 	public static void updateVideo(Video video) {
 		videoRef.child(video.getVideoId()).setValue(video);
-		Log.i(TAG, "updateVideo: " + video.getVideoId() + " updated to firebase");
+		Log.e(TAG, "updateVideo: " + video.getVideoId() + " updated to firebase");
 	}
 
 	// Delete video to firebase

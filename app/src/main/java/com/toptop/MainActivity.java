@@ -54,33 +54,42 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void setCurrentUser(User user) {
-		// Log
-		Log.i(TAG, "setCurrentUser: " + user.getUsername());
+		changeNavItem(0);
+		if (user != null) {
+			// Log
+			Log.i(TAG, "setCurrentUser: " + user.getUsername());
 
-		// If first time login or change user
-		if (currentUser == null || !currentUser.getUsername().equals(user.getUsername())) {
-			// Set current user
-			Query query = FirebaseUtil.getUserByUsername(user.getUsername());
-			query.addValueEventListener(new ValueEventListener() {
-				@Override
-				public void onDataChange(@NonNull DataSnapshot snapshot) {
-					if (snapshot.exists()) {
-						currentUser = new User(snapshot.getChildren().iterator().next());
-						updateUI();
+			// If first time login or change user
+			if (currentUser == null || !currentUser.getUsername().equals(user.getUsername())) {
+				// Set current user
+				Query query = FirebaseUtil.getUserByUsername(user.getUsername());
+				query.addValueEventListener(new ValueEventListener() {
+					@Override
+					public void onDataChange(@NonNull DataSnapshot snapshot) {
+						if (snapshot.exists()) {
+							currentUser = new User(snapshot.getChildren().iterator().next());
+							updateUI();
+						}
+
+						if (currentUser != null && !currentUser.getUsername().equals(mAppPreferences.getString(SAVE_USER, ""))) {
+							// Save user to memory
+							mEditor.putString(SAVE_USER, currentUser.getUsername());
+							mEditor.apply();
+						}
 					}
 
-					if (!currentUser.getUsername().equals(mAppPreferences.getString(SAVE_USER, ""))) {
-						// Save user to memory
-						mEditor.putString(SAVE_USER, currentUser.getUsername());
-						mEditor.apply();
+					@Override
+					public void onCancelled(@NonNull DatabaseError error) {
+
 					}
-				}
-
-				@Override
-				public void onCancelled(@NonNull DatabaseError error) {
-
-				}
-			});
+				});
+			}
+		} else {
+			currentUser = null;
+			mEditor.clear();
+			mEditor.apply();
+			// Log
+			Log.i(TAG, "setCurrentUser: logged out");
 		}
 	}
 
@@ -110,7 +119,7 @@ public class MainActivity extends FragmentActivity {
 					setCurrentUser(user);
 				}
 			} else {
-				if (data.getBooleanExtra(EXTRA_REGISTER, false)) {
+				if (data != null && data.getBooleanExtra(EXTRA_REGISTER, false)) {
 					openRegisterActivity();
 				} else {
 					Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
@@ -121,7 +130,7 @@ public class MainActivity extends FragmentActivity {
 				User user = (User) data.getSerializableExtra(RegisterActivity.USER);
 				setCurrentUser(user);
 			} else {
-				if (data.getBooleanExtra(EXTRA_LOGIN, false)) {
+				if (data != null && data.getBooleanExtra(EXTRA_LOGIN, false)) {
 					openLoginActivity();
 				} else {
 					Toast.makeText(this, "Register failed", Toast.LENGTH_SHORT).show();
@@ -130,7 +139,7 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	private void openRegisterActivity() {
+	public void openRegisterActivity() {
 		Intent intent = new Intent(this, RegisterActivity.class);
 		startActivityForResult(intent, REGISTER_REQUEST_CODE);
 	}
@@ -231,10 +240,6 @@ public class MainActivity extends FragmentActivity {
 				Log.i(NAV_TAG, "Change to notification fragment");
 				break;
 			case R.drawable.ic_profile:
-				if (!isLoggedIn()) {
-					Toast.makeText(MainActivity.this, "Please login first", Toast.LENGTH_SHORT).show();
-					openLoginActivity();
-				}
 				getSupportFragmentManager().beginTransaction()
 						.replace(R.id.fragment_container,
 								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG)))
@@ -287,5 +292,9 @@ public class MainActivity extends FragmentActivity {
 		// Enable scroll
 		RecyclerView recycler_view_videos = findViewById(R.id.recycler_view_videos);
 		recycler_view_videos.removeOnItemTouchListener(VideoFragmentAdapter.disableTouchListener);
+	}
+
+	public void logOut() {
+		setCurrentUser(null);
 	}
 }

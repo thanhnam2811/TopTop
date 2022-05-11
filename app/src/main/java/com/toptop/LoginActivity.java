@@ -15,6 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -28,6 +33,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.toptop.models.User;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
+
+import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -88,6 +95,34 @@ public class LoginActivity extends AppCompatActivity {
 		loginGoogle.setOnClickListener(v -> {
 			Intent signInIntent = googleSignInClient.getSignInIntent();
 			startActivityForResult(signInIntent, LOGIN_GOOGLE);
+		});
+
+		CallbackManager callbackManager = CallbackManager.Factory.create();
+
+		String EMAIL = "email";
+		LoginButton loginButton = (LoginButton) findViewById(R.id.loginFacebook_button);
+		loginButton.setReadPermissions(Arrays.asList(EMAIL));
+		// If you are using in a fragment, call loginButton.setFragment(this);
+
+		// Callback registration
+		loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+			@Override
+			public void onSuccess(LoginResult loginResult) {
+				// App code
+				Toast.makeText(LoginActivity.this, "Login success", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onCancel() {
+				// App code
+				Toast.makeText(LoginActivity.this, "Login cancel", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onError(FacebookException exception) {
+				// App code
+				Toast.makeText(LoginActivity.this, "Login error", Toast.LENGTH_SHORT).show();
+			}
 		});
 	}
 

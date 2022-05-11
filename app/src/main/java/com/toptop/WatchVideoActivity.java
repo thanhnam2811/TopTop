@@ -47,7 +47,7 @@ public class WatchVideoActivity extends FragmentActivity {
 		query.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				Video newVideo = new Video(snapshot);
+				Video newVideo = new Video(snapshot.getChildren().iterator().next());
 				if (video.hasChanged(newVideo) || recyclerView.getAdapter() == null) {
 					List<Video> videos = new ArrayList<>();
 					videos.add(video);

@@ -88,6 +88,10 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 		}
 	}
 
+	public List<Video> getVideos() {
+		return videos;
+	}
+
 	static class ViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_num_likes, txt_num_views;
 		ImageView img_preview;

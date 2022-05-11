@@ -26,7 +26,6 @@ import java.util.List;
 
 public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragmentVideoAdapter.SearchViewHolder> {
 	private static final String TAG = "SearchFragementAdapter";
-	private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
 
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
 	Context context;
@@ -64,20 +63,21 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 		System.out.println("video: " + video);
 		holder.txt_timePost.setText(MyUtil.getTimeAgo(video.getDateUploaded()));
 		holder.txt_content.setText(video.getContent());
-		holder.img_video.setImageBitmap(MyUtil.getBitmapFromURL(video.getPreview()));
 		//load image priview
-		Glide.with(context).load(video.getPreview()).into(holder.img_video);
+		Glide.with(context)
+				.load(video.getPreview())
+				.error(R.drawable.bg)
+				.into(holder.img_video);
 		holder.txt_username.setText(video.getUsername());
 		// Load avatar
 		Query query = FirebaseUtil.getUserByUsername(video.getUsername());
 		query.get().addOnSuccessListener(documentSnapshot -> {
 			if (documentSnapshot.exists()) {
 				User author = new User(documentSnapshot.getChildren().iterator().next());
-				if (author.getAvatar() != null) {
-					Glide.with(context).load(author.getAvatar()).into(holder.img_avatar);
-				} else {
-					Glide.with(context).load(DEF_AVATAR).into(holder.img_avatar);
-				}
+					Glide.with(context)
+							.load(author.getAvatar())
+							.error(R.drawable.default_avatar)
+							.into(holder.img_avatar);
 			}
 		});
 		holder.itemView.setOnClickListener(v -> MyUtil.goToVideo((Activity) context, video));

@@ -190,7 +190,7 @@ public class CommentFragment extends Fragment {
 					for (DataSnapshot dataSnapshot : task.getResult().getChildren()) {
 						Comment comment = new Comment(dataSnapshot);
 						if (!comment.isReply())
-							comments.add(new Comment(dataSnapshot));
+							comments.add(comment);
 					}
 					Comment.sortByTimeNewsest(comments);
 					if (recycler_view_comments.getAdapter() != null)

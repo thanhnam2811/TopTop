@@ -3,6 +3,7 @@ package com.toptop;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -119,7 +120,10 @@ public class WatchProfileActivity extends AppCompatActivity {
 		numFollowing.setText(user.getNumFollowing() + "");
 		numLikes.setText(user.getNumLikes() + "");
 		username.setText(user.getUsername());
-		setFollowStatus(MainActivity.getCurrentUser().isFollowing(user.getUsername()));
+		if (MainActivity.isLoggedIn())
+			setFollowStatus(MainActivity.getCurrentUser().isFollowing(user.getUsername()));
+		else
+			txt_follow_status.setVisibility(View.GONE);
 		Glide.with(getApplicationContext())
 				.load(user.getAvatar())
 				.error(R.drawable.default_avatar)

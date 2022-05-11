@@ -97,8 +97,9 @@ public class Video implements Serializable {
 			this.numViews = 0L;
 			hasChanged = true;
 		}
-
-		if (hasChanged) VideoFirebase.updateVideo(this);
+		if (hasChanged) {
+			VideoFirebase.updateVideo(this);
+		}
 	}
 
 	@Override

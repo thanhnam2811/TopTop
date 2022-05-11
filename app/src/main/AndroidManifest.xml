@@ -13,16 +13,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RemoveSplashScreenTheme">
         <activity
+            android:name=".ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditProfileActivity"
+            android:exported="false" /> <!-- For login with facebook -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+
+        <activity
             android:name=".WatchProfileActivity"
             android:exported="false" />
         <activity
             android:name=".WatchVideoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".formEditIProfile"
-            android:exported="false" />
-        <activity
-            android:name=".editinfouser"
             android:exported="false" />
         <activity
             android:name=".RegisterActivity"
