@@ -7,7 +7,9 @@
     tools:context=".LoginActivity">
 
     <EditText
+        android:drawableStart="@drawable/ic_baseline_email_32"
         android:id="@+id/txtEmail"
+        android:drawablePadding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -31,6 +33,8 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
+        android:drawablePadding="8dp"
+        android:drawableStart="@drawable/ic_baseline_lock_32"
         android:autofillHints="password"
         android:fontFamily="@font/varela_round"
         android:hint="Mật khẩu"
@@ -42,7 +46,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:gravity="center"
+        android:drawablePadding="8dp"
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,8 +54,9 @@
         android:background="@drawable/button_background"
         android:drawableEnd="@drawable/ic_login"
         android:fontFamily="@font/varela_round"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:text="Đăng nhập"
         android:textColor="@color/main_color"
         android:textSize="16sp"
@@ -151,13 +156,24 @@
 
 
     <com.facebook.login.widget.LoginButton
-        android:visibility="gone"
         android:id="@+id/loginFacebook_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/loginFacebook"
         app:layout_constraintTop_toBottomOf="@+id/loginFacebook" />
+
+    <TextView
+        android:id="@+id/txt_forgot_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Quên mật khẩu?"
+        android:textColor="@color/secondary_color"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/loginGoogle"
+        app:layout_constraintTop_toBottomOf="@+id/loginGoogle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

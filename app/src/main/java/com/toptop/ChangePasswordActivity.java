@@ -59,6 +59,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
 								finish();
 							}
 						});
+					} else {
+						edtOldPassword.setError("Mật khẩu cũ không đúng!");
 					}
 				});
 			} else {

@@ -7,26 +7,30 @@
     tools:context=".fragment.InputInfoRegister">
 
     <EditText
-        android:textSize="16sp"
-        android:autofillHints="name"
         android:id="@+id/txt_fullname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:autofillHints="name"
+        android:drawableStart="@drawable/ic_baseline_person_24"
+        android:drawablePadding="8dp"
         android:hint="Họ và tên"
+        android:inputType="text"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:autofillHints="phone"
-        android:textSize="16sp"
+        android:drawableStart="@drawable/ic_baseline_phone_24"
+        android:drawablePadding="8dp"
         android:id="@+id/txt_phone_number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:autofillHints="phone"
         android:hint="Số điện thoại"
         android:inputType="phone"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_fullname" />
@@ -38,8 +42,9 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/button_background"
         android:drawableEnd="@drawable/ic_arrow_right"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:drawablePadding="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:text="Tiếp tục"
         android:textColor="@color/main_color"
         android:textStyle="bold"

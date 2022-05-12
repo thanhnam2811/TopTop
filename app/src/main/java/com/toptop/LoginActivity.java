@@ -70,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
 		ImageView loginFacebook = findViewById(R.id.loginFacebook);
 		email = findViewById(R.id.txtEmail);
 		password = findViewById(R.id.txtPassword);
+		TextView forgotPassword = findViewById(R.id.txt_forgot_password);
 
 		// Configure sign-in to request the user's ID, email address, and basic
 		// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -128,6 +129,26 @@ public class LoginActivity extends AppCompatActivity {
 				Toast.makeText(LoginActivity.this, "Login error", Toast.LENGTH_SHORT).show();
 			}
 		});
+
+		// Forgot password
+		forgotPassword.setOnClickListener(v -> handleForgotPassword());
+	}
+
+	private void handleForgotPassword() {
+		String emailText = email.getText().toString();
+		if (emailText.isEmpty()) {
+			email.setError("Vui lòng nhập email trước khi tiếp tục");
+		} else {
+			mAuth.sendPasswordResetEmail(emailText)
+					.addOnCompleteListener(task -> {
+						if (task.isSuccessful()) {
+							Toast.makeText(LoginActivity.this, "Email xác nhận đã được gửi đến email của bạn", Toast.LENGTH_SHORT).show();
+						} else {
+							Toast.makeText(LoginActivity.this, "Email không tồn tại", Toast.LENGTH_SHORT).show();
+						}
+					});
+		}
+
 	}
 
 	@Override
