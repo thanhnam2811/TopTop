@@ -22,7 +22,7 @@ import com.toptop.utils.firebase.FirebaseUtil;
 public class InputAccountRegister extends Fragment {
 	public final static String TAG = "InputAccountRegister";
 
-	EditText mEditTextUsername, mEditTextPassword, mEditTextConfirmPassword;
+	EditText mEditTextEmail, mEditTextPassword, mEditTextConfirmPassword;
 
 	public InputAccountRegister() {
 		// Required empty public constructor
@@ -42,7 +42,7 @@ public class InputAccountRegister extends Fragment {
 		// Binding
 		Button btnBack = view.findViewById(R.id.btn_back_register);
 		Button btnRegister = view.findViewById(R.id.btn_register);
-		mEditTextUsername = view.findViewById(R.id.txt_username);
+		mEditTextEmail = view.findViewById(R.id.txt_email);
 		mEditTextPassword = view.findViewById(R.id.txt_password);
 		mEditTextConfirmPassword = view.findViewById(R.id.txt_password_confirm);
 
@@ -51,21 +51,21 @@ public class InputAccountRegister extends Fragment {
 		});
 
 		btnRegister.setOnClickListener(v -> {
-			String username = mEditTextUsername.getText().toString();
+			String email = mEditTextEmail.getText().toString();
 			String password = mEditTextPassword.getText().toString();
 			String confirmPassword = mEditTextConfirmPassword.getText().toString();
 
-			// check if username is existed
-			Query query = FirebaseUtil.getUserByUsername(username);
+			// check if email is existed
+			Query query = FirebaseUtil.getUserByEmail(email);
 			query.addListenerForSingleValueEvent(new ValueEventListener() {
 				@Override
 				public void onDataChange(@NonNull DataSnapshot snapshot) {
 					if (snapshot.exists()) {
-						mEditTextUsername.setError("Username is existed");
+						mEditTextEmail.setError("Email is used by another user");
 					} else {
-						if (isValidInput(username, password, confirmPassword)) {
-							setData(username, password);
-							((RegisterActivity) requireActivity()).finishRegister(true);
+						if (isValidInput(email, password, confirmPassword)) {
+							((RegisterActivity) requireActivity())
+									.finishRegister(true, email, password);
 						}
 					}
 				}
@@ -90,9 +90,9 @@ public class InputAccountRegister extends Fragment {
 	}
 
 	// is valid input data
-	private boolean isValidInput(String username, String password, String confirmPassword) {
-		if (username.isEmpty()) {
-			mEditTextUsername.setError("Username is required");
+	private boolean isValidInput(String email, String password, String confirmPassword) {
+		if (email.isEmpty()) {
+			mEditTextEmail.setError("Email is required");
 			return false;
 		}
 		if (password.isEmpty()) {
@@ -108,13 +108,6 @@ public class InputAccountRegister extends Fragment {
 			return false;
 		}
 		return true;
-	}
-
-	// set data for new user in register
-	public void setData(String username, String password) {
-		RegisterActivity registerActivity = (RegisterActivity) requireActivity();
-		registerActivity.newUser.setUsername(username);
-		registerActivity.newUser.setPassword(password);
 	}
 
 }

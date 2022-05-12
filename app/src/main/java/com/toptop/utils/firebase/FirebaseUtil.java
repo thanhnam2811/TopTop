@@ -29,12 +29,6 @@ public class FirebaseUtil {
 		return ref.orderByChild("replyToCommentId").equalTo(replyToCommentId);
 	}
 
-	// Get user by username
-	public static Query getUserByUsername(String username) {
-		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
-		return ref.orderByChild("username").equalTo(username).limitToFirst(1);
-	}
-
 	// Get videos by username
 	public static Query getVideosByUsername(String username) {
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_VIDEOS);
@@ -59,12 +53,6 @@ public class FirebaseUtil {
 		return ref.orderByChild("videoId").equalTo(videoId);
 	}
 
-	//	get user by string like username
-	public static Query getUserByStringLikeUsername(String username) {
-		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
-		return ref.orderByChild("username").startAt(username).endAt(username + "\uf8ff");
-	}
-
 	//	get video by string like content
 	public static Query getVideoByStringLikeContent(String content) {
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_VIDEOS);
@@ -76,6 +64,25 @@ public class FirebaseUtil {
 	public static Query getVideoByUsername(String username) {
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_VIDEOS);
 		return ref.orderByChild("username").equalTo(username);
+	}
+
+	// Get user by email
+	public static Query getUserByEmail(String email) {
+		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
+		return ref.orderByChild("email").equalTo(email).limitToFirst(1);
+	}
+
+	// Get user by username
+	public static Query getUserByUsername(String username) {
+		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
+		return ref.orderByChild("username").equalTo(username).limitToFirst(1);
+	}
+
+
+	//	get user by string like username
+	public static Query getUserByStringLikeUsername(String username) {
+		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_USERS);
+		return ref.orderByChild("username").startAt(username).endAt(username + "\uf8ff");
 	}
 
 }

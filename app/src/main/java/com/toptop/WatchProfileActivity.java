@@ -57,7 +57,7 @@ public class WatchProfileActivity extends AppCompatActivity {
 		numFollowers = findViewById(R.id.txt_num_followers);
 		numFollowing = findViewById(R.id.txt_num_following);
 		numLikes = findViewById(R.id.txt_num_likes);
-		username = findViewById(R.id.txt_username);
+		username = findViewById(R.id.txt_email);
 		avatar = findViewById(R.id.img_avatar);
 		recyclerView = findViewById(R.id.recycler_view_videos_grid);
 		scrollView = findViewById(R.id.scroll_view);

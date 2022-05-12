@@ -2,10 +2,8 @@ package com.toptop;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -16,6 +14,8 @@ import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -27,6 +27,7 @@ import com.toptop.fragment.SearchFragment;
 import com.toptop.fragment.VideoFragment;
 import com.toptop.models.User;
 import com.toptop.utils.KeyboardUtils;
+import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
 
 import java.util.Objects;
@@ -36,13 +37,12 @@ import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem;
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView;
 
 public class MainActivity extends FragmentActivity {
+	private FirebaseAuth mAuth;
 	public static final String EXTRA_REGISTER = "register";
 	public static final String EXTRA_LOGIN = "login";
-	private static final String TAG = "MainActivity", NAV_TAG = "Navigation", SAVE_USER = "SaveUser";
+	private static final String TAG = "MainActivity", NAV_TAG = "Navigation";
 	private static final int LOGIN_REQUEST_CODE = 1;
 	private static final int REGISTER_REQUEST_CODE = 2;
-	private static SharedPreferences mAppPreferences;
-	private static SharedPreferences.Editor mEditor;
 	private static User currentUser;
 
 	@SuppressLint("StaticFieldLeak")
@@ -70,12 +70,6 @@ public class MainActivity extends FragmentActivity {
 							currentUser = new User(snapshot.getChildren().iterator().next());
 							updateUI();
 						}
-
-						if (currentUser != null && !currentUser.getUsername().equals(mAppPreferences.getString(SAVE_USER, ""))) {
-							// Save user to memory
-							mEditor.putString(SAVE_USER, currentUser.getUsername());
-							mEditor.apply();
-						}
 					}
 
 					@Override
@@ -86,8 +80,7 @@ public class MainActivity extends FragmentActivity {
 			}
 		} else {
 			currentUser = null;
-			mEditor.clear();
-			mEditor.apply();
+			mAuth.signOut();
 			// Log
 			Log.i(TAG, "setCurrentUser: logged out");
 		}
@@ -107,6 +100,19 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		FirebaseUser currentUser = mAuth.getCurrentUser();
+		if (currentUser != null) {
+			Query query = FirebaseUtil.getUserByEmail(currentUser.getEmail());
+			query.get().addOnSuccessListener(documentSnapshot -> {
+				if (documentSnapshot.exists()) {
+					User user = new User(documentSnapshot.getChildren().iterator().next());
+					setCurrentUser(user);
+				} else {
+					setCurrentUser(null);
+				}
+				init();
+			});
+		}
 	}
 
 	@Override
@@ -117,23 +123,25 @@ public class MainActivity extends FragmentActivity {
 				if (data != null) {
 					User user = (User) data.getSerializableExtra(LoginActivity.USER);
 					setCurrentUser(user);
+					Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 				}
 			} else {
 				if (data != null && data.getBooleanExtra(EXTRA_REGISTER, false)) {
 					openRegisterActivity();
 				} else {
-					Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
 				}
 			}
 		} else if (requestCode == REGISTER_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
 				User user = (User) data.getSerializableExtra(RegisterActivity.USER);
 				setCurrentUser(user);
+				Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
 			} else {
 				if (data != null && data.getBooleanExtra(EXTRA_LOGIN, false)) {
 					openLoginActivity();
 				} else {
-					Toast.makeText(this, "Register failed", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "Đăng ký thất bại!", Toast.LENGTH_SHORT).show();
 				}
 			}
 		}
@@ -148,26 +156,11 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_DARK_MODE, this);
 
-		mAppPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		mEditor = mAppPreferences.edit();
+		mAuth = FirebaseAuth.getInstance();
 
 		init();
-
-		// Get user from memory
-		String username = mAppPreferences.getString(SAVE_USER, null);
-		if (username != null) {
-			Query query = FirebaseUtil.getUserByUsername(username);
-			query.get().addOnSuccessListener(documentSnapshot -> {
-				if (documentSnapshot.exists()) {
-					User user = new User(documentSnapshot.getChildren().iterator().next());
-					setCurrentUser(user);
-				} else {
-					Log.i(TAG, "getUserFromMemory: User not found");
-				}
-				init();
-			});
-		}
 	}
 
 	private void init() {
@@ -258,7 +251,9 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void changeNavItem(int position) {
-		nav.onMenuItemClick(position);
+		if (nav != null) {
+			nav.onMenuItemClick(position);
+		}
 	}
 
 	public void goToProfileUser(String username) {

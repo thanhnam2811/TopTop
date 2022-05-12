@@ -71,6 +71,7 @@ public class ProfileFragment extends Fragment {
 			username.setText(user.getUsername());
 			Glide.with(context)
 					.load(user.getAvatar())
+					.error(R.drawable.default_avatar)
 					.into(avatar);
 			prepareRecyclerView(user);
 		} else {
@@ -110,6 +111,8 @@ public class ProfileFragment extends Fragment {
 						} else {
 							videos.add(video);
 						}
+						videos.addAll(videos);
+						videos.addAll(videos);
 					}
 					videoGridAdapter.setVideos(videos);
 				}
@@ -144,7 +147,7 @@ public class ProfileFragment extends Fragment {
 			numFollowers = view.findViewById(R.id.txt_num_followers);
 			numFollowing = view.findViewById(R.id.txt_num_following);
 			numLikes = view.findViewById(R.id.txt_num_likes);
-			username = view.findViewById(R.id.txt_username);
+			username = view.findViewById(R.id.txt_email);
 			avatar = view.findViewById(R.id.img_avatar);
 			recyclerView = view.findViewById(R.id.recycler_view_videos_grid);
 			scrollView = view.findViewById(R.id.scroll_view);

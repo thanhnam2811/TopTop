@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,10 +25,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.toptop.models.User;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
@@ -47,14 +47,18 @@ public class LoginActivity extends AppCompatActivity {
 	private static final int LOGIN_GOOGLE = 1;
 	private static final int LOGIN_FACEBOOK = 2;
 	private static final boolean LOGIN_SUCCESS = true;
+	private static final boolean LOGIN_FAIL = false;
+
+	private FirebaseAuth mAuth;
 
 
-	EditText username, password;
+	EditText email, password;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
+		mAuth = FirebaseAuth.getInstance();
 
 		getWindow().setStatusBarColor(Color.WHITE);
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -64,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
 		Button login = findViewById(R.id.btnLogin);
 		ImageView loginGoogle = findViewById(R.id.loginGoogle);
 		ImageView loginFacebook = findViewById(R.id.loginFacebook);
-		username = findViewById(R.id.txtUsername);
+		email = findViewById(R.id.txtEmail);
 		password = findViewById(R.id.txtPassword);
 
 		// Configure sign-in to request the user's ID, email address, and basic
@@ -139,31 +143,48 @@ public class LoginActivity extends AppCompatActivity {
 		try {
 			GoogleSignInAccount account = task.getResult(ApiException.class);
 			if (account != null) {
-				String id = account.getId();
-				Query query = FirebaseUtil.getUserByUsername(id);
-				query.get().addOnSuccessListener(snapshot -> {
-					User user = new User();
-					if (snapshot.exists()) {
-						user = new User(snapshot.getChildren().iterator().next());
-						Toast.makeText(LoginActivity.this, "Welcome back " + user.getFullname(), Toast.LENGTH_SHORT).show();
-					} else {
-						user.setUsername(id);
-						user.setFullname(account.getDisplayName());
-						user.setEmail(account.getEmail());
-						user.setPhoneNumber("");
-						if (account.getPhotoUrl() != null) {
-							user.setAvatar(account.getPhotoUrl().toString());
-						}
-						UserFirebase.addUser(user);
-						Toast.makeText(LoginActivity.this, "Welcome " + user.getFullname(), Toast.LENGTH_SHORT).show();
-					}
-					finishLogin(LOGIN_SUCCESS, user);
-				});
+				fireBaseAuthWithGoogle(account);
+			} else {
+				Toast.makeText(this, "Account is null", Toast.LENGTH_SHORT).show();
 			}
-
 		} catch (ApiException e) {
 			Log.e(TAG, "Google sign in failed, error code: " + e.getStatusCode());
 		}
+	}
+
+	private void fireBaseAuthWithGoogle(GoogleSignInAccount account) {
+		AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+		mAuth.signInWithCredential(credential)
+				.addOnCompleteListener(this, task -> {
+					FirebaseUser firebaseUser = mAuth.getCurrentUser();
+					if (task.isSuccessful() && firebaseUser != null) {
+						// Sign in success, update UI with the signed-in user's information
+						Log.d(TAG, "signInWithCredential:success");
+						Query query = FirebaseUtil.getUserByEmail(firebaseUser.getEmail());
+						query.get().addOnSuccessListener(dataSnapshot -> {
+							if (dataSnapshot.exists()) {
+								User user = new User(dataSnapshot.getChildren().iterator().next());
+								Toast.makeText(LoginActivity.this, "Welcome back, Google User: " + user.getFullname(), Toast.LENGTH_SHORT).show();
+								finishLogin(LOGIN_SUCCESS, user);
+							} else {
+								// Create user
+								User user = new User();
+								user.setUid(account.getId());
+								user.setUsername("GG-" + account.getId());
+								user.setEmail(account.getEmail());
+								user.setFullname(account.getDisplayName());
+								if (account.getPhotoUrl() != null) {
+									user.setAvatar(account.getPhotoUrl().toString());
+								}
+								UserFirebase.addUser(user);
+								Toast.makeText(LoginActivity.this, "Welcome, Google User: " + user.getFullname(), Toast.LENGTH_SHORT).show();
+								finishLogin(LOGIN_SUCCESS, user);
+							}
+						});
+					} else {
+						Toast.makeText(LoginActivity.this, "Đăng nhập thất bại, vui lòng kiểm tra internet", Toast.LENGTH_SHORT).show();
+					}
+				});
 	}
 
 	// Open RegisterActivity
@@ -176,49 +197,45 @@ public class LoginActivity extends AppCompatActivity {
 
 	// Login
 	private void handleLogin() {
-		// Check if username and password are empty
+		// Check if email and password are empty
 		if (isValidInput()) {
 			loginFirebase();
 		}
 	}
 
 	private void loginFirebase() {
-		String usernameText = username.getText().toString();
+		String emailText = email.getText().toString();
 		String passwordText = password.getText().toString();
-
-		Query query = FirebaseUtil.getUserByUsername(usernameText);
-		query.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				if (snapshot.exists()) {
-					// Log
-					Log.i(TAG, "Login with username: " + usernameText + " and password: " + passwordText);
-					User user = new User(snapshot.getChildren().iterator().next());
-					if (passwordText.equals(user.getPassword())) {
-						finishLogin(LOGIN_SUCCESS, user);
+		mAuth.signInWithEmailAndPassword(emailText, passwordText)
+				.addOnCompleteListener(this, task -> {
+					FirebaseUser user = mAuth.getCurrentUser();
+					if (task.isSuccessful() && user != null) {
+						// Sign in success, update UI with the signed-in user's information
+						Log.d(TAG, "signInWithEmail:success");
+						Query query = FirebaseUtil.getUserByEmail(user.getEmail());
+						query.get().addOnSuccessListener(snapshot -> {
+							if (snapshot.exists()) {
+								User user1 = new User(snapshot.getChildren().iterator().next());
+								Toast.makeText(LoginActivity.this, "Welcome back, FirebaseUser: " + user1.getFullname(), Toast.LENGTH_SHORT).show();
+								finishLogin(LOGIN_SUCCESS, user1);
+							} else {
+								finishLogin(LOGIN_FAIL, null);
+							}
+						}).addOnFailureListener(e -> {
+							Log.e(TAG, "loginFirebase: " + e.getMessage());
+							finishLogin(LOGIN_FAIL, null);
+						});
 					} else {
-						password.setError("Wrong password");
-						password.requestFocus();
-						Toast.makeText(LoginActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
+						Toast.makeText(LoginActivity.this, "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin đăng nhập", Toast.LENGTH_SHORT).show();
+						password.setError("Vui lòng kiểm tra lại mật khẩu");
 					}
-				} else {
-					username.setError("User not found");
-					username.requestFocus();
-					Toast.makeText(LoginActivity.this, "User not found", Toast.LENGTH_SHORT).show();
-				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-				Log.e(TAG, error.getMessage());
-			}
-		});
+				});
 	}
 
 	private boolean isValidInput() {
-		if (username.getText().toString().isEmpty()) {
-			username.setError("Username is required");
-			username.requestFocus();
+		if (email.getText().toString().isEmpty()) {
+			email.setError("Username is required");
+			email.requestFocus();
 			return false;
 		} else if (password.getText().toString().isEmpty()) {
 			password.setError("Password is required");

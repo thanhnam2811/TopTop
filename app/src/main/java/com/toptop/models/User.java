@@ -15,45 +15,49 @@ public class User implements Serializable {
 	// Tag
 	public static final String TAG = "User";
 
-	private String username, password, fullname, phoneNumber, email, avatar;
+	private String username, fullname, phoneNumber, email, avatar, uid;
 	private Long numFollowers, numFollowing, numLikes;
 	private HashMap<String, Boolean> followings, followers;
 
-	public User() {
-
-	}
-
-	public User(String username, String password, String fullname,
-	            String phoneNumber, String email) {
+	// For Firebase
+	public User(String username, String fullname, String email, String avatar, String uid) {
 		this.username = username;
-		this.password = password;
 		this.fullname = fullname;
-		this.phoneNumber = phoneNumber;
 		this.email = email;
+		this.avatar = avatar;
+		this.uid = uid;
+
+		this.phoneNumber = "";
+		this.numFollowers = 0L;
+		this.numFollowing = 0L;
+		this.numLikes = 0L;
+		this.followings = new HashMap<>();
+		this.followers = new HashMap<>();
 	}
 
-	public User(String username, String password, String fullname,
-	            String phoneNumber, String email, String avatar,
-	            Long numFollowers, Long numFollowing, Long numLikes) {
+	public User(String username, String fullname, String phoneNumber, String email, String avatar, String uid, Long numFollowers, Long numFollowing, Long numLikes, HashMap<String, Boolean> followings, HashMap<String, Boolean> followers) {
 		this.username = username;
-		this.password = password;
 		this.fullname = fullname;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
 		this.avatar = avatar;
+		this.uid = uid;
 		this.numFollowers = numFollowers;
 		this.numFollowing = numFollowing;
 		this.numLikes = numLikes;
-		this.followings = new HashMap<>();
-		this.followers = new HashMap<>();
+		this.followings = followings;
+		this.followers = followers;
+	}
+
+	public User() {
 	}
 
 	@SuppressWarnings("unchecked")
 	public User(DataSnapshot dataSnapshot) {
 		HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.getValue();
 		if (data != null) {
+			this.uid = dataSnapshot.getKey();
 			this.username = (String) data.get("username");
-			this.password = (String) data.get("password");
 			this.fullname = (String) data.get("fullname");
 			this.phoneNumber = (String) data.get("phoneNumber");
 			this.email = (String) data.get("email");
@@ -204,8 +208,8 @@ public class User implements Serializable {
 	@Override
 	public String toString() {
 		return "User {" +
+				"uid='" + uid + '\'' +
 				"username='" + username + '\'' +
-				", password='" + password + '\'' +
 				", fullname='" + fullname + '\'' +
 				", phoneNumber='" + phoneNumber + '\'' +
 				", email='" + email + '\'' +
@@ -216,14 +220,6 @@ public class User implements Serializable {
 				", followings=" + followings +
 				", followers=" + followers +
 				'}';
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		if (this.password == null) this.password = password;
 	}
 
 	@Exclude
@@ -266,7 +262,7 @@ public class User implements Serializable {
 	}
 
 	public boolean hasChangedInfo(User user) {
-		if(user.getAvatar() !=null)
+		if (user.getAvatar() != null)
 			return !user.getAvatar().equals(avatar);
 		return !fullname.equals(user.fullname) ||
 				!phoneNumber.equals(user.phoneNumber) ||
@@ -283,5 +279,13 @@ public class User implements Serializable {
 			return username.equals(user.username);
 		}
 		return false;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 }

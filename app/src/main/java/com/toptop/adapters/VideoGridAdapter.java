@@ -62,7 +62,8 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 		holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
 		holder.txt_num_views.setText(String.valueOf(video.getNumViews()));
 		if (context != null)
-			Glide.with(context).load(video.getPreview()).into(holder.img_preview);
+			Glide.with(context).load(video.getPreview())
+					.into(holder.img_preview);
 
 		holder.img_preview.setOnClickListener(v -> handleImageClick(video));
 	}

@@ -45,8 +45,14 @@ public class EditProfileActivity extends AppCompatActivity {
 		// Set onclick listener
 		icBack.setOnClickListener(v -> finish());
 		txtSave.setOnClickListener(v -> handleSave(user));
+		txtChangePassword.setOnClickListener(v -> handleChangePassword());
 
 		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, this);
+	}
+
+	private void handleChangePassword() {
+		Intent intent = new Intent(this, ChangePasswordActivity.class);
+		startActivity(intent);
 	}
 
 	private void handleSave(User user) {

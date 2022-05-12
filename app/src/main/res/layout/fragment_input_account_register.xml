@@ -7,12 +7,12 @@
     tools:context=".fragment.InputAccountRegister">
 
     <EditText
-        android:id="@+id/txt_username"
+        android:id="@+id/txt_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:autofillHints="username"
-        android:hint="Username"
-        android:inputType="text"
+        android:autofillHints="email"
+        android:hint="Emai"
+        android:inputType="textEmailAddress"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,12 +24,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Password"
+        android:hint="Mật khẩu"
         android:inputType="textPassword"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_username" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_email" />
 
     <EditText
         android:autofillHints="password"
@@ -37,7 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Confirm Password"
+        android:hint="Xác nhận mật khẩu"
         android:inputType="textPassword"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,8 +51,8 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/button_background"
         android:drawableEnd="@drawable/ic_login"
-        android:paddingStart="20sp"
-        android:paddingEnd="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="Đăng ký"
         android:textColor="@color/main_color"
         android:textStyle="bold"
@@ -66,8 +66,8 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/button_background"
         android:drawableStart="@drawable/ic_arow_back"
-        android:paddingStart="8dp"
-        android:paddingEnd="20sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="Trở lại"
         android:textColor="@color/main_color"
         android:textStyle="bold"

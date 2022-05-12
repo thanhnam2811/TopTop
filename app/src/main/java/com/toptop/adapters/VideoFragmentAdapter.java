@@ -327,7 +327,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 
 		public VideoViewHolder(@NonNull View itemView) {
 			super(itemView);
-			txt_username = itemView.findViewById(R.id.txt_username);
+			txt_username = itemView.findViewById(R.id.txt_email);
 			txt_content = itemView.findViewById(R.id.txt_content);
 			txt_num_likes = itemView.findViewById(R.id.txt_num_likes);
 			txt_num_comments = itemView.findViewById(R.id.txt_num_comments);

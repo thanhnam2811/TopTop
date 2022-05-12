@@ -15,7 +15,7 @@ import com.toptop.RegisterActivity;
 
 public class InputInfoRegister extends Fragment {
 	public final static String TAG = "InputInfoRegister";
-	EditText mEditTextName, mEditTextEmail, mEditTextPhone;
+	EditText mEditTextName, mEditTextPhone;
 
 	public InputInfoRegister() {
 		// Required empty public constructor
@@ -35,15 +35,13 @@ public class InputInfoRegister extends Fragment {
 		// Binding
 		Button btnContinue = view.findViewById(R.id.btn_continue_register);
 		mEditTextName = view.findViewById(R.id.txt_fullname);
-		mEditTextEmail = view.findViewById(R.id.txt_email);
 		mEditTextPhone = view.findViewById(R.id.txt_phone_number);
 
 		btnContinue.setOnClickListener(v -> {
 			String name = mEditTextName.getText().toString();
-			String email = mEditTextEmail.getText().toString();
 			String phonenumber = mEditTextPhone.getText().toString();
-			if (isValidInputData(name, email, phonenumber)) {
-				setData(name, email, phonenumber);
+			if (isValidInputData(name, phonenumber)) {
+				setData(name, phonenumber);
 				openInputAccountRegister();
 			}
 		});
@@ -60,7 +58,7 @@ public class InputInfoRegister extends Fragment {
 	}
 
 	// Check input data
-	public boolean isValidInputData(String name, String email, String phonenumber) {
+	public boolean isValidInputData(String name, String phonenumber) {
 		if (name.isEmpty()) {
 			mEditTextName.setError("Please enter your name");
 			return false;
@@ -73,14 +71,6 @@ public class InputInfoRegister extends Fragment {
 			mEditTextPhone.setError("Please enter a valid phone number");
 			return false;
 		}
-		if (email.isEmpty()) {
-			mEditTextEmail.setError("Please enter your email");
-			return false;
-		}
-		if (!email.contains("@")) {
-			mEditTextEmail.setError("Please enter a valid email");
-			return false;
-		}
 		return true;
 	}
 
@@ -90,10 +80,9 @@ public class InputInfoRegister extends Fragment {
 	}
 
 	// set data for new user in registerActivity
-	public void setData(String name, String email, String phonenumber) {
+	public void setData(String name, String phonenumber) {
 		RegisterActivity registerActivity = (RegisterActivity) requireActivity();
 		registerActivity.newUser.setFullname(name);
-		registerActivity.newUser.setEmail(email);
 		registerActivity.newUser.setPhoneNumber(phonenumber);
 	}
 

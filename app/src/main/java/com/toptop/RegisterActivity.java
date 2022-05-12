@@ -3,12 +3,16 @@ package com.toptop;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.toptop.fragment.InputAccountRegister;
 import com.toptop.fragment.InputInfoRegister;
 import com.toptop.models.User;
@@ -66,17 +70,41 @@ public class RegisterActivity extends AppCompatActivity {
 	}
 
 	// Finish activity
-	public void finishRegister(boolean isSuccess) {
-		User user = newUser;
+	public void finishRegister(boolean isSuccess, String email, String password) {
+		FirebaseAuth auth = FirebaseAuth.getInstance();
 		Intent intent = new Intent(this, MainActivity.class);
+		Log.i(TAG, "finishRegister: email: " + email + " password: " + password);
 		if (isSuccess) {
-			// Create new user
-			UserFirebase.addUser(user);
-			intent.putExtra(USER, user);
-			setResult(RESULT_OK, intent);
+			auth.createUserWithEmailAndPassword(email, password)
+					.addOnCompleteListener(this, task -> {
+						if (task.isSuccessful()) {
+							// Sign in success, update UI with the signed-in user's information
+							Log.i(TAG, "createUserWithEmail:success");
+							FirebaseUser user = auth.getCurrentUser();
+							if (user != null) {
+								// Create new user
+								newUser.setUid(user.getUid());
+								newUser.setUsername("FirebaseUser-" + user.getUid());
+								newUser.setEmail(user.getEmail());
+								if (user.getPhotoUrl() != null) {
+									newUser.setAvatar(user.getPhotoUrl().toString());
+								}
+								UserFirebase.addUser(newUser);
+								intent.putExtra(USER, newUser);
+								setResult(RESULT_OK, intent);
+								finish();
+							}
+						} else {
+							// If sign in fails, display a message to the user.
+							Log.w(TAG, "createUserWithEmail:failure", task.getException());
+							Toast.makeText(RegisterActivity.this, "Authentication failed.",
+									Toast.LENGTH_SHORT).show();
+						}
+						// ...
+					});
 		} else {
 			setResult(RESULT_CANCELED, intent);
+			finish();
 		}
-		finish();
 	}
 }

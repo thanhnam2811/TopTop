@@ -198,7 +198,7 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 
 		public ViewHolder(View itemView) {
 			super(itemView);
-			txt_username = itemView.findViewById(R.id.txt_username);
+			txt_username = itemView.findViewById(R.id.txt_email);
 			txt_content = itemView.findViewById(R.id.txt_content);
 			img_avatar = itemView.findViewById(R.id.img_avatar);
 			txt_time_comment = itemView.findViewById(R.id.txt_time_comment);

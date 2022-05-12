@@ -7,7 +7,7 @@
     tools:context=".LoginActivity">
 
     <EditText
-        android:id="@+id/txtUsername"
+        android:id="@+id/txtEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -15,7 +15,7 @@
         android:layout_marginEnd="32dp"
         android:autofillHints="username"
         android:fontFamily="@font/varela_round"
-        android:hint="Username"
+        android:hint="Email"
         android:inputType="text"
         android:minHeight="48dp"
         android:textSize="16sp"
@@ -33,15 +33,16 @@
         android:layout_marginEnd="32dp"
         android:autofillHints="password"
         android:fontFamily="@font/varela_round"
-        android:hint="Password"
+        android:hint="Mật khẩu"
         android:inputType="textPassword"
         android:minHeight="48dp"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtUsername" />
+        app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:gravity="center"
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,8 +51,8 @@
         android:drawableEnd="@drawable/ic_login"
         android:fontFamily="@font/varela_round"
         android:paddingStart="16dp"
-        android:paddingEnd="8dp"
-        android:text="Login"
+        android:paddingEnd="16dp"
+        android:text="Đăng nhập"
         android:textColor="@color/main_color"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -77,7 +78,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="Login"
+        android:layout_marginBottom="-24dp"
+        android:text="Đăng nhập"
         android:textColor="@color/black"
         android:textSize="48sp"
         android:textStyle="bold"
@@ -99,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/varela_round"
-            android:text="Don't have an account?"
+            android:text="Chưa có tài khoản?"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/txtRegister" />
@@ -110,7 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/varela_round"
-            android:text="Register now!"
+            android:text="Đăng ký ngay!"
             android:textColor="@color/secondary_color"
             android:textSize="16sp"
             android:textStyle="bold"
