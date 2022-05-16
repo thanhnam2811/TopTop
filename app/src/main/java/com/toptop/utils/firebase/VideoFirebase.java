@@ -115,26 +115,34 @@ public class VideoFirebase {
 	}
 
 	public static void getPreviewVideo(MyCallback myCallback, String commentId) {
-		getDataVideoId(new MyCallback() {
-			@Override
-			public void onCallback(String value) {
-				Query myQuery = FirebaseUtil.getVideoById(value);
-				myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(DataSnapshot dataSnapshot) {
-						String value = dataSnapshot.getChildren().iterator().next().child("preview").getValue(String.class);
-						System.out.println(value);
-						myCallback.onCallback(value);
-					}
+		getDataVideoId(value -> {
+			Query myQuery = FirebaseUtil.getVideoById(value);
+			myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(DataSnapshot dataSnapshot) {
+					String value = dataSnapshot.getChildren().iterator().next().child("preview").getValue(String.class);
+					System.out.println(value);
+					myCallback.onCallback(value);
+				}
 
-					@Override
-					public void onCancelled(DatabaseError databaseError) {
-						Log.i(TAG, "onCancelled: ", databaseError.toException());
-					}
-				});
-			}
+				@Override
+				public void onCancelled(DatabaseError databaseError) {
+					Log.i(TAG, "onCancelled: ", databaseError.toException());
+				}
+			});
 		}, commentId);
 
+	}
+
+	public static void deleteCommentFromVideo(Comment comment, Video video) {
+		// Delete comment
+		video.removeComment(comment);
+
+		// Update video
+		updateVideo(video);
+
+		// Log
+		Log.i(TAG, "deleteCommentFromVideo: " + comment.getCommentId() + " deleted from " + video.getVideoId());
 	}
 
 

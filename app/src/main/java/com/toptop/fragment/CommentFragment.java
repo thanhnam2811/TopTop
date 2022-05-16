@@ -115,7 +115,7 @@ public class CommentFragment extends Fragment {
 		// Disable comment input if user is not logged in
 		if (!MainActivity.isLoggedIn()) {
 			txt_comment_input.setEnabled(false);
-			txt_comment_input.setHint("Please login to comment");
+			txt_comment_input.setHint("Chưa đăng nhập");
 		}
 
 		// Refresh image
@@ -161,7 +161,7 @@ public class CommentFragment extends Fragment {
 		CommentFirebase.addCommentToVideo(newComment, video);
 
 		// Toast message
-		Toast.makeText(context, "Comment success", Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "Bình luận thành công!", Toast.LENGTH_SHORT).show();
 
 		// Refresh comments
 		getCommentsFromFirebase();

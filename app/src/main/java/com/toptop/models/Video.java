@@ -255,4 +255,11 @@ public class Video implements Serializable {
 			numLikes--;
 		}
 	}
+
+	public void removeComment(Comment comment) {
+		if (comments != null && comments.containsKey(comment.getCommentId())) {
+			comments.remove(comment.getCommentId());
+			numComments--;
+		}
+	}
 }

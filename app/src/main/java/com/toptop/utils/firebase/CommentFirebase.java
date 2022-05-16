@@ -22,6 +22,15 @@ public class CommentFirebase {
 		VideoFirebase.addCommentToVideo(comment, video);
 	}
 
+	// Delete comment from firebase
+	public static void deleteCommentFromVideo(Comment comment, Video video) {
+		// delete comment from video
+		deleteComment(comment);
+
+		// delete comment from video
+		VideoFirebase.deleteCommentFromVideo(comment, video);
+	}
+
 
 	// Update comment to firebase
 	public static void updateComment(Comment comment) {

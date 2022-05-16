@@ -1,15 +1,19 @@
 package com.toptop.adapters;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +28,8 @@ import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.Comment;
+import com.toptop.models.Video;
+import com.toptop.utils.ItemClickListener;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
 import com.toptop.utils.firebase.FirebaseUtil;
@@ -38,6 +44,7 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 	Context context;
 	private final List<Comment> comments;
 	private List<Comment> replies = new ArrayList<>();
+	PopupMenu popupMenu;
 
 	public CommentFragmentAdapter(List<Comment> comments, Context context) {
 		mDB_comment = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
@@ -83,9 +90,71 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 		// TODO: get replies, do it if have enough time
 		// getReplies(comment, recycler_reply_comment);
 
-		holder.txt_reply_comment.setOnClickListener(view -> handleReplyComment(comment));
+		holder.setItemClickListener((view, position1, isLongClick) -> {
+			if (isLongClick) {
+				popupMenu = new PopupMenu(holder.txt_content.getContext(), view);
+				popupMenu.inflate(R.menu.popup_menu_comment);
 
-		holder.ic_like_comment.setOnClickListener(view -> handleLikeComment(comment));
+				// Check owner
+				if (!MainActivity.isLoggedIn() || !MainActivity.getCurrentUser().getUsername().equals(comment.getUsername()))
+					popupMenu.getMenu().removeItem(R.id.menu_comment_delete);
+
+				popupMenu.setOnMenuItemClickListener(item -> {
+					switch (item.getItemId()) {
+						case R.id.menu_comment_delete:
+							AlertDialog.Builder builder = new AlertDialog.Builder(context);
+							builder.setMessage("Bạn có chắc chắn muốn xóa bình luận này?");
+							builder
+									.setPositiveButton("Xóa", (dialog, which) -> {
+										Query query = FirebaseUtil.getVideoById(comment.getVideoId());
+										query.get().addOnCompleteListener(task -> {
+											if (task.isSuccessful() && task.getResult().exists()) {
+												DataSnapshot dataSnapshot = task.getResult();
+												Video video = new Video(dataSnapshot.getChildren().iterator().next());
+												CommentFirebase.deleteCommentFromVideo(comment, video);
+												comments.remove(comment);
+												notifyItemRemoved(position);
+												Toast.makeText(context, "Xóa bình luận thành công", Toast.LENGTH_SHORT).show();
+											} else {
+												Toast.makeText(context, "Xoá bình luận thất bại", Toast.LENGTH_SHORT).show();
+												Log.e(TAG, "Error when get video", task.getException());
+											}
+										});
+									})
+									.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+							builder.show();
+							break;
+
+						case R.id.menu_comment_reply:
+							Toast.makeText(context, "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show();
+							break;
+
+						case R.id.menu_comment_copy:
+							ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+							ClipData clip = ClipData.newPlainText("content", comment.getContent());
+							clipboard.setPrimaryClip(clip);
+							Toast.makeText(context, "Đã copy!", Toast.LENGTH_SHORT).show();
+							break;
+
+						case R.id.menu_comment_report:
+							Toast.makeText(context, "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show();
+							break;
+					}
+					return true;
+				});
+
+				popupMenu.show();
+			}
+		});
+
+		holder.txt_reply_comment.setOnClickListener(view ->
+						Toast.makeText(context, "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show()
+//				handleReplyComment(comment)
+		);
+
+		holder.ic_like_comment.setOnClickListener(view ->
+
+				handleLikeComment(comment));
 
 		if (comment.isLiked()) {
 			holder.ic_like_comment.setImageResource(R.drawable.ic_liked);
@@ -116,6 +185,7 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 		title.setText(HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_LEGACY));
 		ConstraintLayout layout_reply_comment_title = ((MainActivity) context).findViewById(R.id.layout_reply_comment_title);
 		layout_reply_comment_title.setVisibility(View.VISIBLE);
+
 	}
 
 	private void getReplies(Comment comment, RecyclerView recycler_reply_comment) {
@@ -191,10 +261,11 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 		return comments.indexOf(comment);
 	}
 
-	public static class ViewHolder extends RecyclerView.ViewHolder {
+	public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 		TextView txt_username, txt_content, txt_time_comment, txt_reply_comment, txt_num_likes_comment;
 		ImageView img_avatar, ic_like_comment;
 		RecyclerView recycler_reply_comment;
+		private ItemClickListener itemClickListener;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
@@ -206,6 +277,25 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 			txt_reply_comment = itemView.findViewById(R.id.txt_reply_comment);
 			ic_like_comment = itemView.findViewById(R.id.ic_like_comment);
 			txt_num_likes_comment = itemView.findViewById(R.id.txt_num_likes_comment);
+
+			itemView.setOnClickListener(this); // Mấu chốt ở đây , set sự kiên onClick cho View
+			itemView.setOnLongClickListener(this); // Mấu chốt ở đây , set sự kiên onLongClick cho View
+		}
+
+		//Tạo setter cho biến itemClickListenenr
+		public void setItemClickListener(ItemClickListener itemClickListener) {
+			this.itemClickListener = itemClickListener;
+		}
+
+		@Override
+		public void onClick(View view) {
+			itemClickListener.onClick(view, getAdapterPosition(), false);
+		}
+
+		@Override
+		public boolean onLongClick(View view) {
+			itemClickListener.onClick(view, getAdapterPosition(), true);
+			return true;
 		}
 	}
 }

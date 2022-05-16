@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_comment_reply"
+        android:title="Trả lời" />
+    <item
+        android:id="@+id/menu_comment_report"
+        android:title="Báo cáo" />
+    <item
+        android:id="@+id/menu_comment_delete"
+        android:title="Xóa" />
+    <item
+        android:id="@id/menu_comment_copy"
+        android:title="Sao chép" />
+</menu>
