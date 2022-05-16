@@ -7,14 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.toptop.R;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
+import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.List;
 
@@ -41,6 +44,8 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 		Video video = videos.get(position);
 
 		updateView(holder, video);
+
+		holder.txt_delete_video.setOnClickListener(v -> handleDeleteVideo(video, position));
 	}
 
 	@Override
@@ -71,6 +76,20 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 		holder.img_preview.setOnClickListener(v -> handleImageClick(video));
 	}
 
+	private void handleDeleteVideo(Video video, int position) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle("Xóa video")
+				.setMessage("Bạn có chắc chắn muốn xóa video này?")
+				.setPositiveButton("Có", (dialog, which) -> {
+					VideoFirebase.deleteVideo(video);
+					Toast.makeText(context, "Xóa video thành công", Toast.LENGTH_SHORT).show();
+					videos.remove(position);
+					notifyItemRemoved(position);
+				})
+				.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss())
+				.show();
+	}
+
 	private void handleImageClick(Video video) {
 		MyUtil.goToVideo((Activity) context, video);
 	}
@@ -97,7 +116,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 	}
 
 	static class ViewHolder extends RecyclerView.ViewHolder {
-		TextView txt_num_likes, txt_num_views;
+		TextView txt_num_likes, txt_num_views, txt_delete_video;
 		ImageView img_preview;
 
 		public ViewHolder(@NonNull View itemView) {
@@ -105,6 +124,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 			txt_num_likes = itemView.findViewById(R.id.txt_num_likes);
 			txt_num_views = itemView.findViewById(R.id.txt_num_views);
 			img_preview = itemView.findViewById(R.id.img_preview);
+			txt_delete_video = itemView.findViewById(R.id.txt_delete_video);
 		}
 	}
 }
