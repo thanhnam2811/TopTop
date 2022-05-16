@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.R;
 import com.toptop.adapters.VideoFragmentAdapter;
+import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
@@ -129,6 +130,13 @@ public class VideoFragment extends Fragment {
 	}
 
 	public void updateUI() {
+		if (recyclerView.getAdapter() != null) {
+			videos = ((VideoFragmentAdapter) recyclerView.getAdapter()).getVideos();
+			recyclerView.getAdapter().notifyItemRangeChanged(0, videos.size());
+		}
+	}
+
+	public void updateUI(User user) {
 		if (recyclerView.getAdapter() != null) {
 			videos = ((VideoFragmentAdapter) recyclerView.getAdapter()).getVideos();
 			recyclerView.getAdapter().notifyItemRangeChanged(0, videos.size());

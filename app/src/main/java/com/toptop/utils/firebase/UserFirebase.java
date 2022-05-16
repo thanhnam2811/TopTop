@@ -147,6 +147,4 @@ public class UserFirebase {
 	public interface MyCallback {
 		void onCallback(String value);
 	}
-
-
 }

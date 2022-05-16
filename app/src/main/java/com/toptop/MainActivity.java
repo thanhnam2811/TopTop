@@ -41,8 +41,10 @@ public class MainActivity extends FragmentActivity {
 	public static final String EXTRA_REGISTER = "register";
 	public static final String EXTRA_LOGIN = "login";
 	private static final String TAG = "MainActivity", NAV_TAG = "Navigation";
-	private static final int LOGIN_REQUEST_CODE = 1;
-	private static final int REGISTER_REQUEST_CODE = 2;
+	public static final int LOGIN_REQUEST_CODE = 1;
+	public static final int REGISTER_REQUEST_CODE = 2;
+	public static final int REQUEST_CHANGE_AVATAR = 3;
+	public static final int REQUEST_ADD_VIDEO = 4;
 	private static User currentUser;
 
 	@SuppressLint("StaticFieldLeak")
@@ -54,7 +56,6 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void setCurrentUser(User user) {
-		changeNavItem(0);
 		if (user != null) {
 			// Log
 			Log.i(TAG, "setCurrentUser: " + user.getUsername());
@@ -80,6 +81,7 @@ public class MainActivity extends FragmentActivity {
 			}
 		} else {
 			currentUser = null;
+			updateUI();
 			mAuth.signOut();
 			// Log
 			Log.i(TAG, "setCurrentUser: logged out");
@@ -94,6 +96,14 @@ public class MainActivity extends FragmentActivity {
 		ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG);
 		if (profileFragment != null) {
 			profileFragment.updateUI();
+		}
+		VideoFragment videoFragment = (VideoFragment) getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG);
+		if (videoFragment != null) {
+			videoFragment.updateUI();
+		}
+		NotificationFragment notificationFragment = (NotificationFragment) getSupportFragmentManager().findFragmentByTag(NotificationFragment.TAG);
+		if (notificationFragment != null) {
+			notificationFragment.updateUI();
 		}
 	}
 
@@ -117,12 +127,12 @@ public class MainActivity extends FragmentActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == LOGIN_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
 				if (data != null) {
 					User user = (User) data.getSerializableExtra(LoginActivity.USER);
 					setCurrentUser(user);
+					changeNavItem(0);
 					Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 				}
 			} else {
@@ -136,6 +146,7 @@ public class MainActivity extends FragmentActivity {
 			if (resultCode == RESULT_OK) {
 				User user = (User) data.getSerializableExtra(RegisterActivity.USER);
 				setCurrentUser(user);
+				changeNavItem(0);
 				Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
 			} else {
 				if (data != null && data.getBooleanExtra(EXTRA_LOGIN, false)) {
@@ -144,6 +155,11 @@ public class MainActivity extends FragmentActivity {
 					Toast.makeText(this, "Đăng ký thất bại!", Toast.LENGTH_SHORT).show();
 				}
 			}
+		} else if (requestCode == REQUEST_CHANGE_AVATAR || requestCode == REQUEST_ADD_VIDEO) {
+			// Don't do anything
+		}
+		else {
+			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
 
@@ -164,49 +180,51 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	private void init() {
-		// Bind the view using the id
-		nav = findViewById(R.id.nav);
+		if (nav == null) {
+			Log.w(TAG, "init: nav is null");
+			// Bind the view using the id
+			nav = findViewById(R.id.nav);
 
-		// Set list of items
-		items = new CbnMenuItem[]{
-				new CbnMenuItem(R.drawable.ic_video, R.drawable.ic_video_avd, 0),
-				new CbnMenuItem(R.drawable.ic_search, R.drawable.ic_search_avd, 0),
-				new CbnMenuItem(R.drawable.ic_notification, R.drawable.ic_notification_avd, 0),
-				new CbnMenuItem(R.drawable.ic_profile, R.drawable.ic_profile_avd, 0)
-		};
+			// Set list of items
+			items = new CbnMenuItem[]{
+					new CbnMenuItem(R.drawable.ic_video, R.drawable.ic_video_avd, 0),
+					new CbnMenuItem(R.drawable.ic_search, R.drawable.ic_search_avd, 0),
+					new CbnMenuItem(R.drawable.ic_notification, R.drawable.ic_notification_avd, 0),
+					new CbnMenuItem(R.drawable.ic_profile, R.drawable.ic_profile_avd, 0)
+			};
 
+			// Add fragment to the container
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.fragment_container, new SearchFragment(), SearchFragment.TAG)
+					.addToBackStack(SearchFragment.TAG)
+					.add(R.id.fragment_container, new NotificationFragment(), NotificationFragment.TAG)
+					.addToBackStack(NotificationFragment.TAG)
+					.add(R.id.fragment_container, new ProfileFragment(), ProfileFragment.TAG)
+					.addToBackStack(ProfileFragment.TAG)
+					.add(R.id.fragment_container, new VideoFragment(), VideoFragment.TAG)
+					.addToBackStack(VideoFragment.TAG)
+					.commit();
 
-		// Add fragment to the container
-		getSupportFragmentManager().beginTransaction()
-				.add(R.id.fragment_container, new SearchFragment(), SearchFragment.TAG)
-				.addToBackStack(SearchFragment.TAG)
-				.add(R.id.fragment_container, new NotificationFragment(), NotificationFragment.TAG)
-				.addToBackStack(NotificationFragment.TAG)
-				.add(R.id.fragment_container, new ProfileFragment(), ProfileFragment.TAG)
-				.addToBackStack(ProfileFragment.TAG)
-				.add(R.id.fragment_container, new VideoFragment(), VideoFragment.TAG)
-				.addToBackStack(VideoFragment.TAG)
-				.commit();
+			// Execute transaction
+			getSupportFragmentManager().executePendingTransactions();
 
-		// Execute transaction
-		getSupportFragmentManager().executePendingTransactions();
+			// Set the items
+			nav.setMenuItems(items, 0);
 
-		// Set the items
-		nav.setMenuItems(items, 0);
+			// Set the listener
+			nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> handleMenuItemClick(cbnMenuItem));
 
-		// Set the listener
-		nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> handleMenuItemClick(cbnMenuItem));
+			// Set the default fragment
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.fragment_container,
+							Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
+					.commit();
 
-		// Set the default fragment
-		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.fragment_container,
-						Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
-				.commit();
+			// Set navigation bar color
+			getWindow().setNavigationBarColor(Color.WHITE);
 
-		// Set navigation bar color
-		getWindow().setNavigationBarColor(Color.WHITE);
-
-		getPermission();
+			getPermission();
+		}
 	}
 
 	private Unit handleMenuItemClick(CbnMenuItem cbnMenuItem) {
@@ -291,5 +309,6 @@ public class MainActivity extends FragmentActivity {
 
 	public void logOut() {
 		setCurrentUser(null);
+		changeNavItem(0);
 	}
 }

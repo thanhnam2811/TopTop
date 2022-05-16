@@ -29,7 +29,7 @@ public class VideoFirebase {
 	// Update video to firebase
 	public static void updateVideo(Video video) {
 		videoRef.child(video.getVideoId()).setValue(video);
-		Log.e(TAG, "updateVideo: " + video.getVideoId() + " updated to firebase");
+		Log.i(TAG, "updateVideo: " + video.getVideoId() + " updated to firebase");
 	}
 
 	// Delete video to firebase
@@ -86,7 +86,7 @@ public class VideoFirebase {
 
 			@Override
 			public void onCancelled(DatabaseError databaseError) {
-				Log.e(TAG, "onCancelled: ", databaseError.toException());
+				Log.i(TAG, "onCancelled: ", databaseError.toException());
 			}
 		});
 	}
@@ -107,7 +107,7 @@ public class VideoFirebase {
 
 					@Override
 					public void onCancelled(@NonNull DatabaseError error) {
-						Log.e(TAG, "onCancelled: ", error.toException());
+						Log.i(TAG, "onCancelled: ", error.toException());
 					}
 				});
 			}
@@ -129,7 +129,7 @@ public class VideoFirebase {
 
 					@Override
 					public void onCancelled(DatabaseError databaseError) {
-						Log.e(TAG, "onCancelled: ", databaseError.toException());
+						Log.i(TAG, "onCancelled: ", databaseError.toException());
 					}
 				});
 			}
