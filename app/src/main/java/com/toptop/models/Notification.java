@@ -9,8 +9,9 @@ import java.util.List;
 
 public class Notification {
     public static final String TYPE_FOLLOW = "follow";
-    //notification_id,avatar, username, content, time_notification, image_notification
-    private String notificationId, username, content, type, time, redirectTo;
+    public static final String TYPE_COMMENT = "comment";
+    public static final String TYPE_LIKE = "like";
+    private String notificationId, username, content, type, time = MyUtil.getCurrentTime(), redirectTo;
     private Boolean seen = false;
 
     public Notification() {
@@ -103,6 +104,24 @@ public class Notification {
             }
             return 0;
         });
+    }
+
+    //set seen to true
+    public static void setSeen(List<Notification> notifications) {
+        for (Notification notification : notifications) {
+            notification.setSeen(true);
+        }
+    }
+
+    //counnt notifications not seen
+    public static int countNotSeen(List<Notification> notifications) {
+        int count = 0;
+        for (Notification notification : notifications) {
+            if (!notification.getSeen()) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override

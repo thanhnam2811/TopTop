@@ -105,7 +105,7 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 				Notification notification = new Notification();
 				notification.setUsername(user.getUsername());
 				notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã theo dõi bạn");
-				notification.setType("follow");
+				notification.setType(Notification.TYPE_FOLLOW);
 				notification.setTime(MyUtil.getCurrentTime());
 				notification.setRedirectTo(MainActivity.getCurrentUser().getUsername());
 				NotificationFirebase.addNotification(notification);

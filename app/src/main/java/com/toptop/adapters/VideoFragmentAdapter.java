@@ -24,11 +24,13 @@ import com.google.firebase.database.Query;
 import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.fragment.CommentFragment;
+import com.toptop.models.Notification;
 import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.RecyclerViewDisabler;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
@@ -149,6 +151,14 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			holder.img_like.setImageResource(R.drawable.ic_like);
 		} else {
 			holder.img_like.setImageResource(R.drawable.ic_liked);
+			//Add notification like video
+			Notification notification = new Notification();
+			notification.setUsername(video.getUsername());
+			notification.setType(Notification.TYPE_LIKE);
+			notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã thích video của bạn");
+			notification.setTime(MyUtil.getCurrentTime());
+			notification.setRedirectTo(video.getVideoId());
+			NotificationFirebase.addNotification(notification);
 		}
 
 		// Load avatar
@@ -175,6 +185,14 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			} else {
 				UserFirebase.followUser(video.getUsername());
 				img_follow.setImageResource(R.drawable.ic_following);
+				//Add notification for user
+				Notification notification = new Notification();
+				notification.setUsername(video.getUsername());
+				notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã theo dõi bạn");
+				notification.setType(Notification.TYPE_FOLLOW);
+				notification.setTime(MyUtil.getCurrentTime());
+				notification.setRedirectTo(user.getUsername());
+				NotificationFirebase.addNotification(notification);
 			}
 		}
 	}
