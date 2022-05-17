@@ -113,6 +113,23 @@ public class VideoFirebase {
 			}
 		}, commentId);
 	}
+	// get Video From VideoId
+	public static void getVideoFromVideoId(VideoCallback videoCallback, String videoId) {
+		Query myQuery = FirebaseUtil.getVideoById(videoId);
+		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				Video video = dataSnapshot.getChildren().iterator().next().getValue(Video.class);
+				System.out.println(video);
+				videoCallback.onCallback(video);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				Log.i(TAG, "onCancelled: ", error.toException());
+			}
+		});
+	}
 
 	public static void getPreviewVideo(MyCallback myCallback, String commentId) {
 		getDataVideoId(value -> {

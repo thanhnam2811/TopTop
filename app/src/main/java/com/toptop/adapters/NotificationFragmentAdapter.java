@@ -149,15 +149,29 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                 @Override
                 public void onClick(View v) {
                     Log.d(TAG, "onClick: " + notification.getRedirectTo());
-                    VideoFirebase.getVideoFromCommentId(new VideoFirebase.VideoCallback() {
-                        @Override
-                        public void onCallback(Video value) {
-                            if (value != null) {
-                                Log.d(TAG, "onCallback Video: " + value);
-                                MyUtil.goToVideo((Activity) context, value);
+                    if(notification.getType().equals(Notification.TYPE_COMMENT)) {
+                        VideoFirebase.getVideoFromCommentId(new VideoFirebase.VideoCallback() {
+                            @Override
+                            public void onCallback(Video value) {
+                                if (value != null) {
+                                    Log.d(TAG, "onCallback Video: " + value);
+                                    MyUtil.goToVideo((Activity) context, value);
+                                    //go to comment in video
+
+                                }
                             }
-                        }
-                    }, notification.getRedirectTo());
+                        }, notification.getRedirectTo());
+                    }else{
+                        VideoFirebase.getVideoFromVideoId(new VideoFirebase.VideoCallback() {
+                            @Override
+                            public void onCallback(Video value) {
+                                if (value != null) {
+                                    Log.d(TAG, "onCallback Video: " + value);
+                                    MyUtil.goToVideo((Activity) context, value);
+                                }
+                            }
+                        }, notification.getRedirectTo());
+                    }
                 }
             });
 
