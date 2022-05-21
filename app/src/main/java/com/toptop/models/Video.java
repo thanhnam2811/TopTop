@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Exclude;
 import com.toptop.MainActivity;
+import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ public class Video implements Serializable {
 
 	private String videoId, preview, username, content, linkVideo;
 	private Long numLikes, numComments, numViews;
-	private String dateUploaded;
+	private String dateUploaded = MyUtil.getCurrentTime();
 	private HashMap<String, Boolean> likes;
 	private HashMap<String, Boolean> comments;
 

@@ -14,12 +14,13 @@ public class CommentFirebase {
 	public static final DatabaseReference commentRef = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
 
 	// Add comment to firebase
-	public static void addCommentToVideo(Comment comment, Video video) {
+	public static String addCommentToVideo(Comment comment, Video video) {
 		// add comment to video
-		addComment(comment);
+		String commentId =  addComment(comment);
 
 		// add comment to video
 		VideoFirebase.addCommentToVideo(comment, video);
+		return commentId;
 	}
 
 	// Delete comment from firebase
@@ -45,11 +46,13 @@ public class CommentFirebase {
 	}
 
 	// Add comment to firebase
-	public static void addComment(Comment comment) {
+	public static String addComment(Comment comment) {
+		String commentId = commentRef.push().getKey();
 		if (comment.getCommentId() == null)
-			comment.setCommentId(commentRef.push().getKey());
+			comment.setCommentId(commentId);
 		commentRef.child(comment.getCommentId()).setValue(comment);
 		Log.i(TAG, "addComment: " + comment.getCommentId() + " added to firebase");
+		return commentId;
 	}
 
 	public static void unlikeComment(Comment comment) {

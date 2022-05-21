@@ -76,6 +76,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.0'
 
     // Load Image from URL
-    implementation 'com.github.bumptech.glide:glide:4.13.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+
+    //Add notification
+    implementation "androidx.core:core:1.6.0"
+
 }

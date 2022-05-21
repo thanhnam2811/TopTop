@@ -21,10 +21,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.adapters.VideoGridAdapter;
+import com.toptop.models.Notification;
 import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.UserFirebase;
 
 import java.util.ArrayList;
@@ -72,6 +74,14 @@ public class WatchProfileActivity extends AppCompatActivity {
 				UserFirebase.unfollowUser(user.getUsername());
 			} else {
 				UserFirebase.followUser(user.getUsername());
+				//Add notification for user
+				Notification notification = new Notification();
+				notification.setUsername(user.getUsername());
+				notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã theo dõi bạn");
+				notification.setType(Notification.TYPE_FOLLOW);
+				notification.setTime(MyUtil.getCurrentTime());
+				notification.setRedirectTo(MainActivity.getCurrentUser().getUsername());
+				NotificationFirebase.addNotification(notification);
 			}
 		});
 

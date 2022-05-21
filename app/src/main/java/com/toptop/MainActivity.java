@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ public class MainActivity extends FragmentActivity {
 	@SuppressLint("StaticFieldLeak")
 	CurvedBottomNavigationView nav;
 	CbnMenuItem[] items;
+
 
 	public static User getCurrentUser() {
 		return currentUser;
@@ -189,6 +191,8 @@ public class MainActivity extends FragmentActivity {
 			items = new CbnMenuItem[]{
 					new CbnMenuItem(R.drawable.ic_video, R.drawable.ic_video_avd, 0),
 					new CbnMenuItem(R.drawable.ic_search, R.drawable.ic_search_avd, 0),
+//					add label to show the number of notifications
+
 					new CbnMenuItem(R.drawable.ic_notification, R.drawable.ic_notification_avd, 0),
 					new CbnMenuItem(R.drawable.ic_profile, R.drawable.ic_profile_avd, 0)
 			};

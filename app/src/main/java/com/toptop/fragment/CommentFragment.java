@@ -29,11 +29,13 @@ import com.toptop.WatchVideoActivity;
 import com.toptop.adapters.CommentFragmentAdapter;
 import com.toptop.adapters.VideoFragmentAdapter;
 import com.toptop.models.Comment;
+import com.toptop.models.Notification;
 import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.NotificationFirebase;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -158,7 +160,17 @@ public class CommentFragment extends Fragment {
 		newComment.setVideoId(video.getVideoId());
 
 		// Add comment to firebase
-		CommentFirebase.addCommentToVideo(newComment, video);
+		String commentID = CommentFirebase.addCommentToVideo(newComment, video);
+
+		//Add notification to video owner
+		Notification notification = new Notification();
+		notification.setUsername(video.getUsername());
+		notification.setContent(MainActivity.getCurrentUser().getUsername() + " bình luận video của bạn");
+		notification.setType(Notification.TYPE_COMMENT);
+		notification.setTime(MyUtil.getCurrentTime());
+		notification.setRedirectTo(commentID);
+		NotificationFirebase.addNotification(notification);
+
 
 		// Toast message
 		Toast.makeText(context, "Bình luận thành công!", Toast.LENGTH_SHORT).show();
