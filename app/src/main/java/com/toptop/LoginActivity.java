@@ -137,18 +137,29 @@ public class LoginActivity extends AppCompatActivity {
 	private void handleForgotPassword() {
 		String emailText = email.getText().toString();
 		if (emailText.isEmpty()) {
-			email.setError("Vui lòng nhập email trước khi tiếp tục");
+			email.setError("Vui lòng nhập email hoặc username!");
+		} else if (emailText.contains("@")) {
+			sendEmailResetPassword(emailText);
 		} else {
-			mAuth.sendPasswordResetEmail(emailText)
-					.addOnCompleteListener(task -> {
-						if (task.isSuccessful()) {
-							Toast.makeText(LoginActivity.this, "Email xác nhận đã được gửi đến email của bạn", Toast.LENGTH_SHORT).show();
-						} else {
-							Toast.makeText(LoginActivity.this, "Email không tồn tại", Toast.LENGTH_SHORT).show();
-						}
-					});
+			Query query = FirebaseUtil.getUserByUsername(emailText);
+			query.get().addOnSuccessListener(documentSnapshot -> {
+				if (documentSnapshot.exists()) {
+					User user = new User(documentSnapshot.getChildren().iterator().next());
+					sendEmailResetPassword(user.getEmail());
+				}
+			});
 		}
+	}
 
+	private void sendEmailResetPassword(String email) {
+		mAuth.sendPasswordResetEmail(email)
+				.addOnCompleteListener(task -> {
+					if (task.isSuccessful()) {
+						Toast.makeText(LoginActivity.this, "Email xác nhận đã được gửi đến email của bạn", Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(LoginActivity.this, "Email không tồn tại", Toast.LENGTH_SHORT).show();
+					}
+				});
 	}
 
 	@Override
@@ -190,7 +201,6 @@ public class LoginActivity extends AppCompatActivity {
 							} else {
 								// Create user
 								User user = new User();
-								user.setUid(account.getId());
 								user.setUsername("GG-" + account.getId());
 								user.setEmail(account.getEmail());
 								user.setFullname(account.getDisplayName());
@@ -220,13 +230,23 @@ public class LoginActivity extends AppCompatActivity {
 	private void handleLogin() {
 		// Check if email and password are empty
 		if (isValidInput()) {
-			loginFirebase();
+			String emailText = email.getText().toString();
+			String passwordText = password.getText().toString();
+			if (emailText.contains("@"))
+				loginFirebase(emailText, passwordText);
+			else {
+				Query query = FirebaseUtil.getUserByUsername(emailText);
+				query.get().addOnSuccessListener(dataSnapshot -> {
+					if (dataSnapshot.exists()) {
+						User user = new User(dataSnapshot.getChildren().iterator().next());
+						loginFirebase(user.getEmail(), passwordText);
+					}
+				});
+			}
 		}
 	}
 
-	private void loginFirebase() {
-		String emailText = email.getText().toString();
-		String passwordText = password.getText().toString();
+	private void loginFirebase(String emailText, String passwordText) {
 		mAuth.signInWithEmailAndPassword(emailText, passwordText)
 				.addOnCompleteListener(this, task -> {
 					FirebaseUser user = mAuth.getCurrentUser();

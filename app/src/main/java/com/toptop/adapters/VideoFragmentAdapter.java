@@ -114,10 +114,8 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 	private void handleClickAvatar(Video video) {
 		if (context instanceof MainActivity) {
 			MainActivity mainActivity = (MainActivity) context;
-			if (MainActivity.isLoggedIn()) {
-				if (MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
-					mainActivity.changeNavItem(3);
-				}
+			if (MainActivity.isLoggedIn() && MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
+				mainActivity.changeNavItem(3);
 			} else
 				mainActivity.goToProfileUser(video.getUsername());
 		}

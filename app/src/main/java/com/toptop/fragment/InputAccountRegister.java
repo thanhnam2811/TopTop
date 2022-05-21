@@ -6,15 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.toptop.R;
 import com.toptop.RegisterActivity;
 import com.toptop.utils.firebase.FirebaseUtil;
@@ -22,7 +17,7 @@ import com.toptop.utils.firebase.FirebaseUtil;
 public class InputAccountRegister extends Fragment {
 	public final static String TAG = "InputAccountRegister";
 
-	EditText mEditTextEmail, mEditTextPassword, mEditTextConfirmPassword;
+	EditText mEditTextUsername, mEditTextPassword, mEditTextConfirmPassword;
 
 	public InputAccountRegister() {
 		// Required empty public constructor
@@ -42,7 +37,7 @@ public class InputAccountRegister extends Fragment {
 		// Binding
 		Button btnBack = view.findViewById(R.id.btn_back_register);
 		Button btnRegister = view.findViewById(R.id.btn_register);
-		mEditTextEmail = view.findViewById(R.id.txt_email);
+		mEditTextUsername = view.findViewById(R.id.txt_username);
 		mEditTextPassword = view.findViewById(R.id.txt_password);
 		mEditTextConfirmPassword = view.findViewById(R.id.txt_password_confirm);
 
@@ -51,28 +46,23 @@ public class InputAccountRegister extends Fragment {
 		});
 
 		btnRegister.setOnClickListener(v -> {
-			String email = mEditTextEmail.getText().toString();
+			String username = mEditTextUsername.getText().toString();
 			String password = mEditTextPassword.getText().toString();
 			String confirmPassword = mEditTextConfirmPassword.getText().toString();
 
 			// check if email is existed
-			Query query = FirebaseUtil.getUserByEmail(email);
-			query.addListenerForSingleValueEvent(new ValueEventListener() {
-				@Override
-				public void onDataChange(@NonNull DataSnapshot snapshot) {
-					if (snapshot.exists()) {
-						mEditTextEmail.setError("Email is used by another user");
+			Query query = FirebaseUtil.getUserByUsername(username);
+			query.get().addOnCompleteListener(task -> {
+				if (task.isSuccessful()) {
+					if (task.getResult().getChildrenCount() > 0) {
+						mEditTextUsername.setError("Username đã tồn tại");
 					} else {
-						if (isValidInput(email, password, confirmPassword)) {
-							((RegisterActivity) requireActivity())
-									.finishRegister(true, email, password);
+						if (isValidInput(username, password, confirmPassword)) {
+							RegisterActivity act = (RegisterActivity) requireActivity();
+							act.newUser.setUsername(username);
+							act.finishRegister(true, act.newUser.getEmail(), password);
 						}
 					}
-				}
-
-				@Override
-				public void onCancelled(@NonNull DatabaseError error) {
-					Toast.makeText(requireContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
 				}
 			});
 		});
@@ -92,7 +82,7 @@ public class InputAccountRegister extends Fragment {
 	// is valid input data
 	private boolean isValidInput(String email, String password, String confirmPassword) {
 		if (email.isEmpty()) {
-			mEditTextEmail.setError("Email is required");
+			mEditTextUsername.setError("Vui lòng nhập tên tài khoản");
 			return false;
 		}
 		if (password.isEmpty()) {

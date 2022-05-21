@@ -1,7 +1,6 @@
 package com.toptop.fragment;
 
 import static android.app.Activity.RESULT_OK;
-
 import static com.toptop.MainActivity.REQUEST_ADD_VIDEO;
 import static com.toptop.MainActivity.REQUEST_CHANGE_AVATAR;
 
@@ -281,7 +280,7 @@ public class ProfileFragment extends Fragment {
 				progressDialog.dismiss();
 			}).addOnProgressListener(taskSnapshot -> {
 				double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-				progressDialog.setMessage("Đang đăng video... " + progress + "%");
+				progressDialog.setMessage("Đang đăng video... " + (int) progress + "%");
 			});
 		}
 	}
