@@ -7,9 +7,25 @@
     tools:context=".fragment.InputInfoRegister">
 
     <EditText
+        android:id="@+id/txt_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="email"
+        android:drawableStart="@drawable/ic_baseline_email_24"
+        android:drawablePadding="8dp"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
         android:id="@+id/txt_fullname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:autofillHints="name"
         android:drawableStart="@drawable/ic_baseline_person_24"
         android:drawablePadding="8dp"
@@ -18,16 +34,16 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_email" />
 
     <EditText
-        android:drawableStart="@drawable/ic_baseline_phone_24"
-        android:drawablePadding="8dp"
         android:id="@+id/txt_phone_number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:autofillHints="phone"
+        android:drawableStart="@drawable/ic_baseline_phone_24"
+        android:drawablePadding="8dp"
         android:hint="Số điện thoại"
         android:inputType="phone"
         android:textSize="16sp"

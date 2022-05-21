@@ -18,6 +18,8 @@ import com.toptop.fragment.InputInfoRegister;
 import com.toptop.models.User;
 import com.toptop.utils.firebase.UserFirebase;
 
+import java.util.Objects;
+
 public class RegisterActivity extends AppCompatActivity {
 	public static final String USER = "user";
 	// tag
@@ -44,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
 		getSupportFragmentManager().executePendingTransactions();
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.input_fragment, getSupportFragmentManager().findFragmentByTag(InputInfoRegister.TAG))
+				.replace(R.id.input_fragment, Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(InputInfoRegister.TAG)))
 				.commit();
 
 		TextView txt_login = findViewById(R.id.txt_login);
@@ -84,7 +86,6 @@ public class RegisterActivity extends AppCompatActivity {
 							if (user != null) {
 								// Create new user
 								newUser.setUid(user.getUid());
-								newUser.setUsername("FirebaseUser-" + user.getUid());
 								newUser.setEmail(user.getEmail());
 								if (user.getPhotoUrl() != null) {
 									newUser.setAvatar(user.getPhotoUrl().toString());

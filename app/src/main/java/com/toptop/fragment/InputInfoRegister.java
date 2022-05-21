@@ -9,13 +9,17 @@ import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.database.Query;
 import com.toptop.R;
 import com.toptop.RegisterActivity;
+import com.toptop.utils.firebase.FirebaseUtil;
+
+import java.util.Objects;
 
 
 public class InputInfoRegister extends Fragment {
 	public final static String TAG = "InputInfoRegister";
-	EditText mEditTextName, mEditTextPhone;
+	EditText mEditTextName, mEditTextPhone, mEditTextEmail;
 
 	public InputInfoRegister() {
 		// Required empty public constructor
@@ -36,39 +40,53 @@ public class InputInfoRegister extends Fragment {
 		Button btnContinue = view.findViewById(R.id.btn_continue_register);
 		mEditTextName = view.findViewById(R.id.txt_fullname);
 		mEditTextPhone = view.findViewById(R.id.txt_phone_number);
+		mEditTextEmail = view.findViewById(R.id.txt_email);
 
-		btnContinue.setOnClickListener(v -> {
-			String name = mEditTextName.getText().toString();
-			String phonenumber = mEditTextPhone.getText().toString();
-			if (isValidInputData(name, phonenumber)) {
-				setData(name, phonenumber);
-				openInputAccountRegister();
-			}
-		});
+		btnContinue.setOnClickListener(v -> handleContinueButton());
 
 		return view;
+	}
+
+	private void handleContinueButton() {
+		String name = mEditTextName.getText().toString();
+		String phonenumber = mEditTextPhone.getText().toString();
+		String email = mEditTextEmail.getText().toString();
+
+		if (isValidInputData(name, phonenumber, email)) {
+			setData(name, phonenumber, email);
+
+			Query query = FirebaseUtil.getUserByEmail(email);
+			query.get().addOnCompleteListener(task -> {
+				if (task.isSuccessful()) {
+					if (task.getResult().getChildrenCount() > 0)
+						mEditTextEmail.setError("Email đã tồn tại");
+					else
+						openInputAccountRegister();
+				}
+			});
+		}
 	}
 
 	// Open InputAccountRegister fragment
 	private void openInputAccountRegister() {
 		requireActivity().getSupportFragmentManager().beginTransaction()
 				.replace(R.id.input_fragment,
-						requireActivity().getSupportFragmentManager().findFragmentByTag(InputAccountRegister.TAG))
+						Objects.requireNonNull(requireActivity().getSupportFragmentManager().findFragmentByTag(InputAccountRegister.TAG)))
 				.commit();
 	}
 
 	// Check input data
-	public boolean isValidInputData(String name, String phonenumber) {
+	public boolean isValidInputData(String name, String phonenumber, String email) {
+		if (email.isEmpty()) {
+			mEditTextEmail.setError("Vui lòng nhập email");
+			return false;
+		}
 		if (name.isEmpty()) {
-			mEditTextName.setError("Please enter your name");
+			mEditTextName.setError("Vui lòng nhập họ tên");
 			return false;
 		}
 		if (phonenumber.isEmpty()) {
-			mEditTextPhone.setError("Please enter your phone number");
-			return false;
-		}
-		if (!isPhoneNumberValid(phonenumber)) {
-			mEditTextPhone.setError("Please enter a valid phone number");
+			mEditTextPhone.setError("Vui lòng nhập số điện thoại");
 			return false;
 		}
 		return true;
@@ -80,10 +98,11 @@ public class InputInfoRegister extends Fragment {
 	}
 
 	// set data for new user in registerActivity
-	public void setData(String name, String phonenumber) {
+	public void setData(String name, String phonenumber, String email) {
 		RegisterActivity registerActivity = (RegisterActivity) requireActivity();
 		registerActivity.newUser.setFullname(name);
 		registerActivity.newUser.setPhoneNumber(phonenumber);
+		registerActivity.newUser.setEmail(email);
 	}
 
 }

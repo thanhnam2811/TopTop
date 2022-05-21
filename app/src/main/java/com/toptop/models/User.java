@@ -25,7 +25,6 @@ public class User implements Serializable {
 		this.fullname = fullname;
 		this.email = email;
 		this.avatar = avatar;
-		this.uid = uid;
 
 		this.phoneNumber = "";
 		this.numFollowers = 0L;
@@ -41,7 +40,6 @@ public class User implements Serializable {
 		this.phoneNumber = phoneNumber;
 		this.email = email;
 		this.avatar = avatar;
-		this.uid = uid;
 		this.numFollowers = numFollowers;
 		this.numFollowing = numFollowing;
 		this.numLikes = numLikes;
@@ -56,7 +54,6 @@ public class User implements Serializable {
 	public User(DataSnapshot dataSnapshot) {
 		HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.getValue();
 		if (data != null) {
-			this.uid = dataSnapshot.getKey();
 			this.username = (String) data.get("username");
 			this.fullname = (String) data.get("fullname");
 			this.phoneNumber = (String) data.get("phoneNumber");
