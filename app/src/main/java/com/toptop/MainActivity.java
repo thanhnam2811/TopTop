@@ -1,16 +1,26 @@
 package com.toptop;
 
+import static android.app.Notification.EXTRA_NOTIFICATION_ID;
+
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +41,7 @@ import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
 
+import java.util.Date;
 import java.util.Objects;
 
 import kotlin.Unit;
@@ -47,6 +58,8 @@ public class MainActivity extends FragmentActivity {
 	public static final int REQUEST_CHANGE_AVATAR = 3;
 	public static final int REQUEST_ADD_VIDEO = 4;
 	private static User currentUser;
+	private NotificationManagerCompat notificationManagerCompat;
+
 
 	@SuppressLint("StaticFieldLeak")
 	CurvedBottomNavigationView nav;
@@ -178,7 +191,54 @@ public class MainActivity extends FragmentActivity {
 
 		mAuth = FirebaseAuth.getInstance();
 
+
 		init();
+		//create notification
+		sendNotification("Thông báo", "Bạn có 1 video mới");
+
+	}
+	private void sendNotification(String messageTitle,String messageBody) {
+		NotificationManager notificationManager =
+				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+		Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+			@SuppressLint("WrongConstant")
+			NotificationChannel notificationChannel=new NotificationChannel("my_notification","n_channel",NotificationManager.IMPORTANCE_MAX);
+			notificationChannel.setDescription("description");
+			notificationChannel.setName("Channel Name");
+			assert notificationManager != null;
+			notificationManager.createNotificationChannel(notificationChannel);
+		}
+
+		Intent snoozeIntent = new Intent(this, MainActivity.class);
+		snoozeIntent.setAction("snooze");
+		snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 0);
+		PendingIntent snoozePendingIntent =
+				PendingIntent.getBroadcast(this, 0, snoozeIntent, 0);
+
+
+		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+				.setSmallIcon(R.drawable.logo_toptop)
+//				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.sicont))
+				.setContentTitle(messageTitle)
+				.setContentText(messageBody)
+				.setAutoCancel(true)
+				.setSound(soundUri)
+				.setContentIntent(pendingIntent)
+				.setDefaults(Notification.DEFAULT_ALL)
+				.setOnlyAlertOnce(true)
+				.setChannelId("my_notification")
+				.addAction(R.drawable.ic_notification, getString(R.string.action_sign_in), snoozePendingIntent)
+				.setColor(Color.parseColor("#3F5996"));
+
+		//.setProgress(100,50,false);
+		assert notificationManager != null;
+		int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+		notificationManager.notify(m, notificationBuilder.build());
 	}
 
 	private void init() {
@@ -228,6 +288,7 @@ public class MainActivity extends FragmentActivity {
 			getWindow().setNavigationBarColor(Color.WHITE);
 
 			getPermission();
+
 		}
 	}
 

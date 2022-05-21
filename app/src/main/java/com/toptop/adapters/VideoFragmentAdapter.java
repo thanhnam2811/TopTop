@@ -151,14 +151,6 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			holder.img_like.setImageResource(R.drawable.ic_like);
 		} else {
 			holder.img_like.setImageResource(R.drawable.ic_liked);
-			//Add notification like video
-			Notification notification = new Notification();
-			notification.setUsername(video.getUsername());
-			notification.setType(Notification.TYPE_LIKE);
-			notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã thích video của bạn");
-			notification.setTime(MyUtil.getCurrentTime());
-			notification.setRedirectTo(video.getVideoId());
-			NotificationFirebase.addNotification(notification);
 		}
 
 		// Load avatar
@@ -201,8 +193,17 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		if (MainActivity.isLoggedIn()) {
 			if (video.isLiked())
 				VideoFirebase.unlikeVideo(video);
-			else
+			else {
 				VideoFirebase.likeVideo(video);
+				//Add notification like video
+				Notification notification = new Notification();
+				notification.setUsername(video.getUsername());
+				notification.setType(Notification.TYPE_LIKE);
+				notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã thích video của bạn");
+				notification.setTime(MyUtil.getCurrentTime());
+				notification.setRedirectTo(video.getVideoId());
+				NotificationFirebase.addNotification(notification);
+			}
 		} else
 			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
 	}

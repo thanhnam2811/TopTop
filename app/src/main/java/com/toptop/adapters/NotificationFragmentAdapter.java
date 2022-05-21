@@ -145,33 +145,24 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             });
 
             //set onclick listener for item
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d(TAG, "onClick: " + notification.getRedirectTo());
-                    if(notification.getType().equals(Notification.TYPE_COMMENT)) {
-                        VideoFirebase.getVideoFromCommentId(new VideoFirebase.VideoCallback() {
-                            @Override
-                            public void onCallback(Video value) {
-                                if (value != null) {
-                                    Log.d(TAG, "onCallback Video: " + value);
-                                    MyUtil.goToVideo((Activity) context, value);
-                                    //go to comment in video
+            holder.itemView.setOnClickListener(v -> {
+                Log.d(TAG, "onClick: " + notification.getRedirectTo());
+                if(notification.getType().equals(Notification.TYPE_COMMENT)) {
+                    VideoFirebase.getVideoFromCommentId(value -> {
+                        if (value != null) {
+                            Log.d(TAG, "onCallback Video: " + value);
+                            MyUtil.goToVideo((Activity) context, value);
+                            //go to comment in video
 
-                                }
-                            }
-                        }, notification.getRedirectTo());
-                    }else{
-                        VideoFirebase.getVideoFromVideoId(new VideoFirebase.VideoCallback() {
-                            @Override
-                            public void onCallback(Video value) {
-                                if (value != null) {
-                                    Log.d(TAG, "onCallback Video: " + value);
-                                    MyUtil.goToVideo((Activity) context, value);
-                                }
-                            }
-                        }, notification.getRedirectTo());
-                    }
+                        }
+                    }, notification.getRedirectTo());
+                }else{
+                    VideoFirebase.getVideoFromVideoId(value -> {
+                        if (value != null) {
+                            Log.d(TAG, "onCallback Video: " + value);
+                            MyUtil.goToVideo((Activity) context, value);
+                        }
+                    }, notification.getRedirectTo());
                 }
             });
 
@@ -207,7 +198,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                     Notification notification = new Notification();
                     notification.setUsername(notification.getRedirectTo());
                     notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã theo dõi bạn");
-                    notification.setType("follow");
+                    notification.setType(Notification.TYPE_FOLLOW);
                     notification.setTime(MyUtil.getCurrentTime());
                     notification.setRedirectTo(MainActivity.getCurrentUser().getUsername());
                     NotificationFirebase.addNotification(notification);
@@ -218,12 +209,9 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
             });
             //set onclick listener for item
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d(TAG, "forward: " + notification.getRedirectTo());
-                    MyUtil.goToUser((Activity)context, notification.getRedirectTo());
-                }
+            holder.itemView.setOnClickListener(v -> {
+                Log.d(TAG, "forward: " + notification.getRedirectTo());
+                MyUtil.goToUser((Activity)context, notification.getRedirectTo());
             });
         }
     }
