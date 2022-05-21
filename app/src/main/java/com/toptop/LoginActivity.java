@@ -138,18 +138,16 @@ public class LoginActivity extends AppCompatActivity {
 		String emailText = email.getText().toString();
 		if (emailText.isEmpty()) {
 			email.setError("Vui lòng nhập email hoặc username!");
+		} else if (emailText.contains("@")) {
+			sendEmailResetPassword(emailText);
 		} else {
-			if (emailText.contains("@")) {
-				sendEmailResetPassword(emailText);
-			} else {
-				Query query = FirebaseUtil.getUserByUsername(emailText);
-				query.get().addOnSuccessListener(documentSnapshot -> {
-					if (documentSnapshot.exists()) {
-						User user = new User(documentSnapshot.getChildren().iterator().next());
-						sendEmailResetPassword(user.getEmail());
-					}
-				});
-			}
+			Query query = FirebaseUtil.getUserByUsername(emailText);
+			query.get().addOnSuccessListener(documentSnapshot -> {
+				if (documentSnapshot.exists()) {
+					User user = new User(documentSnapshot.getChildren().iterator().next());
+					sendEmailResetPassword(user.getEmail());
+				}
+			});
 		}
 	}
 
