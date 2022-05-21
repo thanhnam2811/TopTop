@@ -109,17 +109,14 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             notificationViewHolder.txt_content.setText(notification.getContent());
             notificationViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
             //get video from video id
-            VideoFirebase.getPreviewVideo(new VideoFirebase.MyCallback() {
-                @Override
-                public void onCallback(String value) {
-                    if (value != null) {
-                        Log.d(TAG, "onCallback Video: " + value);
-                        Glide.with(context)
-                                .load(value)
-                                .error(R.drawable.avatar)
-                                .into(((NotificationViewHolder) holder).privew_img);
+            VideoFirebase.getPreviewVideo(value -> {
+                if (value != null) {
+                    Log.d(TAG, "onCallback Video: " + value);
+                    Glide.with(context)
+                            .load(value)
+                            .error(R.drawable.avatar)
+                            .into(((NotificationViewHolder) holder).privew_img);
 
-                    }
                 }
             }, notification.getRedirectTo());
 
