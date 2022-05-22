@@ -1,14 +1,15 @@
 package com.toptop;
 
-import static android.app.Notification.EXTRA_NOTIFICATION_ID;
-
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+
+
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.RemoteInput;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,12 +38,16 @@ import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
 import com.toptop.fragment.SearchFragment;
 import com.toptop.fragment.VideoFragment;
+import com.toptop.models.Notification;
 import com.toptop.models.User;
+import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.NotificationFirebase;
+import com.toptop.utils.firebase.VideoFirebase;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import kotlin.Unit;
@@ -59,7 +65,8 @@ public class MainActivity extends FragmentActivity {
 	public static final int REQUEST_ADD_VIDEO = 4;
 	private static User currentUser;
 	private NotificationManagerCompat notificationManagerCompat;
-
+	private static final String KEY_TEXT_REPLY = "key_text_reply";
+	private static final int NOTIFICATION_ID = 1;
 
 	@SuppressLint("StaticFieldLeak")
 	CurvedBottomNavigationView nav;
@@ -132,6 +139,33 @@ public class MainActivity extends FragmentActivity {
 				if (documentSnapshot.exists()) {
 					User user = new User(documentSnapshot.getChildren().iterator().next());
 					setCurrentUser(user);
+					//get notification for current user
+					Query queryNotify = FirebaseUtil.getNotificationsByUsername(user.getUsername());
+					queryNotify.addValueEventListener(new ValueEventListener() {
+						@Override
+						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+							ArrayList<Notification> notifications = new ArrayList<>();
+							for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+								Notification notification = new Notification(snapshot);
+								notifications.add(notification);
+							}
+							ArrayList<Notification> notifyUnseen = Notification.getNotificationUnseen(notifications);
+							if (notifyUnseen.size() > 0) {
+								Notification.setSeen(notifyUnseen);
+//								send notification
+								for(Notification notify : notifyUnseen){
+									sendNotification(notify);
+									System.out.println("count: " + notifyUnseen.size());
+									NotificationFirebase.updateNotification(notify);
+								}
+							}
+						}
+
+						@Override
+						public void onCancelled(@NonNull DatabaseError error) {
+
+						}
+					});
 				} else {
 					setCurrentUser(null);
 				}
@@ -190,21 +224,24 @@ public class MainActivity extends FragmentActivity {
 		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_DARK_MODE, this);
 
 		mAuth = FirebaseAuth.getInstance();
-
-
 		init();
-		//create notification
-		sendNotification("Thông báo", "Bạn có 1 video mới");
 
+		//get reply from notification
+		Intent intent = this.getIntent();
+		Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
+		if (remoteInput != null) {
+			String reply = remoteInput.getCharSequence(KEY_TEXT_REPLY).toString();
+			if (reply != null && !reply.isEmpty()) {
+				Toast.makeText(this, "Reply: " + reply, Toast.LENGTH_SHORT).show();
+			}
+			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			manager.cancel(NOTIFICATION_ID);
+		}
 	}
-	private void sendNotification(String messageTitle,String messageBody) {
+	private void sendNotification(Notification notification) {
 		NotificationManager notificationManager =
 				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		Intent intent = new Intent(this, MainActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-		Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
+//		create channel notification
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 			@SuppressLint("WrongConstant")
 			NotificationChannel notificationChannel=new NotificationChannel("my_notification","n_channel",NotificationManager.IMPORTANCE_MAX);
@@ -214,32 +251,109 @@ public class MainActivity extends FragmentActivity {
 			notificationManager.createNotificationChannel(notificationChannel);
 		}
 
-		Intent snoozeIntent = new Intent(this, MainActivity.class);
-		snoozeIntent.setAction("snooze");
-		snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 0);
-		PendingIntent snoozePendingIntent =
-				PendingIntent.getBroadcast(this, 0, snoozeIntent, 0);
+//		create notification
+		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "my_notification");
+		if(notification.getType().equals(Notification.TYPE_LIKE) ) {
+			//	notification for like
+			VideoFirebase.getVideoFromVideoId(value -> {
+				if (value != null) {
+					Log.d(TAG, "onCallback Video: " + value);
+					// event click notification to open activity
+					Intent intent = new Intent(this, WatchVideoActivity.class);
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					intent.putExtra(Video.TAG, value);
 
-
-		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-				.setSmallIcon(R.drawable.logo_toptop)
+					PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+					Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+					NotificationCompat.Builder notificationBuilderVideo  = new NotificationCompat.Builder(this)
+							.setSmallIcon(R.drawable.logo_toptop)
 //				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.sicont))
-				.setContentTitle(messageTitle)
-				.setContentText(messageBody)
-				.setAutoCancel(true)
-				.setSound(soundUri)
-				.setContentIntent(pendingIntent)
-				.setDefaults(Notification.DEFAULT_ALL)
-				.setOnlyAlertOnce(true)
-				.setChannelId("my_notification")
-				.addAction(R.drawable.ic_notification, getString(R.string.action_sign_in), snoozePendingIntent)
-				.setColor(Color.parseColor("#3F5996"));
+							.setContentTitle(notification.getType())
+							.setContentText(notification.getContent())
+							.setAutoCancel(true)
+							.setSound(soundUri)
+							.setContentIntent(pendingIntent)
+							.setDefaults(android.app.Notification.DEFAULT_ALL)
+							.setOnlyAlertOnce(true)
+							.setChannelId("my_notification")
+							.setColor(Color.parseColor("#3F5996"));
+					assert notificationManager != null;
+					notificationManager.notify(NOTIFICATION_ID, notificationBuilderVideo.build());
+				}
+			}, notification.getRedirectTo());
+		}else if(notification.getType().equals(Notification.TYPE_FOLLOW)){
+			// event click notification to open activity
+			Intent intent = new Intent(this, WatchProfileActivity.class);
+			intent.putExtra(User.TAG, notification.getRedirectTo());
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+			Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+			//notification for follow
+			notificationBuilder = new NotificationCompat.Builder(this)
+					.setSmallIcon(R.drawable.logo_toptop)
+//					.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar))
+					.setContentTitle(notification.getType())
+					.setContentText(notification.getContent())
+					.setAutoCancel(true)
+					.setSound(soundUri)
+					.setContentIntent(pendingIntent)
+					.setDefaults(android.app.Notification.DEFAULT_ALL)
+					.setOnlyAlertOnce(true)
+					.setChannelId("my_notification")
+					.setColor(Color.parseColor("#3F5996"));
+			//.setProgress(100,50,false);
+			assert notificationManager != null;
+			notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+		}
+		else {
+			// event click notification to open activity
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+			Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//			notification for comment
+			System.out.println("notification.getType() = " + notification.getType());
+			//Create notification builder
+			notificationBuilder = new NotificationCompat.Builder(this)
+					.setSmallIcon(R.drawable.logo_toptop)
+					.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_comment))
+					.setContentTitle("Message")
+					.setContentText(notification.getContent())
+					.setStyle(new NotificationCompat.BigTextStyle()
+							.bigText(notification.getContent()))
+					.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+					.setAutoCancel(true)
+					.setSound(soundUri)
+					.setContentIntent(pendingIntent)
+					.setDefaults(android.app.Notification.DEFAULT_ALL)
+					.setOnlyAlertOnce(true)
+					.setChannelId("my_notification")
+					.setColor(Color.parseColor("#3F5996"));
 
-		//.setProgress(100,50,false);
-		assert notificationManager != null;
-		int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
-		notificationManager.notify(m, notificationBuilder.build());
+			String replyLabel = "Type to reply...";
+			//Initialise RemoteInput
+			RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY).setLabel(replyLabel).build();
+			Intent resultIntent = new Intent(this, MainActivity.class);
+			resultIntent.putExtra("notificationId", notification.getNotificationId());
+
+			resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+			NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(R.drawable.ic_comment, "REPLY", resultPendingIntent)
+					.addRemoteInput(remoteInput)
+					.setAllowGeneratedReplies(true)
+					.build();
+
+			notificationBuilder.addAction(replyAction);
+
+			//.setProgress(100,50,false);
+			assert notificationManager != null;
+			notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+		}
+
 	}
+
+
 
 	private void init() {
 		if (nav == null) {

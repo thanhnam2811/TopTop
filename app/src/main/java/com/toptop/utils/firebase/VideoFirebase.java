@@ -83,7 +83,6 @@ public class VideoFirebase {
 				System.out.println(value);
 				myCallback.onCallback(value);
 			}
-
 			@Override
 			public void onCancelled(DatabaseError databaseError) {
 				Log.i(TAG, "onCancelled: ", databaseError.toException());

@@ -1,38 +1,29 @@
 package com.toptop.adapters;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.mikhaellopez.circularimageview.CircularImageView;
-import com.toptop.LoginActivity;
 import com.toptop.MainActivity;
 import com.toptop.R;
-import com.toptop.fragment.CommentFragment;
-import com.toptop.fragment.VideoFragment;
 import com.toptop.models.Notification;
 import com.toptop.models.User;
-import com.toptop.models.Video;
 import com.toptop.utils.RecyclerViewDisabler;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.NotificationFirebase;
@@ -40,8 +31,6 @@ import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -74,7 +63,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemViewType(int position) {
-        Notification notification = notifications.get(position);
+        Notification notification = this.notifications.get(position);
         Log.d(TAG, Notification.TYPE_FOLLOW + "---" + notification.getType());
         if(notification.getType().equals(Notification.TYPE_FOLLOW)){
             return VIEW_TYPE_ITEM_2;
@@ -101,45 +90,60 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Notification notification = notifications.get(position);
+        Notification notification = this.notifications.get(position);
 
         if (holder instanceof NotificationViewHolder) {
             NotificationViewHolder notificationViewHolder = (NotificationViewHolder) holder;
-
             notificationViewHolder.txt_content.setText(notification.getContent());
-            notificationViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
-            //get video from video id
-            VideoFirebase.getPreviewVideo(value -> {
-                if (value != null) {
-                    Log.d(TAG, "onCallback Video: " + value);
-                    Glide.with(context)
-                            .load(value)
-                            .error(R.drawable.avatar)
-                            .into(((NotificationViewHolder) holder).privew_img);
 
-                }
-            }, notification.getRedirectTo());
-
-            //get user from notification
-            UserFirebase.getUsernameByCommentId(notification.getRedirectTo(), new UserFirebase.MyCallback() {
-                @Override
-                public void onCallback(String value) {
-                    if (value != null) {
-                        Log.d(TAG, "onCallback User: " + value);
-                        notificationViewHolder.txt_username.setText(value);
-                        Query query= FirebaseUtil.getUserByUsername(value);
-                        query.get().addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
-                                User author = new User(documentSnapshot.getChildren().iterator().next());
-                                Glide.with(context)
-                                        .load(author.getAvatar())
-                                        .error(R.drawable.default_avatar)
-                                        .into(((NotificationViewHolder) holder).img_profile);
-                            }
-                        });
+            if(notification.getType().equals(Notification.TYPE_COMMENT)) {
+                //get video from commentID
+                VideoFirebase.getVideoFromCommentId(video -> {
+                    if (video != null) {
+                        Glide.with(context)
+                                .load(video.getLinkVideo())
+                                .error(R.drawable.avatar)
+                                .into(((NotificationViewHolder) holder).privew_img);
                     }
-                }
-            });
+                }, notification.getRedirectTo());
+
+                //get user from notification
+                UserFirebase.getUsernameByCommentId(notification.getRedirectTo(), new UserFirebase.MyCallback() {
+                    @Override
+                    public void onCallback(String value) {
+                        if (value != null) {
+                            Log.d(TAG, "onCallback User: " + value);
+                            Query query = FirebaseUtil.getUserByUsername(value);
+                            query.get().addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists()) {
+                                    User author = new User(documentSnapshot.getChildren().iterator().next());
+                                    notificationViewHolder.txt_username.setText(author.getFullname());
+                                    Glide.with(context)
+                                            .load(author.getAvatar())
+                                            .error(R.drawable.default_avatar)
+                                            .into(((NotificationViewHolder) holder).img_profile);
+                                }
+                            });
+                        }
+                    }
+                });
+            } else if(notification.getType().equals(Notification.TYPE_LIKE)) {
+                //get video from likeID
+                VideoFirebase.getVideoFromVideoId(value -> {
+                    if (value != null) {
+                        Glide.with(context)
+                                .load(value.getLinkVideo())
+                                .error(R.drawable.avatar)
+                                .into(((NotificationViewHolder) holder).privew_img);
+                    }
+                }, notification.getRedirectTo());
+
+                //hide username
+                notificationViewHolder.txt_username.setVisibility(View.GONE);
+                //indecrease size  txt_content
+                notificationViewHolder.txt_content.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+
+            }
 
             //set onclick listener for item
             holder.itemView.setOnClickListener(v -> {
@@ -167,7 +171,6 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
         } else if(holder instanceof FollowViewHolder) {
             FollowViewHolder followViewHolder = (FollowViewHolder) holder;
 
-            followViewHolder.txt_username.setText(notification.getRedirectTo());
             followViewHolder.txt_content.setText(notification.getContent());
             followViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
             //get user from username
@@ -175,6 +178,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             query.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     User author = new User(documentSnapshot.getChildren().iterator().next());
+                    followViewHolder.txt_username.setText(author.getFullname());
                     Glide.with(context)
                             .load(author.getAvatar())
                             .error(R.drawable.default_avatar)
@@ -210,6 +214,9 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                 Log.d(TAG, "forward: " + notification.getRedirectTo());
                 MyUtil.goToUser((Activity)context, notification.getRedirectTo());
             });
+            // handle horizontal swipe to delete item
+//            holder.itemView.setOnTouchListener(new SwipeToDelete(context, position, holder));
+
         }
     }
 
@@ -256,6 +263,30 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             }
         }
         return -1;
+    }
+
+    private class SwipeToDelete implements View.OnTouchListener {
+        public SwipeToDelete(Context context, int position, RecyclerView.ViewHolder holder) {
+            //get notification
+            Notification notification = NotificationFragmentAdapter.this.notifications.get(position);
+            //delete notification
+            NotificationFirebase.deleteNotification(notification);
+
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                //remove item
+                 int position = view.getId();
+                 notifications.remove(position);
+                 notifyItemRemoved(position);
+                 notifyItemRangeChanged(position, notifications.size());
+
+                 return true;
+            }
+            return false;
+        }
     }
 }
 

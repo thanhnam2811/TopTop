@@ -1,10 +1,9 @@
 package com.toptop.models;
 
-import androidx.core.app.NotificationCompat;
-
 import com.google.firebase.database.DataSnapshot;
 import com.toptop.utils.MyUtil;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -114,9 +113,19 @@ public class Notification {
             notification.setSeen(true);
         }
     }
+    // get notification unseen
+    public static ArrayList<Notification> getNotificationUnseen(ArrayList<Notification> notifications) {
+        ArrayList<Notification> notificationUnseen = new ArrayList<>();
+        for (Notification notification : notifications) {
+            if (!notification.getSeen()) {
+                notificationUnseen.add(notification);
+            }
+        }
+        return notificationUnseen;
+    }
 
     //counnt notifications not seen
-    public static int countNotSeen(List<Notification> notifications) {
+    public static int countNotSeen(ArrayList<Notification> notifications) {
         int count = 0;
         for (Notification notification : notifications) {
             if (!notification.getSeen()) {

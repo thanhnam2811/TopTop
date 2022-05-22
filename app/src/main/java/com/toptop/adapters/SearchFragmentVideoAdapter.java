@@ -66,7 +66,7 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 		holder.img_video.setImageBitmap(MyUtil.getBitmapFromURL(video.getPreview()));
 		//load image priview
 		Glide.with(context)
-				.load(video.getPreview())
+				.load(video.getLinkVideo())
 				.error(R.drawable.bg)
 				.into(holder.img_video);
 		holder.txt_username.setText(video.getUsername());
