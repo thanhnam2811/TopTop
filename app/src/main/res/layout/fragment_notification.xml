@@ -41,5 +41,6 @@
         android:layout_marginTop="5dp"
         android:id="@+id/recycler_view_notifications"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginBottom="80dp"/>
 </LinearLayout>

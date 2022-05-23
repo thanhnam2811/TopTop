@@ -11,7 +11,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
 import com.toptop.models.Comment;
+import com.toptop.models.Notification;
 import com.toptop.models.User;
+import com.toptop.utils.MyUtil;
 
 public class UserFirebase {
 	// Tag
@@ -52,6 +54,14 @@ public class UserFirebase {
 			User userToFollow = new User(dataSnapshot);
 			userToFollow.addFollower(user.getUsername());
 			updateUser(userToFollow);
+			//Add notification for user
+			Notification notification = new Notification();
+			notification.setUsername(userToFollow.getUsername());
+			notification.setContent(user.getUsername() + " đã theo dõi bạn");
+			notification.setType(Notification.TYPE_FOLLOW);
+			notification.setTime(MyUtil.getCurrentTime());
+			notification.setRedirectTo(user.getUsername());
+			NotificationFirebase.addNotification(notification);
 		});
 	}
 

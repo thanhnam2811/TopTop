@@ -74,14 +74,7 @@ public class WatchProfileActivity extends AppCompatActivity {
 				UserFirebase.unfollowUser(user.getUsername());
 			} else {
 				UserFirebase.followUser(user.getUsername());
-				//Add notification for user
-				Notification notification = new Notification();
-				notification.setUsername(user.getUsername());
-				notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã theo dõi bạn");
-				notification.setType(Notification.TYPE_FOLLOW);
-				notification.setTime(MyUtil.getCurrentTime());
-				notification.setRedirectTo(MainActivity.getCurrentUser().getUsername());
-				NotificationFirebase.addNotification(notification);
+
 			}
 		});
 

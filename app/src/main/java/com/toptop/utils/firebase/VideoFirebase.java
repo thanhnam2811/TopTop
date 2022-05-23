@@ -11,7 +11,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
 import com.toptop.models.Comment;
+import com.toptop.models.Notification;
 import com.toptop.models.Video;
+import com.toptop.utils.MyUtil;
 
 public class VideoFirebase {
 	// Tag
@@ -64,6 +66,15 @@ public class VideoFirebase {
 
 		// Update video
 		updateVideo(video);
+
+		//Add notification like video
+		Notification notification = new Notification();
+		notification.setUsername(video.getUsername());
+		notification.setType(Notification.TYPE_LIKE);
+		notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã thích video của bạn");
+		notification.setTime(MyUtil.getCurrentTime());
+		notification.setRedirectTo(video.getVideoId());
+		NotificationFirebase.addNotification(notification);
 	}
 
 	// Unlike video

@@ -193,14 +193,6 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 				VideoFirebase.unlikeVideo(video);
 			else {
 				VideoFirebase.likeVideo(video);
-				//Add notification like video
-				Notification notification = new Notification();
-				notification.setUsername(video.getUsername());
-				notification.setType(Notification.TYPE_LIKE);
-				notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã thích video của bạn");
-				notification.setTime(MyUtil.getCurrentTime());
-				notification.setRedirectTo(video.getVideoId());
-				NotificationFirebase.addNotification(notification);
 			}
 		} else
 			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();

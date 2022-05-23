@@ -101,14 +101,6 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 			@Override
 			public void onClick(View v) {
 				UserFirebase.followUser(user.getUsername());
-				//Add notification for user
-				Notification notification = new Notification();
-				notification.setUsername(user.getUsername());
-				notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã theo dõi bạn");
-				notification.setType(Notification.TYPE_FOLLOW);
-				notification.setTime(MyUtil.getCurrentTime());
-				notification.setRedirectTo(MainActivity.getCurrentUser().getUsername());
-				NotificationFirebase.addNotification(notification);
 //				//hide button
 				holder.btn_follow.setVisibility(View.GONE);
 				Toast.makeText(context, "Đã theo dõi " + user.getUsername(), Toast.LENGTH_SHORT).show();

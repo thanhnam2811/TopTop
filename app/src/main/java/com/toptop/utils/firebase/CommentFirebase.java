@@ -9,7 +9,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
 import com.toptop.models.Comment;
+import com.toptop.models.Notification;
 import com.toptop.models.Video;
+import com.toptop.utils.MyUtil;
 
 import java.util.Map;
 
@@ -19,13 +21,21 @@ public class CommentFirebase {
 	public static final DatabaseReference commentRef = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
 
 	// Add comment to firebase
-	public static String addCommentToVideo(Comment comment, Video video) {
+	public static void addCommentToVideo(Comment comment, Video video) {
 		// add comment to video
 		String commentId = addComment(comment);
 
+		//Add notification to video owner
+		Notification notification = new Notification();
+		notification.setUsername(video.getUsername());
+		notification.setContent(MainActivity.getCurrentUser().getUsername() + " bình luận video của bạn");
+		notification.setType(Notification.TYPE_COMMENT);
+		notification.setTime(MyUtil.getCurrentTime());
+		notification.setRedirectTo(commentId);
+		NotificationFirebase.addNotification(notification);
+
 		// add comment to video
 		VideoFirebase.addCommentToVideo(comment, video);
-		return commentId;
 	}
 
 	// Delete comment from firebase

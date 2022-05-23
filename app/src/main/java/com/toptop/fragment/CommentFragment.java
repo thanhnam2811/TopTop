@@ -160,17 +160,7 @@ public class CommentFragment extends Fragment {
 		newComment.setVideoId(video.getVideoId());
 
 		// Add comment to firebase
-		String commentID = CommentFirebase.addCommentToVideo(newComment, video);
-
-		//Add notification to video owner
-		Notification notification = new Notification();
-		notification.setUsername(video.getUsername());
-		notification.setContent(MainActivity.getCurrentUser().getUsername() + " bình luận video của bạn");
-		notification.setType(Notification.TYPE_COMMENT);
-		notification.setTime(MyUtil.getCurrentTime());
-		notification.setRedirectTo(commentID);
-		NotificationFirebase.addNotification(notification);
-
+		CommentFirebase.addCommentToVideo(newComment, video);
 
 		// Toast message
 		Toast.makeText(context, "Bình luận thành công!", Toast.LENGTH_SHORT).show();

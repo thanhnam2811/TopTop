@@ -174,17 +174,16 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             followViewHolder.txt_content.setText(notification.getContent());
             followViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
             //get user from username
-            Query query = FirebaseUtil.getUserByUsername(notification.getRedirectTo());
-            query.get().addOnSuccessListener(documentSnapshot -> {
-                if (documentSnapshot.exists()) {
-                    User author = new User(documentSnapshot.getChildren().iterator().next());
-                    followViewHolder.txt_username.setText(author.getFullname());
+            UserFirebase.getUserByUsername(user -> {
+                if (user != null) {
+                    Log.d(TAG, "onCallback User: " + user.getUsername());
+                    followViewHolder.txt_username.setText(user.getFullname());
                     Glide.with(context)
-                            .load(author.getAvatar())
-                            .error(R.drawable.default_avatar)
-                            .into(((FollowViewHolder) holder).img_profile);
+                        .load(user.getAvatar())
+                        .error(R.drawable.default_avatar)
+                        .into(((FollowViewHolder) holder).img_profile);
                 }
-            });
+            }, notification.getRedirectTo());
             if (MainActivity.getCurrentUser().isFollowing(notification.getRedirectTo())) {
                 followViewHolder.btn_follow.setVisibility(View.GONE);
             } else {
@@ -195,14 +194,6 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                 @Override
                 public void onClick(View v) {
                     UserFirebase.followUser(notification.getRedirectTo());
-                    //Add notification for user
-                    Notification notification = new Notification();
-                    notification.setUsername(notification.getRedirectTo());
-                    notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã theo dõi bạn");
-                    notification.setType(Notification.TYPE_FOLLOW);
-                    notification.setTime(MyUtil.getCurrentTime());
-                    notification.setRedirectTo(MainActivity.getCurrentUser().getUsername());
-                    NotificationFirebase.addNotification(notification);
 
                     //hide follow button
                     ((FollowViewHolder) holder).btn_follow.setVisibility(View.GONE);
