@@ -20,7 +20,7 @@ public class Comment {
 	private static final String TAG = "Comment";
 	private String commentId, username, videoId, content, replyToCommentId;
 	private Long numReplies = 0L, numLikes = 0L;
-	private String time;
+	private String time = MyUtil.getCurrentTime();
 	private HashMap<String, Boolean> replies;
 	private HashMap<String, Boolean> likes;
 

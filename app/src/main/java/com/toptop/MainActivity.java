@@ -1,5 +1,7 @@
 package com.toptop;
 
+import static com.toptop.fragment.CommentFragment.newComment;
+
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -16,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,16 +36,20 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.toptop.adapters.CommentFragmentAdapter;
 import com.toptop.adapters.VideoFragmentAdapter;
+import com.toptop.fragment.CommentFragment;
 import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
 import com.toptop.fragment.SearchFragment;
 import com.toptop.fragment.VideoFragment;
+import com.toptop.models.Comment;
 import com.toptop.models.Notification;
 import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
+import com.toptop.utils.firebase.CommentFirebase;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
@@ -67,6 +74,7 @@ public class MainActivity extends FragmentActivity {
 	private NotificationManagerCompat notificationManagerCompat;
 	private static final String KEY_TEXT_REPLY = "key_text_reply";
 	private static final int NOTIFICATION_ID = 1;
+	private static final String COMMENT_NOTIFICATION = "comment_notification";
 
 	@SuppressLint("StaticFieldLeak")
 	CurvedBottomNavigationView nav;
@@ -232,7 +240,29 @@ public class MainActivity extends FragmentActivity {
 		if (remoteInput != null) {
 			String reply = remoteInput.getCharSequence(KEY_TEXT_REPLY).toString();
 			if (reply != null && !reply.isEmpty()) {
-				Toast.makeText(this, "Reply: " + reply, Toast.LENGTH_SHORT).show();
+//				Toast.makeText(this, "Reply: " + reply, Toast.LENGTH_SHORT).show();
+				Bundle extras = getIntent().getExtras();
+				String commentId = extras.getString(COMMENT_NOTIFICATION);
+//				Toast.makeText(this, "CommentId: " + commentId, Toast.LENGTH_SHORT).show();
+				if (commentId != null && !commentId.isEmpty()) {
+					//Get video by commentId
+					VideoFirebase.getVideoFromCommentId(video -> {
+						if (video != null) {
+							//create new comment
+							Comment commentReply = new Comment();
+							commentReply.setContent(reply);
+							commentReply.setUsername(currentUser.getUsername() != null ? getCurrentUser().getUsername() : "tantapcode"); // ? or currentUser.getUsername()
+							commentReply.setVideoId(video.getVideoId());
+
+							//add comment to database
+							String newCommentID = CommentFirebase.addCommentToVideo(commentReply, video);
+							if (newCommentID != null) {
+								Toast.makeText(this, "Đã trả lời bình luận!", Toast.LENGTH_SHORT).show();
+							}
+						}
+					}, commentId);
+				}
+
 			}
 			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			manager.cancel(NOTIFICATION_ID);
@@ -308,6 +338,8 @@ public class MainActivity extends FragmentActivity {
 		else {
 			// event click notification to open activity
 			Intent intent = new Intent(this, MainActivity.class);
+			System.out.println("notification.getRedirectTo()"+notification.getRedirectTo());
+			intent.putExtra(COMMENT_NOTIFICATION,notification.getRedirectTo());
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 			Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -335,6 +367,7 @@ public class MainActivity extends FragmentActivity {
 			RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY).setLabel(replyLabel).build();
 			Intent resultIntent = new Intent(this, MainActivity.class);
 			resultIntent.putExtra("notificationId", notification.getNotificationId());
+			resultIntent.putExtra(COMMENT_NOTIFICATION,notification.getRedirectTo());
 
 			resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);

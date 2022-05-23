@@ -18,7 +18,10 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.toptop.MainActivity;
 import com.toptop.R;
@@ -108,23 +111,19 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                 }, notification.getRedirectTo());
 
                 //get user from notification
-                UserFirebase.getUsernameByCommentId(notification.getRedirectTo(), new UserFirebase.MyCallback() {
-                    @Override
-                    public void onCallback(String value) {
-                        if (value != null) {
-                            Log.d(TAG, "onCallback User: " + value);
-                            Query query = FirebaseUtil.getUserByUsername(value);
-                            query.get().addOnSuccessListener(documentSnapshot -> {
-                                if (documentSnapshot.exists()) {
-                                    User author = new User(documentSnapshot.getChildren().iterator().next());
-                                    notificationViewHolder.txt_username.setText(author.getFullname());
-                                    Glide.with(context)
-                                            .load(author.getAvatar())
-                                            .error(R.drawable.default_avatar)
-                                            .into(((NotificationViewHolder) holder).img_profile);
-                                }
-                            });
-                        }
+                UserFirebase.getUsernameByCommentId(notification.getRedirectTo(), value -> {
+                    if (value != null) {
+                        Log.d(TAG, "onCallback User: " + value);
+                        UserFirebase.getUserByUsername(user -> {
+                            if (user != null) {
+                                Log.d(TAG, "onCallback User: " + user.getUsername());
+                                notificationViewHolder.txt_username.setText(user.getFullname());
+                            }
+                            Glide.with(context)
+                                        .load(user.getAvatar())
+                                        .error(R.drawable.default_avatar)
+                                        .into(((NotificationViewHolder) holder).img_profile);
+                        }, value);
                     }
                 });
             } else if(notification.getType().equals(Notification.TYPE_LIKE)) {
