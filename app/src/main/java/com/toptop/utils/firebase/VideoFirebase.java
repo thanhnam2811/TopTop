@@ -38,7 +38,7 @@ public class VideoFirebase {
 		//delete notification from video
 		NotificationFirebase.deleteNotificationByRedirectTo(video.getVideoId());
 		//delete comment of video
-		CommentFirebase.deleteCommentByVideoId(video.getVideoId());
+		CommentFirebase.deleteCommentFromVideo(video);
 		Log.i(TAG, "deleteVideo: " + video.getVideoId() + " deleted from firebase");
 	}
 
@@ -82,13 +82,13 @@ public class VideoFirebase {
 		Query myQuery = FirebaseUtil.getCommentById(commentId);
 		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				String value = dataSnapshot.getChildren().iterator().next().child("videoId").getValue(String.class);
 				System.out.println(value);
 				myCallback.onCallback(value);
 			}
 			@Override
-			public void onCancelled(DatabaseError databaseError) {
+			public void onCancelled(@NonNull DatabaseError databaseError) {
 				Log.i(TAG, "onCancelled: ", databaseError.toException());
 			}
 		});
@@ -96,24 +96,21 @@ public class VideoFirebase {
 
 	//	get video by id from commentId
 	public static void getVideoFromCommentId(VideoCallback videoCallback, String commentId) {
-		getDataVideoId(new MyCallback() {
-			@Override
-			public void onCallback(String value) {
-				Query myQuery = FirebaseUtil.getVideoById(value);
-				myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(DataSnapshot dataSnapshot) {
-						Video video = dataSnapshot.getChildren().iterator().next().getValue(Video.class);
-						System.out.println(video);
-						videoCallback.onCallback(video);
-					}
+		getDataVideoId(value -> {
+			Query myQuery = FirebaseUtil.getVideoById(value);
+			myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+					Video video = dataSnapshot.getChildren().iterator().next().getValue(Video.class);
+					System.out.println(video);
+					videoCallback.onCallback(video);
+				}
 
-					@Override
-					public void onCancelled(@NonNull DatabaseError error) {
-						Log.i(TAG, "onCancelled: ", error.toException());
-					}
-				});
-			}
+				@Override
+				public void onCancelled(@NonNull DatabaseError error) {
+					Log.i(TAG, "onCancelled: ", error.toException());
+				}
+			});
 		}, commentId);
 	}
 	// get Video From VideoId

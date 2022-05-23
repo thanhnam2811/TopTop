@@ -11,6 +11,8 @@ import com.toptop.MainActivity;
 import com.toptop.models.Comment;
 import com.toptop.models.Video;
 
+import java.util.Map;
+
 public class CommentFirebase {
 	// Tag
 	public static final String TAG = "CommentFirebase";
@@ -19,7 +21,7 @@ public class CommentFirebase {
 	// Add comment to firebase
 	public static String addCommentToVideo(Comment comment, Video video) {
 		// add comment to video
-		String commentId =  addComment(comment);
+		String commentId = addComment(comment);
 
 		// add comment to video
 		VideoFirebase.addCommentToVideo(comment, video);
@@ -46,6 +48,9 @@ public class CommentFirebase {
 	// Delete comment from firebase
 	public static void deleteComment(Comment comment) {
 		commentRef.child(comment.getCommentId()).removeValue();
+
+		// delete notification of comment
+		NotificationFirebase.deleteNotificationByRedirectTo(comment.getCommentId());
 		Log.i(TAG, "deleteComment: " + comment.getCommentId() + " deleted from firebase");
 	}
 
@@ -74,6 +79,7 @@ public class CommentFirebase {
 		// Log
 		Log.i(TAG, "likeComment: " + comment.getCommentId() + " liked");
 	}
+
 	//delete comment by videoID
 	public static void deleteCommentByVideoId(String videoId) {
 		commentRef.orderByChild("videoId").equalTo(videoId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -86,10 +92,24 @@ public class CommentFirebase {
 					NotificationFirebase.deleteNotificationByRedirectTo(comment.getCommentId());
 				}
 			}
+
 			@Override
 			public void onCancelled(DatabaseError databaseError) {
 
 			}
 		});
 	}
+
+	// delete comment by commentId
+	public static void deleteCommentByCommentId(String commentId) {
+		commentRef.child(commentId).removeValue();
+		// delete notification of comment
+		NotificationFirebase.deleteNotificationByRedirectTo(commentId);
+	}
+
+	 public static void deleteCommentFromVideo(Video video) {
+		for (Map.Entry<String, Boolean> entry : video.getComments().entrySet()) {
+			deleteCommentByCommentId(entry.getKey());
+		}
+	 }
 }
