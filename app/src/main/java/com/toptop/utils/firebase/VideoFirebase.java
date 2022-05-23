@@ -35,6 +35,10 @@ public class VideoFirebase {
 	// Delete video to firebase
 	public static void deleteVideo(Video video) {
 		videoRef.child(video.getVideoId()).removeValue();
+		//delete notification from video
+		NotificationFirebase.deleteNotificationByRedirectTo(video.getVideoId());
+		//delete comment of video
+		CommentFirebase.deleteCommentByVideoId(video.getVideoId());
 		Log.i(TAG, "deleteVideo: " + video.getVideoId() + " deleted from firebase");
 	}
 

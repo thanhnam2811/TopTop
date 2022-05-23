@@ -3,7 +3,10 @@ package com.toptop.utils.firebase;
 
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
 import com.toptop.models.Comment;
 import com.toptop.models.Video;
@@ -27,7 +30,8 @@ public class CommentFirebase {
 	public static void deleteCommentFromVideo(Comment comment, Video video) {
 		// delete comment from video
 		deleteComment(comment);
-
+		//Delete notification of comment
+		NotificationFirebase.deleteNotificationByRedirectTo(comment.getCommentId());
 		// delete comment from video
 		VideoFirebase.deleteCommentFromVideo(comment, video);
 	}
@@ -69,5 +73,23 @@ public class CommentFirebase {
 
 		// Log
 		Log.i(TAG, "likeComment: " + comment.getCommentId() + " liked");
+	}
+	//delete comment by videoID
+	public static void deleteCommentByVideoId(String videoId) {
+		commentRef.orderByChild("videoId").equalTo(videoId).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				for (DataSnapshot data : dataSnapshot.getChildren()) {
+					Comment comment = data.getValue(Comment.class);
+					deleteComment(comment);
+					//delete notification of comment
+					NotificationFirebase.deleteNotificationByRedirectTo(comment.getCommentId());
+				}
+			}
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+
+			}
+		});
 	}
 }

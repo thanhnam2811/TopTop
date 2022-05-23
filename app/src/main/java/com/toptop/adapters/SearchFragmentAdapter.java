@@ -75,7 +75,7 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 			holder.txt_number_follow.setText(String.valueOf(user.getNumFollowers()));
 			//get user current
 			User currentUser = MainActivity.getCurrentUser();
-			if (Integer.valueOf(String.valueOf(user.getNumFollowers())) > 0 && currentUser.isFollowing(user.getUsername())) {
+			if ((Integer.valueOf(String.valueOf(user.getNumFollowers())) > 0 && currentUser.isFollowing(user.getUsername())) || user.getUsername().equals(currentUser.getUsername())) {
 //				holder.btn_follow.setText("Following");
 //				//set backgroundTint to button
 //				holder.btn_follow.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.teal_200)));

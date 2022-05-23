@@ -2,7 +2,10 @@ package com.toptop.utils.firebase;
 
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.toptop.models.Notification;
 
 public class NotificationFirebase {
@@ -28,5 +31,21 @@ public class NotificationFirebase {
 	public static void deleteNotification(Notification notification) {
 		notificationRef.child(notification.getNotificationId()).removeValue();
 		Log.i(TAG, "deleteNotification: " + notification.getNotificationId() + " deleted from firebase");
+	}
+	//delete notification by redirectTo
+	public static void deleteNotificationByRedirectTo(String redirectTo) {
+		notificationRef.orderByChild("redirectTo").equalTo(redirectTo).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+					postSnapshot.getRef().removeValue();
+				}
+			}
+
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+
+			}
+		});
 	}
 }

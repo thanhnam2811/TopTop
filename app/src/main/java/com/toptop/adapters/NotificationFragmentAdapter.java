@@ -98,6 +98,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
         if (holder instanceof NotificationViewHolder) {
             NotificationViewHolder notificationViewHolder = (NotificationViewHolder) holder;
             notificationViewHolder.txt_content.setText(notification.getContent());
+            notificationViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
 
             if(notification.getType().equals(Notification.TYPE_COMMENT)) {
                 //get video from commentID

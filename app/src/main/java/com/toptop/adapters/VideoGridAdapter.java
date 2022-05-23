@@ -17,6 +17,8 @@ import com.bumptech.glide.Glide;
 import com.toptop.R;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
+import com.toptop.utils.firebase.CommentFirebase;
+import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.List;
