@@ -29,13 +29,11 @@ import com.toptop.WatchVideoActivity;
 import com.toptop.adapters.CommentFragmentAdapter;
 import com.toptop.adapters.VideoFragmentAdapter;
 import com.toptop.models.Comment;
-import com.toptop.models.Notification;
 import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
 import com.toptop.utils.firebase.FirebaseUtil;
-import com.toptop.utils.firebase.NotificationFirebase;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,10 +48,24 @@ public class CommentFragment extends Fragment {
 	List<Comment> comments = new ArrayList<>();
 	private final DatabaseReference mDB_comment;
 
-	public CommentFragment(Video video, Context context) {
+	private static List<CommentFragment> instances = new ArrayList<>();
+
+	private CommentFragment(Video video, Context context) {
 		mDB_comment = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
 		this.video = video;
 		this.context = context;
+	}
+
+	// New instance
+	public static CommentFragment getInstance(Video video, Context context) {
+		for (CommentFragment instance : instances) {
+			if (instance.video.getVideoId().equals(video.getVideoId())) {
+				return instance;
+			}
+		}
+		CommentFragment instance = new CommentFragment(video, context);
+		instances.add(instance);
+		return instance;
 	}
 
 	@Override

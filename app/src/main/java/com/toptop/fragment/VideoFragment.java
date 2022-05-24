@@ -35,8 +35,12 @@ public class VideoFragment extends Fragment {
 	RecyclerView recyclerView;
 	private List<Video> videos = new ArrayList<>();
 
-	public VideoFragment() {
-		// Required empty public constructor
+	private static final VideoFragment instance = new VideoFragment();
+
+	private VideoFragment() { }
+
+	public static VideoFragment getInstance() {
+		return instance;
 	}
 
 	@Override

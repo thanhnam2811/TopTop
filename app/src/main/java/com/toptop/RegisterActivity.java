@@ -1,10 +1,8 @@
 package com.toptop;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.toptop.fragment.InputAccountRegister;
 import com.toptop.fragment.InputInfoRegister;
 import com.toptop.models.User;
+import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.UserFirebase;
 
 import java.util.Objects;
@@ -32,13 +31,12 @@ public class RegisterActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register);
 
-		getWindow().setStatusBarColor(Color.WHITE);
-		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, this);
 
 		getSupportFragmentManager().beginTransaction()
-				.add(R.id.input_fragment, new InputInfoRegister(), InputInfoRegister.TAG)
+				.add(R.id.input_fragment, InputInfoRegister.getInstance(), InputInfoRegister.TAG)
 				.addToBackStack(InputInfoRegister.TAG)
-				.add(R.id.input_fragment, new InputAccountRegister(), InputAccountRegister.TAG)
+				.add(R.id.input_fragment, InputAccountRegister.getInstance(), InputAccountRegister.TAG)
 				.addToBackStack(InputAccountRegister.TAG)
 				.commit();
 

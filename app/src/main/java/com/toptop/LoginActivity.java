@@ -1,10 +1,8 @@
 package com.toptop;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,6 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.Query;
 import com.toptop.models.User;
+import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 
@@ -59,9 +58,7 @@ public class LoginActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		mAuth = FirebaseAuth.getInstance();
-
-		getWindow().setStatusBarColor(Color.WHITE);
-		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, this);
 
 		// Binding
 		TextView register = findViewById(R.id.txtRegister);

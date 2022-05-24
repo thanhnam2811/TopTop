@@ -41,8 +41,13 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 	private final ArrayList<User> users = new ArrayList<>();
 	private final ArrayList<Video> videos = new ArrayList<>();
 
-	public SearchFragment() {
-		// Required empty public constructor
+	private static final SearchFragment instance = new SearchFragment();
+
+	private SearchFragment() {
+	}
+
+	public static SearchFragment getInstance() {
+		return instance;
 	}
 
 	@Override

@@ -1,9 +1,11 @@
 package com.toptop.adapters;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,7 +34,6 @@ import com.toptop.utils.ItemClickListener;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
 import com.toptop.utils.firebase.FirebaseUtil;
-import com.toptop.utils.firebase.NotificationFirebase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +95,7 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 			if (isLongClick) {
 				popupMenu = new PopupMenu(holder.txt_content.getContext(), view);
 				popupMenu.inflate(R.menu.popup_menu_comment);
+				popupMenu.setGravity(Gravity.CENTER);
 
 				// Check owner
 				if (!MainActivity.isLoggedIn() || !MainActivity.getCurrentUser().getUsername().equals(comment.getUsername()))
@@ -115,6 +116,7 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 												CommentFirebase.deleteCommentFromVideo(comment, video);
 												comments.remove(comment);
 												notifyItemRemoved(position);
+												notifyItemRangeChanged(0, comments.size());
 												Toast.makeText(context, "Xóa bình luận thành công", Toast.LENGTH_SHORT).show();
 											} else {
 												Toast.makeText(context, "Xoá bình luận thất bại", Toast.LENGTH_SHORT).show();
@@ -127,6 +129,8 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 							break;
 
 						case R.id.menu_comment_reply:
+
+						case R.id.menu_comment_report:
 							Toast.makeText(context, "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show();
 							break;
 
@@ -135,10 +139,6 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 							ClipData clip = ClipData.newPlainText("content", comment.getContent());
 							clipboard.setPrimaryClip(clip);
 							Toast.makeText(context, "Đã copy!", Toast.LENGTH_SHORT).show();
-							break;
-
-						case R.id.menu_comment_report:
-							Toast.makeText(context, "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show();
 							break;
 					}
 					return true;

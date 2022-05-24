@@ -21,8 +21,11 @@ public class InputInfoRegister extends Fragment {
 	public final static String TAG = "InputInfoRegister";
 	EditText mEditTextName, mEditTextPhone, mEditTextEmail;
 
-	public InputInfoRegister() {
-		// Required empty public constructor
+	private static final InputInfoRegister instance = new InputInfoRegister();
+	private InputInfoRegister() {
+	}
+	public static InputInfoRegister getInstance() {
+		return instance;
 	}
 
 	@Override
@@ -89,11 +92,15 @@ public class InputInfoRegister extends Fragment {
 			mEditTextPhone.setError("Vui lòng nhập số điện thoại");
 			return false;
 		}
+		if (!isPhoneNumberValid(phonenumber)) {
+			mEditTextPhone.setError("Số điện thoại không hợp lệ");
+		}
 		return true;
 	}
 
 	// is phone number valid
 	private boolean isPhoneNumberValid(String phonenumber) {
+		phonenumber = phonenumber.trim().replace("+84", "0");
 		return phonenumber.length() == 10 && phonenumber.startsWith("0");
 	}
 

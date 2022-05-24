@@ -74,7 +74,10 @@ public class ProfileFragment extends Fragment {
 	StorageReference imageRef, videoRef;
 	Uri videoUri;
 
-	public ProfileFragment() {
+	private static final ProfileFragment instance = new ProfileFragment();
+	private ProfileFragment() { }
+	public static ProfileFragment getInstance() {
+		return instance;
 	}
 
 	@SuppressLint("SetTextI18n")
@@ -274,6 +277,10 @@ public class ProfileFragment extends Fragment {
 					progressDialog.dismiss();
 					Glide.with(context).load(R.drawable.ic_add_video).into(ic_add_video);
 					edt_video_content.setText("");
+					VideoGridAdapter videoGridAdapter = (VideoGridAdapter) recyclerView.getAdapter();
+					if (videoGridAdapter != null) {
+						videoGridAdapter.notifyItemInserted(videoGridAdapter.getItemCount());
+					}
 				});
 			}).addOnFailureListener(e -> {
 				Toast.makeText(context, "Đăng video thất bại", Toast.LENGTH_SHORT).show();

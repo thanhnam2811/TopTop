@@ -54,6 +54,7 @@ public class UserFirebase {
 			User userToFollow = new User(dataSnapshot);
 			userToFollow.addFollower(user.getUsername());
 			updateUser(userToFollow);
+
 			//Add notification for user
 			Notification notification = new Notification();
 			notification.setUsername(userToFollow.getUsername());
