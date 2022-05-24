@@ -14,13 +14,17 @@ import com.toptop.R;
 import com.toptop.RegisterActivity;
 import com.toptop.utils.firebase.FirebaseUtil;
 
+import java.util.Objects;
+
 public class InputAccountRegister extends Fragment {
 	public final static String TAG = "InputAccountRegister";
 
 	EditText mEditTextUsername, mEditTextPassword, mEditTextConfirmPassword;
 
-	public InputAccountRegister() {
-		// Required empty public constructor
+	private static final InputAccountRegister instance = new InputAccountRegister();
+	private InputAccountRegister() {}
+	public static InputAccountRegister getInstance() {
+		return instance;
 	}
 
 	@Override
@@ -41,9 +45,7 @@ public class InputAccountRegister extends Fragment {
 		mEditTextPassword = view.findViewById(R.id.txt_password);
 		mEditTextConfirmPassword = view.findViewById(R.id.txt_password_confirm);
 
-		btnBack.setOnClickListener(v -> {
-			openInputInfoRegister();
-		});
+		btnBack.setOnClickListener(v -> openInputInfoRegister());
 
 		btnRegister.setOnClickListener(v -> {
 			String username = mEditTextUsername.getText().toString();
@@ -75,7 +77,7 @@ public class InputAccountRegister extends Fragment {
 	public void openInputInfoRegister() {
 		requireActivity().getSupportFragmentManager().beginTransaction()
 				.replace(R.id.input_fragment,
-						requireActivity().getSupportFragmentManager().findFragmentByTag(InputInfoRegister.TAG))
+						Objects.requireNonNull(requireActivity().getSupportFragmentManager().findFragmentByTag(InputInfoRegister.TAG)))
 				.commit();
 	}
 

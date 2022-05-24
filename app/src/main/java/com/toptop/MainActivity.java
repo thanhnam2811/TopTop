@@ -1,15 +1,11 @@
 package com.toptop;
 
 import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
-import static com.toptop.fragment.CommentFragment.newComment;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-
-
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -19,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,9 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.toptop.adapters.CommentFragmentAdapter;
 import com.toptop.adapters.VideoFragmentAdapter;
-import com.toptop.fragment.CommentFragment;
 import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
 import com.toptop.fragment.SearchFragment;
@@ -80,7 +73,6 @@ public class MainActivity extends FragmentActivity {
 	@SuppressLint("StaticFieldLeak")
 	CurvedBottomNavigationView nav;
 	CbnMenuItem[] items;
-
 
 	public static User getCurrentUser() {
 		return currentUser;
@@ -290,7 +282,7 @@ public class MainActivity extends FragmentActivity {
 					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 					intent.putExtra(Video.TAG, value);
 
-					PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+					PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 					Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 					NotificationCompat.Builder notificationBuilderVideo  = new NotificationCompat.Builder(this)
 							.setSmallIcon(R.drawable.logo_toptop)
@@ -314,7 +306,7 @@ public class MainActivity extends FragmentActivity {
 			Intent intent = new Intent(this, WatchProfileActivity.class);
 			intent.putExtra(User.TAG, notification.getRedirectTo());
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 			Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 			//notification for follow
 			notificationBuilder = new NotificationCompat.Builder(this)
@@ -412,13 +404,13 @@ public class MainActivity extends FragmentActivity {
 
 			// Add fragment to the container
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.fragment_container, new SearchFragment(), SearchFragment.TAG)
+					.add(R.id.fragment_container, SearchFragment.getInstance(), SearchFragment.TAG)
 					.addToBackStack(SearchFragment.TAG)
-					.add(R.id.fragment_container, new NotificationFragment(), NotificationFragment.TAG)
+					.add(R.id.fragment_container, NotificationFragment.getInstance(), NotificationFragment.TAG)
 					.addToBackStack(NotificationFragment.TAG)
-					.add(R.id.fragment_container, new ProfileFragment(), ProfileFragment.TAG)
+					.add(R.id.fragment_container, ProfileFragment.getInstance(), ProfileFragment.TAG)
 					.addToBackStack(ProfileFragment.TAG)
-					.add(R.id.fragment_container, new VideoFragment(), VideoFragment.TAG)
+					.add(R.id.fragment_container, VideoFragment.getInstance(), VideoFragment.TAG)
 					.addToBackStack(VideoFragment.TAG)
 					.commit();
 

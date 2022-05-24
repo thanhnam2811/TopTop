@@ -34,8 +34,12 @@ public class NotificationFragment extends Fragment {
 	RecyclerView recyclerView;
 	Context context;
 
-	public NotificationFragment() {
-		// Required empty public constructor
+	private static final NotificationFragment instance = new NotificationFragment();
+	private NotificationFragment() {
+
+	}
+	public static NotificationFragment getInstance() {
+		return instance;
 	}
 
 	@Override
