@@ -74,7 +74,9 @@ public class MainActivity extends FragmentActivity {
 	private static User currentUser;
 	private NotificationManagerCompat notificationManagerCompat;
 	private static final String KEY_TEXT_REPLY = "key_text_reply";
-	private static final int NOTIFICATION_ID = 1;
+	private static final int NOTIFICATION_COMMENT_ID = 1;
+	private static final int NOTIFICATION_LIKE_ID = 2;
+	private static final int NOTIFICATION_FOLLOW_ID = 3;
 	private static final String COMMENT_NOTIFICATION = "comment_notification";
 
 	@SuppressLint("StaticFieldLeak")
@@ -148,31 +150,8 @@ public class MainActivity extends FragmentActivity {
 				if (documentSnapshot.exists()) {
 					User user = new User(documentSnapshot.getChildren().iterator().next());
 					setCurrentUser(user);
-					//get notification for current user
-					Query queryNotify = FirebaseUtil.getNotificationsByUsername(user.getUsername());
-					queryNotify.addValueEventListener(new ValueEventListener() {
-						@Override
-						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-							ArrayList<Notification> notifications = new ArrayList<>();
-							for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-								Notification notification = new Notification(snapshot);
-								notifications.add(notification);
-							}
-							ArrayList<Notification> notifyUnseen = Notification.getNotificationUnseen(notifications);
-							if (notifyUnseen.size() > 0) {
-								Notification.setSeen(notifyUnseen);
-//								send notification
-								for(Notification notify : notifyUnseen){
-									sendNotification(notify);
-									System.out.println("count: " + notifyUnseen.size());
-									NotificationFirebase.updateNotification(notify);
-								}
-							}
-						}
-						@Override
-						public void onCancelled(@NonNull DatabaseError error) {
-						}
-					});
+					//get notification for current user and send notification unseen
+					notificationUnseen(user);
 				} else {
 					setCurrentUser(null);
 				}
@@ -262,8 +241,47 @@ public class MainActivity extends FragmentActivity {
 
 			}
 			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			manager.cancel(NOTIFICATION_ID);
+			manager.cancel(NOTIFICATION_COMMENT_ID);
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		notificationUnseen(currentUser);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		notificationUnseen(currentUser);
+	}
+
+	private void notificationUnseen(User user) {
+		Query queryNotify = FirebaseUtil.getNotificationsByUsername(user.getUsername());
+		queryNotify.addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				ArrayList<Notification> notifications = new ArrayList<>();
+				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+					Notification notification = new Notification(snapshot);
+					notifications.add(notification);
+				}
+				ArrayList<Notification> notifyUnseen = Notification.getNotificationUnseen(notifications);
+				if (notifyUnseen.size() > 0) {
+//					Notification.setSeen(notifyUnseen);
+//					send notification
+					for(Notification notify : notifyUnseen){
+						sendNotification(notify);
+						System.out.println("count: " + notifyUnseen.size());
+//						NotificationFirebase.updateNotification(notify);
+					}
+				}
+			}
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+			}
+		});
 	}
 	private void sendNotification(Notification notification) {
 		NotificationManager notificationManager =
@@ -306,7 +324,7 @@ public class MainActivity extends FragmentActivity {
 							.setChannelId("my_notification")
 							.setColor(Color.parseColor("#3F5996"));
 					assert notificationManager != null;
-					notificationManager.notify(NOTIFICATION_ID, notificationBuilderVideo.build());
+					notificationManager.notify(NOTIFICATION_LIKE_ID, notificationBuilderVideo.build());
 				}
 			}, notification.getRedirectTo());
 		}else if(notification.getType().equals(Notification.TYPE_FOLLOW)){
@@ -332,7 +350,7 @@ public class MainActivity extends FragmentActivity {
 					.setColor(Color.parseColor("#3F5996"));
 			//.setProgress(100,50,false);
 			assert notificationManager != null;
-			notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+			notificationManager.notify(NOTIFICATION_FOLLOW_ID, notificationBuilder.build());
 		}
 		else {
 			// event click notification to open activity
@@ -387,12 +405,10 @@ public class MainActivity extends FragmentActivity {
 
 			//.setProgress(100,50,false);
 			assert notificationManager != null;
-			notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+			notificationManager.notify(NOTIFICATION_COMMENT_ID, notificationBuilder.build());
 		}
 
 	}
-
-
 
 	private void init() {
 		if (nav == null) {
