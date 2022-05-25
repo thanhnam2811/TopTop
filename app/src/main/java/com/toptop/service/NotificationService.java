@@ -70,7 +70,7 @@ public class NotificationService extends Service {
         return START_NOT_STICKY;
     }
     private void startMyOwnForeground(){
-        String NOTIFICATION_CHANNEL_ID = "com.example.simpleapp";
+        String NOTIFICATION_CHANNEL_ID = "com.toptop.service.notification";
         String channelName = "My Background Service";
         NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
         chan.setLightColor(Color.BLUE);
@@ -86,6 +86,7 @@ public class NotificationService extends Service {
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
+
         startForeground(2, notification);
     }
 
@@ -145,7 +146,7 @@ public class NotificationService extends Service {
                     NotificationCompat.Builder notificationBuilderVideo  = new NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.logo_toptop)
 				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_liked))
-                            .setContentTitle("You have new like")
+                            .setContentTitle("Bạn có một lượt thích mới")
                             .setContentText(notification.getContent())
                             .setAutoCancel(true)
                             .setSound(soundUri)
@@ -170,7 +171,7 @@ public class NotificationService extends Service {
             notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.logo_toptop)
 					.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_following))
-                    .setContentTitle("You have new follower")
+                    .setContentTitle("Bạn có một người theo dõi mới")
                     .setContentText(notification.getContent())
                     .setAutoCancel(true)
                     .setSound(soundUri)
@@ -198,7 +199,7 @@ public class NotificationService extends Service {
             notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.logo_toptop)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_comment))
-                    .setContentTitle("You have new comment")
+                    .setContentTitle("Bạn có một bình luận mới")
                     .setContentText(notification.getContent())
                     .setStyle(new NotificationCompat.BigTextStyle()
                             .bigText(notification.getContent()))
@@ -212,7 +213,7 @@ public class NotificationService extends Service {
                     .setChannelId("my_notification")
                     .setColor(Color.parseColor("#3F5996"));
 
-            String replyLabel = "Type to reply...";
+            String replyLabel = "Nhập để trả lời...";
             //Initialise RemoteInput
             RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY).setLabel(replyLabel).build();
             Intent resultIntent = new Intent(this, MainActivity.class);

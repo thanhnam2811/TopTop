@@ -3,18 +3,26 @@ package com.toptop.adapters;
 import androidx.annotation.NonNull;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.constraintlayout.motion.widget.OnSwipe;
+import androidx.core.view.MotionEventCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -25,9 +33,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.toptop.MainActivity;
 import com.toptop.R;
+import com.toptop.fragment.NotificationFragment;
 import com.toptop.models.Notification;
 import com.toptop.models.User;
+import com.toptop.models.Video;
+import com.toptop.utils.ItemClickListener;
 import com.toptop.utils.RecyclerViewDisabler;
+import com.toptop.utils.firebase.CommentFirebase;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.MyUtil;
@@ -36,14 +48,14 @@ import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.List;
 
-public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnTouchListener {
     private static final String TAG = "NotificationFragementAdapter";
     private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
 
     private final int VIEW_TYPE_ITEM_1 = 1;
     private final int VIEW_TYPE_ITEM_2 = 2;
     private final LayoutInflater inflater;
-
+    PopupMenu popupMenu;
 
     public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
 
@@ -166,7 +178,55 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                     }, notification.getRedirectTo());
                 }
             });
+            //set onclick listener for item
+            ((NotificationViewHolder) holder).setItemClickListener((view, position1, isLongClick) -> {
+                if(isLongClick) {
+                    //change background color for item
+                    ((NotificationViewHolder) holder).itemView.setBackgroundColor(Color.parseColor("#E0E0E0"));
 
+                    popupMenu = new PopupMenu(((NotificationViewHolder) holder).txt_content.getContext(), view);
+                    popupMenu.inflate(R.menu.popup_menu_comment);
+                    popupMenu.setGravity(Gravity.CENTER);
+
+                    //edit text item in popup menu
+                    popupMenu.getMenu().findItem(R.id.menu_comment_reply).setTitle("Tắt thông báo cho Video này");
+
+                    //remove item in popup menu
+                    popupMenu.getMenu().removeItem(R.id.menu_comment_copy);
+
+                    popupMenu.setOnMenuItemClickListener(item -> {
+                        switch (item.getItemId()) {
+                            case R.id.menu_comment_delete:
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                builder.setMessage("Bạn có chắc chắn muốn xóa bình luận này?");
+                                builder
+                                        .setPositiveButton("Xóa", (dialog, which) -> {
+                                            //delete notification
+                                            NotificationFirebase.addNotification(notification);
+                                            //remove notification from list
+                                            notifications.remove(holder.getAdapterPosition());
+                                            notifyItemRemoved(holder.getAdapterPosition());
+                                            notifyItemRangeChanged(holder.getAdapterPosition(), notifications.size());
+                                            Toast.makeText(context, "Xóa thành công", Toast.LENGTH_SHORT).show();
+
+                                        })
+                                        .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+                                builder.show();
+                                break;
+                            case R.id.menu_comment_reply:
+                                Toast.makeText(context, "chức năng đang phát triển", Toast.LENGTH_SHORT).show();
+                                break;
+
+                            case R.id.menu_comment_report:
+                                Toast.makeText(context, "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                        return true;
+                    });
+
+                    popupMenu.show();
+                }
+            });
 
         } else if(holder instanceof FollowViewHolder) {
             FollowViewHolder followViewHolder = (FollowViewHolder) holder;
@@ -205,9 +265,50 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                 Log.d(TAG, "forward: " + notification.getRedirectTo());
                 MyUtil.goToUser((Activity)context, notification.getRedirectTo());
             });
-            // handle horizontal swipe to delete item
-//            holder.itemView.setOnTouchListener(new SwipeToDelete(context, position, holder));
 
+            //set onclick listener for item
+            ((FollowViewHolder) holder).setItemClickListener((view, position1, isLongClick) -> {
+                if(isLongClick) {
+                    //change background color for item
+                    ((FollowViewHolder) holder).itemView.setBackgroundColor(Color.parseColor("#E0E0E0"));
+
+                    popupMenu = new PopupMenu(((FollowViewHolder) holder).txt_content.getContext(), view);
+                    popupMenu.inflate(R.menu.popup_menu_comment);
+                    popupMenu.setGravity(Gravity.CENTER);
+
+                    //remove item in popup menu
+                    popupMenu.getMenu().removeItem(R.id.menu_comment_copy);
+                    popupMenu.getMenu().removeItem(R.id.menu_comment_reply);
+
+                    popupMenu.setOnMenuItemClickListener(item -> {
+                        switch (item.getItemId()) {
+                            case R.id.menu_comment_delete:
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                builder.setMessage("Bạn có chắc chắn muốn xóa bình luận này?");
+                                builder
+                                        .setPositiveButton("Xóa", (dialog, which) -> {
+                                            //delete notification
+                                            NotificationFirebase.addNotification(notification);
+                                            //remove notification from list
+                                            notifications.remove(holder.getAdapterPosition());
+                                            notifyItemRemoved(holder.getAdapterPosition());
+                                            notifyItemRangeChanged(holder.getAdapterPosition(), notifications.size());
+                                            Toast.makeText(context, "Xóa thành công", Toast.LENGTH_SHORT).show();
+
+                                        })
+                                        .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+                                builder.show();
+                                break;
+
+                            case R.id.menu_comment_report:
+                                Toast.makeText(context, "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                        return true;
+                    });
+                    popupMenu.show();
+                }
+            });
         }
     }
 
@@ -215,10 +316,18 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
     public int getItemCount() {
         return notifications.size();
     }
-    class NotificationViewHolder extends RecyclerView.ViewHolder {
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        return false;
+    }
+
+    class NotificationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
         TextView txt_username, txt_content, tx_time;
         CircularImageView img_profile;
         ImageView privew_img;
+        private ItemClickListener itemClickListener;
+
 
         public NotificationViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -227,13 +336,33 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             tx_time = itemView.findViewById(R.id.txt_timeNotification);
             img_profile = itemView.findViewById(R.id.img_avatarNotification);
             privew_img = itemView.findViewById(R.id.img_Notification);
+
+            itemView.setOnClickListener(this); // Mấu chốt ở đây , set sự kiên onClick cho View
+            itemView.setOnLongClickListener(this); // Mấu chốt ở đây , set sự kiên onLongClick cho View
+        }
+        //Tạo setter cho biến itemClickListenenr
+        public void setItemClickListener(ItemClickListener itemClickListener) {
+            this.itemClickListener = itemClickListener;
+        }
+
+        @Override
+        public void onClick(View view) {
+            itemClickListener.onClick(view, getAdapterPosition(), false);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            itemClickListener.onClick(view, getAdapterPosition(), true);
+            return true;
         }
     }
 
-    class FollowViewHolder extends RecyclerView.ViewHolder {
+    class FollowViewHolder extends RecyclerView.ViewHolder   implements View.OnClickListener, View.OnLongClickListener{
         TextView txt_username, txt_content, tx_time;
         CircularImageView img_profile;
         Button btn_follow;
+        private ItemClickListener itemClickListener;
+
 
         public FollowViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -243,8 +372,25 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             img_profile = itemView.findViewById(R.id.img_avatarNotification);
             btn_follow = itemView.findViewById(R.id.btn_followBack);
 
+            itemView.setOnClickListener(this); // Mấu chốt ở đây , set sự kiên onClick cho View
+            itemView.setOnLongClickListener(this); // Mấu chốt ở đây , set sự kiên onLongClick cho View
         }
 
+        //Tạo setter cho biến itemClickListenenr
+        public void setItemClickListener(ItemClickListener itemClickListener) {
+            this.itemClickListener = itemClickListener;
+        }
+
+        @Override
+        public void onClick(View view) {
+            itemClickListener.onClick(view, getAdapterPosition(), false);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            itemClickListener.onClick(view, getAdapterPosition(), true);
+            return true;
+        }
     }
     // Get position of video by video ID
     public int getPosition(String notificationId) {
@@ -256,28 +402,5 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
         return -1;
     }
 
-    private class SwipeToDelete implements View.OnTouchListener {
-        public SwipeToDelete(Context context, int position, RecyclerView.ViewHolder holder) {
-            //get notification
-            Notification notification = NotificationFragmentAdapter.this.notifications.get(position);
-            //delete notification
-            NotificationFirebase.deleteNotification(notification);
-
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                //remove item
-                 int position = view.getId();
-                 notifications.remove(position);
-                 notifyItemRemoved(position);
-                 notifyItemRangeChanged(position, notifications.size());
-
-                 return true;
-            }
-            return false;
-        }
-    }
 }
 

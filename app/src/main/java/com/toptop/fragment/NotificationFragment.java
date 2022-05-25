@@ -88,6 +88,7 @@ public class NotificationFragment extends Fragment {
 				System.out.println("notifications: " + notifications.size());
 				//set seen TRUE notifications
 				Notification.setSeen(notifications);
+				Notification.sortByTimeNewest(notifications);
 
 				NotificationFragmentAdapter notificationFragmentAdapter = new NotificationFragmentAdapter(notifications, context);
 				if (recyclerView.getAdapter() == null) {
