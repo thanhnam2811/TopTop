@@ -41,6 +41,7 @@ import com.toptop.models.Comment;
 import com.toptop.models.Notification;
 import com.toptop.models.User;
 import com.toptop.models.Video;
+import com.toptop.service.NotificationService;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
@@ -56,6 +57,7 @@ import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem;
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView;
 
 public class MainActivity extends FragmentActivity {
+	private static final String CHANNEL_ID = "channel_service";
 	private FirebaseAuth mAuth;
 	public static final String EXTRA_REGISTER = "register";
 	public static final String EXTRA_LOGIN = "login";
@@ -204,6 +206,12 @@ public class MainActivity extends FragmentActivity {
 		mAuth = FirebaseAuth.getInstance();
 		init();
 
+
+		//stop service
+		Intent intentService = new Intent(this, NotificationService.class);
+		stopService(intentService);
+
+
 		//get reply from notification
 		Intent intent = this.getIntent();
 		Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
@@ -240,13 +248,12 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		notificationUnseen(currentUser);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		notificationUnseen(currentUser);
+		startService(new Intent(this, NotificationService.class));
 	}
 
 	private void notificationUnseen(User user) {
@@ -261,12 +268,12 @@ public class MainActivity extends FragmentActivity {
 				}
 				ArrayList<Notification> notifyUnseen = Notification.getNotificationUnseen(notifications);
 				if (notifyUnseen.size() > 0) {
-//					Notification.setSeen(notifyUnseen);
+					Notification.setSeen(notifyUnseen);
 //					send notification
 					for(Notification notify : notifyUnseen){
 						sendNotification(notify);
 						System.out.println("count: " + notifyUnseen.size());
-//						NotificationFirebase.updateNotification(notify);
+						NotificationFirebase.updateNotification(notify);
 					}
 				}
 			}
@@ -304,7 +311,7 @@ public class MainActivity extends FragmentActivity {
 					Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 					NotificationCompat.Builder notificationBuilderVideo  = new NotificationCompat.Builder(this)
 							.setSmallIcon(R.drawable.logo_toptop)
-//				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.sicont))
+				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_liked))
 							.setContentTitle(notification.getType())
 							.setContentText(notification.getContent())
 							.setAutoCancel(true)
@@ -329,7 +336,7 @@ public class MainActivity extends FragmentActivity {
 			//notification for follow
 			notificationBuilder = new NotificationCompat.Builder(this)
 					.setSmallIcon(R.drawable.logo_toptop)
-//					.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar))
+					.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_following))
 					.setContentTitle(notification.getType())
 					.setContentText(notification.getContent())
 					.setAutoCancel(true)
