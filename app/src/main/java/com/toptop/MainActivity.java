@@ -50,7 +50,6 @@ import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import kotlin.Unit;
 import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem;
@@ -118,18 +117,12 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void updateUI() {
-		ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG);
-		if (profileFragment != null) {
-			profileFragment.updateUI();
-		}
-		VideoFragment videoFragment = (VideoFragment) getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG);
-		if (videoFragment != null) {
-			videoFragment.updateUI();
-		}
-		NotificationFragment notificationFragment = (NotificationFragment) getSupportFragmentManager().findFragmentByTag(NotificationFragment.TAG);
-		if (notificationFragment != null) {
-			notificationFragment.updateUI();
-		}
+		ProfileFragment profileFragment = ProfileFragment.getInstance();
+		profileFragment.updateUI();
+		VideoFragment videoFragment = VideoFragment.getInstance();
+		videoFragment.updateUI();
+		NotificationFragment notificationFragment = NotificationFragment.getInstance();
+		notificationFragment.updateUI();
 	}
 
 	@Override
@@ -174,7 +167,7 @@ public class MainActivity extends FragmentActivity {
 				}
 			}
 		} else if (requestCode == REGISTER_REQUEST_CODE) {
-			if (resultCode == RESULT_OK) {
+			if (resultCode == RESULT_OK && data != null) {
 				User user = (User) data.getSerializableExtra(RegisterActivity.USER);
 				setCurrentUser(user);
 				changeNavItem(0);
@@ -188,8 +181,8 @@ public class MainActivity extends FragmentActivity {
 			}
 		} else if (requestCode == REQUEST_CHANGE_AVATAR || requestCode == REQUEST_ADD_VIDEO) {
 			// Don't do anything
-		}
-		else {
+			Log.i(TAG, "onActivityResult: " + requestCode);
+		} else {
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
@@ -213,7 +206,8 @@ public class MainActivity extends FragmentActivity {
 		Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
 		if (remoteInput != null) {
 			String reply = remoteInput.getCharSequence(KEY_TEXT_REPLY).toString();
-			if (reply != null && !reply.isEmpty()) {
+			if (!reply.isEmpty()) {
+//				Toast.makeText(this, "Reply: " + reply, Toast.LENGTH_SHORT).show();
 				Bundle extras = getIntent().getExtras();
 				String commentId = extras.getString(COMMENT_NOTIFICATION);
 				if (commentId != null && !commentId.isEmpty()) {
@@ -288,8 +282,7 @@ public class MainActivity extends FragmentActivity {
 
 			// Set the default fragment
 			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.fragment_container,
-							Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
+					.replace(R.id.fragment_container, VideoFragment.getInstance(), VideoFragment.TAG)
 					.commit();
 
 			// Set navigation bar color
@@ -304,29 +297,25 @@ public class MainActivity extends FragmentActivity {
 		switch (cbnMenuItem.getIcon()) {
 			case R.drawable.ic_video:
 				getSupportFragmentManager().beginTransaction()
-						.replace(R.id.fragment_container,
-								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
+						.replace(R.id.fragment_container, VideoFragment.getInstance(), VideoFragment.TAG)
 						.commit();
 				Log.i(NAV_TAG, "Change to video fragment");
 				break;
 			case R.drawable.ic_search:
 				getSupportFragmentManager().beginTransaction()
-						.replace(R.id.fragment_container,
-								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(SearchFragment.TAG)))
+						.replace(R.id.fragment_container, SearchFragment.getInstance(), SearchFragment.TAG)
 						.commit();
 				Log.i(NAV_TAG, "Change to search fragment");
 				break;
 			case R.drawable.ic_notification:
 				getSupportFragmentManager().beginTransaction()
-						.replace(R.id.fragment_container,
-								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(NotificationFragment.TAG)))
+						.replace(R.id.fragment_container, NotificationFragment.getInstance(), NotificationFragment.TAG)
 						.commit();
 				Log.i(NAV_TAG, "Change to notification fragment");
 				break;
 			case R.drawable.ic_profile:
 				getSupportFragmentManager().beginTransaction()
-						.replace(R.id.fragment_container,
-								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG)))
+						.replace(R.id.fragment_container, ProfileFragment.getInstance(), ProfileFragment.TAG)
 						.commit();
 				Log.i(NAV_TAG, "Change to profile fragment");
 				break;
