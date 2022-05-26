@@ -202,7 +202,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                                 builder
                                         .setPositiveButton("Xóa", (dialog, which) -> {
                                             //delete notification
-                                            NotificationFirebase.addNotification(notification);
+                                            NotificationFirebase.deleteNotification(notification);
                                             //remove notification from list
                                             notifications.remove(holder.getAdapterPosition());
                                             notifyItemRemoved(holder.getAdapterPosition());
@@ -288,7 +288,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                                 builder
                                         .setPositiveButton("Xóa", (dialog, which) -> {
                                             //delete notification
-                                            NotificationFirebase.addNotification(notification);
+                                            NotificationFirebase.deleteNotification(notification);
                                             //remove notification from list
                                             notifications.remove(holder.getAdapterPosition());
                                             notifyItemRemoved(holder.getAdapterPosition());
