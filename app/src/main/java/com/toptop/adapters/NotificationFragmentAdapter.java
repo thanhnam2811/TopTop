@@ -188,16 +188,18 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 					popupMenu.setGravity(Gravity.CENTER);
 
 					//edit text item in popup menu
-					popupMenu.getMenu().findItem(R.id.menu_comment_reply).setTitle("Tắt thông báo cho Video này");
+					popupMenu.getMenu().findItem(R.id.menu_comment_reply).setTitle("Turn off notification for this video");
 
 					//remove item in popup menu
 					popupMenu.getMenu().removeItem(R.id.menu_comment_copy);
+					//show button delete
+					popupMenu.getMenu().findItem(R.id.menu_comment_delete).setVisible(true);
 
 					popupMenu.setOnMenuItemClickListener(item -> {
 						switch (item.getItemId()) {
 							case R.id.menu_comment_delete:
 								AlertDialog.Builder builder = new AlertDialog.Builder(context);
-								builder.setMessage("Bạn có chắc chắn muốn xóa bình luận này?");
+								builder.setMessage("Bạn có chắc chắn muốn xóa thông báo này?");
 								builder
 										.setPositiveButton("Xóa", (dialog, which) -> {
 											//delete notification
@@ -278,6 +280,8 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 					popupMenu = new PopupMenu(((FollowViewHolder) holder).txt_content.getContext(), view);
 					popupMenu.inflate(R.menu.popup_menu_comment);
 					popupMenu.setGravity(Gravity.CENTER);
+					//show button delete
+					popupMenu.getMenu().findItem(R.id.menu_comment_delete).setVisible(true);
 
 					//remove item in popup menu
 					popupMenu.getMenu().removeItem(R.id.menu_comment_copy);
@@ -287,7 +291,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 						switch (item.getItemId()) {
 							case R.id.menu_comment_delete:
 								AlertDialog.Builder builder = new AlertDialog.Builder(context);
-								builder.setMessage("Bạn có chắc chắn muốn xóa bình luận này?");
+								builder.setMessage("Bạn có chắc chắn muốn xóa thông báo này?");
 								builder
 										.setPositiveButton("Xóa", (dialog, which) -> {
 											//delete notification

@@ -32,7 +32,6 @@ import java.util.List;
 
 public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAdapter.SearchViewHolder> {
 	private static final String TAG = "SearchFragementAdapter";
-	private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
 
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
 	Context context;

@@ -28,6 +28,7 @@ import com.toptop.fragment.SearchFragment;
 import com.toptop.fragment.VideoFragment;
 import com.toptop.models.Comment;
 import com.toptop.models.User;
+import com.toptop.service.NotificationService;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
@@ -109,6 +110,11 @@ public class MainActivity extends FragmentActivity {
 			User user = new User();
 			user.setEmail(currentUser.getEmail());
 			setCurrentUser(user);
+			//start service
+			startService(new Intent(this, NotificationService.class));
+		} else {
+			//stop service
+			stopService(new Intent(this, NotificationService.class));
 		}
 	}
 
@@ -195,6 +201,18 @@ public class MainActivity extends FragmentActivity {
 			}
 			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			manager.cancel(NOTIFICATION_ID);
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if(MainActivity.getCurrentUser() != null) {
+			//start service
+			startService(new Intent(this, NotificationService.class));
+		}else {
+			//stop service
+			stopService(new Intent(this, NotificationService.class));
 		}
 	}
 
