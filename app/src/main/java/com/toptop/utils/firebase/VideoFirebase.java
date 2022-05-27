@@ -191,13 +191,13 @@ public class VideoFirebase {
 
 	// Get video by username
 	public static void getVideoByUsername(String username, ListVideoCallback listVideoCallback, FailedCallback failedCallback) {
-		videoRef.child("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
-
+		videoRef.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
 				List<Video> videos = new ArrayList<>();
 				for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 					Video video = dataSnapshot.getValue(Video.class);
+					Log.i(TAG, "onDataChange: " + video.getVideoId());
 					videos.add(video);
 				}
 				listVideoCallback.onCallback(videos);

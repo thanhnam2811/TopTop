@@ -107,6 +107,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 					// Search for video
 					VideoFirebase.getVideoLikeContent(query,
 							listvideos -> {
+						System.out.println(listvideos.size());
 								videos.clear();
 								videos.addAll(listvideos);
 								SearchFragmentVideoAdapter searchFragmentAdapterForVideo = new SearchFragmentVideoAdapter(videos, view.getContext());

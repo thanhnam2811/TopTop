@@ -2,6 +2,7 @@ package com.toptop.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 
+import com.toptop.MainActivity;
 import com.toptop.WatchProfileActivity;
 import com.toptop.WatchVideoActivity;
 import com.toptop.models.User;
@@ -150,10 +152,16 @@ public class MyUtil {
 	}
 
 	public static void goToUser(Activity activity, String username) {
-		Intent intent = new Intent(activity, WatchProfileActivity.class);
-		Log.d("forward to profile ", username);
-		intent.putExtra(User.TAG, username);
-		activity.startActivity(intent);
+		MainActivity mainActivity = (MainActivity) activity;
+		if(MainActivity.getCurrentUser().getUsername().equals(username)) {
+			mainActivity.changeNavItem(3);
+		}
+		else {
+			Intent intent = new Intent(activity, WatchProfileActivity.class);
+			Log.d("forward to profile ", username);
+			intent.putExtra(User.TAG, username);
+			activity.startActivity(intent);
+		}
 	}
 
 	// Date to string

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.share.model.ShareOpenGraphAction;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -27,6 +28,7 @@ import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
+import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,27 +152,20 @@ public class WatchProfileActivity extends AppCompatActivity {
 	}
 
 	private void prepareRecyclerView(User user) {
-		Query query = FirebaseUtil.getVideoByUsername(user.getUsername());
-		query.get().addOnSuccessListener(snapshot -> {
-			if (snapshot.exists()) {
-				List<Video> newVideos = new ArrayList<>();
-				for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-					Video video = new Video(dataSnapshot);
-					newVideos.add(video);
-				}
-
-				if (videos == null || !videos.equals(newVideos)) {
-					videos = newVideos;
-				}
-
-				if (recyclerView.getAdapter() == null) {
-					VideoGridAdapter adapter = new VideoGridAdapter(videos, context);
-					recyclerView.setAdapter(adapter);
-					recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
-				} else {
-					((VideoGridAdapter) recyclerView.getAdapter()).setVideos(videos);
-				}
-			}
-		});
+		VideoFirebase.getVideoByUsername(user.getUsername(), listvideos -> {
+					if (listvideos.size() > 0) {
+						if (videos == null || !videos.equals(listvideos)) {
+							videos = listvideos;
+						}
+						if (recyclerView.getAdapter() == null) {
+							VideoGridAdapter adapter = new VideoGridAdapter(videos, context);
+							recyclerView.setAdapter(adapter);
+							recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
+						} else {
+							((VideoGridAdapter) recyclerView.getAdapter()).setVideos(videos);
+						}
+					}
+				}, error -> Toast.makeText(context, "Failed to load videos", Toast.LENGTH_SHORT).show()
+		);
 	}
 }
