@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +8,7 @@
     <!-- Title bar Start-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:gravity="center">
 
@@ -18,29 +17,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Thông báo"
+            android:text="@string/notification"
             android:textColor="@color/main_color"
             android:textSize="16sp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageNotification"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_notification_color" />
-
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_notification_color"
+            android:contentDescription="TODO" />
     </LinearLayout>
     <!--Title bar End-->
     <View
+        android:id="@+id/line"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_below="@+id/linear_layout"
-        android:background="#6A6868" />
+        android:layout_height="1dp"
+        android:alpha="0.2"
+        android:background="@color/main_color" />
+
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="5dp"
         android:id="@+id/recycler_view_notifications"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="80dp"/>
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="80dp" />
 </LinearLayout>

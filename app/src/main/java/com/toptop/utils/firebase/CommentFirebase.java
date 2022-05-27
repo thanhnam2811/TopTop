@@ -25,16 +25,14 @@ public class CommentFirebase {
 		// add comment to video
 		String commentId = addComment(comment);
 
-		//Add notification to video
-		if(video.getUsername() != null && !video.getUsername().equals(MainActivity.getCurrentUser().getUsername())) {
-			Notification notification = new Notification();
-			notification.setUsername(video.getUsername());
-			notification.setContent(MainActivity.getCurrentUser().getUsername() + " bình luận video của bạn");
-			notification.setType(Notification.TYPE_COMMENT);
-			notification.setTime(MyUtil.getCurrentTime());
-			notification.setRedirectTo(commentId);
-			NotificationFirebase.addNotification(notification);
-		}
+		//Add notification to video owner
+		Notification notification = new Notification();
+		notification.setUsername(video.getUsername());
+		notification.setContent(MainActivity.getCurrentUser().getUsername() + " bình luận video của bạn");
+		notification.setType(Notification.TYPE_COMMENT);
+		notification.setTime(MyUtil.getCurrentTime());
+		notification.setRedirectTo(commentId);
+		NotificationFirebase.addNotification(notification);
 
 		// add comment to video
 		VideoFirebase.addCommentToVideo(comment, video);

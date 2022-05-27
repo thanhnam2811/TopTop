@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="facebook_app_id">5000371686667096</string>
+    <string name="fb_login_protocol_scheme">fb5000371686667096</string>
+    <string name="facebook_client_token">dbb08b348d22dfd6f41cddd4c8f49486</string>
+
+    <string name="app_name">TopTop</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="enter_old_password">Nhập mật khẩu cũ</string>
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="enter_new_password">Nhâp mật khẩu mới</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="confirm_new_password">Nhâp lại mật khẩu mới</string>
+    <string name="edit_info">Chỉnh sửa thông tin</string>
+    <string name="personnal_info">Thông tin cá nhân</string>
+    <string name="full_name">Họ và tên</string>
+    <string name="phone_number">Số điện thoại</string>
+    <string name="email">Email</string>
+    <string name="save">Lưu</string>
+    <string name="account">Tài khoản</string>
+    <string name="delete_account">Xóa tài khoản</string>
+    <string name="login">Đăng nhập</string>
+    <string name="email_or_username">Email hoặc tên tài khoản</string>
+    <string name="password">Mật khẩu</string>
+    <string name="login_with">Đăng nhập với:</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="don_t_have_an_account">Chưa có tài khoản?</string>
+    <string name="register_now">Đăng ký ngay!</string>
+    <string name="register">Đăng ký</string>
+    <string name="follow">Theo dõi</string>
+    <string name="likes">Lượt thích</string>
+    <string name="followers">Người theo dõi</string>
+    <string name="following">Đang theo dõi</string>
+    <string name="comment">Bình luận</string>
+    <string name="username">Tên tài khoản</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="back">Trở lại</string>
+    <string name="next">Tiếp tục</string>
+    <string name="notification">Thông báo</string>
+    <string name="enter_video_content">Nhập mô tả video</string>
+    <string name="post">Đăng</string>
+    <string name="not_login_in_profile_fragment">Bạn chưa đăng nhập!\nHãy đăng nhập để sử dụng tính năng này!</string>
+    <string name="or">hoặc</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="search_not_found">Không tìm thấy! :((</string>
+    <string name="delete">Xóa</string>
+    <string name="reply">Trả lời</string>
+    <string name="copy">Sao chép</string>
+    <string name="share">Chia sẻ</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="report">Báo cáo</string>
+    <string name="already_have_an_account">Bạn đã có tài khoản?</string>
+    <string name="login_now">Đăng nhập ngay!</string>
+</resources>

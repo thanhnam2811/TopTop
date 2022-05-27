@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="13dp"
-        android:text="Search"
+        android:text="@string/search"
         android:textColor="#FB0505"
         android:textStyle="bold|italic"
         app:layout_constraintStart_toEndOf="@+id/searchView"

@@ -27,7 +27,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/create_comment_background"
-        android:hint="Bình luận"
+        android:hint="@string/comment"
         android:inputType="textMultiLine"
         android:paddingLeft="8dp"
         android:paddingTop="12dp"

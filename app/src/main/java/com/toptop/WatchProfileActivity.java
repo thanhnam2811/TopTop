@@ -21,12 +21,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.adapters.VideoGridAdapter;
-import com.toptop.models.Notification;
 import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
-import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.UserFirebase;
 
 import java.util.ArrayList;
@@ -136,11 +134,11 @@ public class WatchProfileActivity extends AppCompatActivity {
 
 	private void setFollowStatus(boolean following) {
 		if (following) {
-			txt_follow_status.setText("Đang theo dõi");
+			txt_follow_status.setText(getResources().getString(R.string.following));
 			txt_follow_status.setTextColor(getResources().getColor(R.color.secondary_color));
 			txt_follow_status.setBackground(getResources().getDrawable(R.drawable.text_box_bg_second));
 		} else {
-			txt_follow_status.setText("Theo dõi");
+			txt_follow_status.setText(getResources().getString(R.string.follow));
 			txt_follow_status.setTextColor(getResources().getColor(R.color.main_color));
 			txt_follow_status.setBackground(getResources().getDrawable(R.drawable.text_box_bg));
 		}

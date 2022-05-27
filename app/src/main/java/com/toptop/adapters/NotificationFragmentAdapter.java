@@ -96,9 +96,9 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             View view = inflater.inflate(R.layout.item_followinform, parent, false);
             return new FollowViewHolder(view);
         } else if (viewType == VIEW_TYPE_ITEM_1) {
-                Log.d(TAG, "onCreateViewHolder: VIEW_TYPE_ITEM_1");
-                View view = inflater.inflate(R.layout.item_listinform, parent, false);
-                return new NotificationViewHolder(view);
+            Log.d(TAG, "onCreateViewHolder: VIEW_TYPE_ITEM_1");
+            View view = inflater.inflate(R.layout.item_listinform, parent, false);
+            return new NotificationViewHolder(view);
         }
         return null;
     }
@@ -133,9 +133,9 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                                 notificationViewHolder.txt_username.setText(user.getFullname());
                             }
                             Glide.with(context)
-                                        .load(user.getAvatar())
-                                        .error(R.drawable.default_avatar)
-                                        .into(((NotificationViewHolder) holder).img_profile);
+                                    .load(user.getAvatar())
+                                    .error(R.drawable.default_avatar)
+                                    .into(((NotificationViewHolder) holder).img_profile);
                         }, value);
                     }
                 });
@@ -239,9 +239,9 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                     Log.d(TAG, "onCallback User: " + user.getUsername());
                     followViewHolder.txt_username.setText(user.getFullname());
                     Glide.with(context)
-                        .load(user.getAvatar())
-                        .error(R.drawable.default_avatar)
-                        .into(((FollowViewHolder) holder).img_profile);
+                            .load(user.getAvatar())
+                            .error(R.drawable.default_avatar)
+                            .into(((FollowViewHolder) holder).img_profile);
                 }
             }, notification.getRedirectTo());
             if (MainActivity.getCurrentUser().isFollowing(notification.getRedirectTo())) {

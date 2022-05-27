@@ -17,6 +17,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.github.angads25.toggle.widget.LabeledSwitch;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -129,6 +130,17 @@ public class LoginActivity extends AppCompatActivity {
 
 		// Forgot password
 		forgotPassword.setOnClickListener(v -> handleForgotPassword());
+
+		// Switch language
+		LabeledSwitch languageSwitch = findViewById(R.id.sw_language);
+		languageSwitch.setColorBorder(R.color.secondary_color);
+
+		languageSwitch.setLabelOff("EN");
+		languageSwitch.setColorOff(getColor(R.color.secondary_color));
+
+		languageSwitch.setLabelOn("VI");
+		languageSwitch.setColorOn(getColor(R.color.white));
+
 	}
 
 	private void handleForgotPassword() {

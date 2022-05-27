@@ -68,15 +68,13 @@ public class VideoFirebase {
 		updateVideo(video);
 
 		//Add notification like video
-		if(!video.getUsername().equals(MainActivity.getCurrentUser().getUsername())) {
-			Notification notification = new Notification();
-			notification.setUsername(video.getUsername());
-			notification.setType(Notification.TYPE_LIKE);
-			notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã thích video của bạn");
-			notification.setTime(MyUtil.getCurrentTime());
-			notification.setRedirectTo(video.getVideoId());
-			NotificationFirebase.addNotification(notification);
-		}
+		Notification notification = new Notification();
+		notification.setUsername(video.getUsername());
+		notification.setType(Notification.TYPE_LIKE);
+		notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã thích video của bạn");
+		notification.setTime(MyUtil.getCurrentTime());
+		notification.setRedirectTo(video.getVideoId());
+		NotificationFirebase.addNotification(notification);
 	}
 
 	// Unlike video
