@@ -29,11 +29,11 @@ import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.Comment;
-import com.toptop.models.Video;
 import com.toptop.utils.ItemClickListener;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,8 +98,8 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 				popupMenu.setGravity(Gravity.CENTER);
 
 				// Check owner
-				if (!MainActivity.isLoggedIn() || !MainActivity.getCurrentUser().getUsername().equals(comment.getUsername()))
-					popupMenu.getMenu().removeItem(R.id.menu_comment_delete);
+				if (MainActivity.isLoggedIn() || MainActivity.getCurrentUser().getUsername().equals(comment.getUsername()))
+					popupMenu.getMenu().findItem(R.id.menu_comment_delete).setVisible(true);
 
 				popupMenu.setOnMenuItemClickListener(item -> {
 					switch (item.getItemId()) {
@@ -108,21 +108,17 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 							builder.setMessage("Bạn có chắc chắn muốn xóa bình luận này?");
 							builder
 									.setPositiveButton("Xóa", (dialog, which) -> {
-										Query query = FirebaseUtil.getVideoById(comment.getVideoId());
-										query.get().addOnCompleteListener(task -> {
-											if (task.isSuccessful() && task.getResult().exists()) {
-												DataSnapshot dataSnapshot = task.getResult();
-												Video video = new Video(dataSnapshot.getChildren().iterator().next());
-												CommentFirebase.deleteCommentFromVideo(comment, video);
-												comments.remove(comment);
-												notifyItemRemoved(position);
-												notifyItemRangeChanged(0, comments.size());
-												Toast.makeText(context, "Xóa bình luận thành công", Toast.LENGTH_SHORT).show();
-											} else {
-												Toast.makeText(context, "Xoá bình luận thất bại", Toast.LENGTH_SHORT).show();
-												Log.e(TAG, "Error when get video", task.getException());
-											}
-										});
+										VideoFirebase.getVideoById(comment.getVideoId(),
+												video -> {
+													CommentFirebase.deleteCommentFromVideo(comment, video);
+													comments.remove(comment);
+													notifyItemRemoved(position);
+													notifyItemRangeChanged(0, comments.size());
+													Toast.makeText(context, "Xóa bình luận thành công!", Toast.LENGTH_SHORT).show();
+												}, error -> {
+													Toast.makeText(context, "Xóa bình luận thất bại!", Toast.LENGTH_SHORT).show();
+													Log.e(TAG, "onBindViewHolder: " + error.getMessage());
+												});
 									})
 									.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
 							builder.show();

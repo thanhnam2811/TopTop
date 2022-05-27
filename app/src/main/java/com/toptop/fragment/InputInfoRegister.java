@@ -72,10 +72,8 @@ public class InputInfoRegister extends Fragment {
 
 	// Open InputAccountRegister fragment
 	private void openInputAccountRegister() {
-		requireActivity().getSupportFragmentManager().beginTransaction()
-				.replace(R.id.input_fragment,
-						Objects.requireNonNull(requireActivity().getSupportFragmentManager().findFragmentByTag(InputAccountRegister.TAG)))
-				.commit();
+		RegisterActivity registerActivity = (RegisterActivity) requireActivity();
+		registerActivity.openInputAccountRegister();
 	}
 
 	// Check input data
@@ -94,6 +92,7 @@ public class InputInfoRegister extends Fragment {
 		}
 		if (!isPhoneNumberValid(phonenumber)) {
 			mEditTextPhone.setError("Số điện thoại không hợp lệ");
+			return false;
 		}
 		return true;
 	}

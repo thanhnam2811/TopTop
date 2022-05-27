@@ -153,7 +153,7 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_DARK_MODE, this);
+		MyUtil.setDarkStatusBar(this);
 
 		mAuth = FirebaseAuth.getInstance();
 		init();
@@ -229,6 +229,7 @@ public class MainActivity extends FragmentActivity {
 			nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> handleMenuItemClick(cbnMenuItem));
 
 			// Set the default fragment
+			MyUtil.setDarkStatusBar(this);
 			getSupportFragmentManager().beginTransaction()
 					.show(videoFragment)
 					.commit();
@@ -245,6 +246,7 @@ public class MainActivity extends FragmentActivity {
 	private Unit handleMenuItemClick(CbnMenuItem cbnMenuItem) {
 		switch (cbnMenuItem.getIcon()) {
 			case R.drawable.ic_video:
+				MyUtil.setDarkStatusBar(this);
 				getSupportFragmentManager().beginTransaction()
 						.hide(activeFragment).show(VideoFragment.getInstance())
 						.commit();
@@ -252,6 +254,7 @@ public class MainActivity extends FragmentActivity {
 				Log.i(NAV_TAG, "Change to video fragment");
 				break;
 			case R.drawable.ic_search:
+				MyUtil.setLightStatusBar(this);
 				getSupportFragmentManager().beginTransaction()
 						.hide(activeFragment).show(SearchFragment.getInstance())
 						.commit();
@@ -259,6 +262,7 @@ public class MainActivity extends FragmentActivity {
 				Log.i(NAV_TAG, "Change to search fragment");
 				break;
 			case R.drawable.ic_notification:
+				MyUtil.setLightStatusBar(this);
 				getSupportFragmentManager().beginTransaction()
 						.hide(activeFragment).show(NotificationFragment.getInstance())
 						.commit();
@@ -266,6 +270,7 @@ public class MainActivity extends FragmentActivity {
 				Log.i(NAV_TAG, "Change to notification fragment");
 				break;
 			case R.drawable.ic_profile:
+				MyUtil.setLightStatusBar(this);
 				if (isLoggedIn()) {
 					getSupportFragmentManager().beginTransaction()
 							.hide(activeFragment).show(ProfileFragment.getInstance())

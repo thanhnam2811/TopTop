@@ -15,7 +15,7 @@ public class AdminActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_admin);
 
-		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, this);
+		MyUtil.setLightStatusBar(this);
 
 		getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, DashboardFragment.getInstance()).commit();
 	}

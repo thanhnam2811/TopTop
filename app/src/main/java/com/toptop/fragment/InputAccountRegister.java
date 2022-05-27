@@ -75,10 +75,8 @@ public class InputAccountRegister extends Fragment {
 
 	// open InputInfoRegister fragment
 	public void openInputInfoRegister() {
-		requireActivity().getSupportFragmentManager().beginTransaction()
-				.replace(R.id.input_fragment,
-						Objects.requireNonNull(requireActivity().getSupportFragmentManager().findFragmentByTag(InputInfoRegister.TAG)))
-				.commit();
+		RegisterActivity act = (RegisterActivity) requireActivity();
+		act.openInputInfoRegister();
 	}
 
 	// is valid input data

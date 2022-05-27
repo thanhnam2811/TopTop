@@ -110,7 +110,7 @@ public class CommentFirebase {
 	}
 
 	// Get comment by videoId
-	public static void getCommentByVideoId(String videoId, final ListCommentCallback callback, final FailCallback failCallback) {
+	public static void getCommentByVideoId(String videoId, final ListCommentCallback callback, final FailedCallback failCallback) {
 		commentRef.orderByChild("videoId").equalTo(videoId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -124,7 +124,23 @@ public class CommentFirebase {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
-				failCallback.onCallback(databaseError.getMessage());
+				failCallback.onCallback(databaseError);
+			}
+		});
+	}
+
+	// Get comment by commentId
+	public static void getCommentByCommentId(String commentId, final CommentCallback callback, final FailedCallback failCallback) {
+		commentRef.child(commentId).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				Comment comment = dataSnapshot.getValue(Comment.class);
+				callback.onCallback(comment);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				failCallback.onCallback(databaseError);
 			}
 		});
 	}
@@ -138,7 +154,7 @@ public class CommentFirebase {
 		void onCallback(List<Comment> comments);
 	}
 
-	public interface FailCallback {
-		void onCallback(String error);
+	public interface FailedCallback {
+		void onCallback(DatabaseError databaseError);
 	}
 }

@@ -40,13 +40,6 @@ public class FirebaseUtil {
 		return ref.orderByChild("videoId").equalTo(videoId);
 	}
 
-	//	get video by string like content
-	public static Query getVideoByStringLikeContent(String content) {
-		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_VIDEOS);
-		return ref.orderByChild("content").startAt(content).endAt(content + "\uf8ff");
-//		return ref.orderByChild("content").startAt("[a-zA-Z0-9]*").endAt(content + "\uf8ff");
-	}
-
 	// Get video by username
 	public static Query getVideoByUsername(String username) {
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_VIDEOS);

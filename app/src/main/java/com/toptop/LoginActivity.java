@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		mAuth = FirebaseAuth.getInstance();
-		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, this);
+		MyUtil.setLightStatusBar(this);
 
 		// Binding
 		TextView register = findViewById(R.id.txtRegister);
