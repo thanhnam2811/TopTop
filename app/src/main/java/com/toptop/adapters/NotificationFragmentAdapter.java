@@ -122,6 +122,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 											.load(user.getAvatar())
 											.error(R.drawable.default_avatar)
 											.into(((NotificationViewHolder) holder).img_profile);
+									((NotificationViewHolder) holder).txt_username.setText(user.getFullname());
 								}, databaseError -> {
 									Log.e(TAG, "onBindViewHolder: " + databaseError.getMessage());
 									Glide.with(context)
@@ -238,6 +239,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 								.load(user.getAvatar())
 								.error(R.drawable.default_avatar)
 								.into(followViewHolder.img_profile);
+						((FollowViewHolder) holder).txt_username.setText(user.getUsername());
 					}, databaseError -> {
 						Log.e(TAG, "onBindViewHolder: " + databaseError.getMessage());
 						Glide.with(context)

@@ -86,34 +86,26 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 			}
 		}
 		// Load avatar
-		Query query = FirebaseUtil.getUserByUsername(user.getUsername());
-		query.get().addOnSuccessListener(documentSnapshot -> {
-			if (documentSnapshot.exists()) {
-				User author = new User(documentSnapshot.getChildren().iterator().next());
+		UserFirebase.getAvatar(new UserFirebase.MyCallback() {
+			@Override
+			public void onCallback(String value) {
 				Glide.with(context)
-						.load(author.getAvatar())
+					.load(value)
 						.error(R.drawable.default_avatar)
 						.into(holder.img_avatar);
-
 			}
-		});
+		}, user.getUsername());
 		//handle follow button
-		holder.btn_follow.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				UserFirebase.followUser(user.getUsername());
+		holder.btn_follow.setOnClickListener(v -> {
+			UserFirebase.followUser(user.getUsername());
 //				//hide button
-				holder.btn_follow.setVisibility(View.GONE);
-				Toast.makeText(context, "Đã theo dõi " + user.getUsername(), Toast.LENGTH_SHORT).show();
-			}
+			holder.btn_follow.setVisibility(View.GONE);
+			Toast.makeText(context, "Đã theo dõi " + user.getUsername(), Toast.LENGTH_SHORT).show();
 		});
 		//handle click item
-		holder.itemView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Log.d(TAG, "onClick on Search: " + user.getUsername());
-				MyUtil.goToUser((Activity) context, user.getUsername());
-			}
+		holder.itemView.setOnClickListener(v -> {
+			Log.d(TAG, "onClick on Search: " + user.getUsername());
+			MyUtil.goToUser((Activity) context, user.getUsername());
 		});
 
 	}
