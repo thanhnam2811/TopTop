@@ -135,33 +135,36 @@ public class NotificationService extends Service {
 		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "my_notification");
 		if (notification.getType().equals(com.toptop.models.Notification.TYPE_LIKE)) {
 			//	notification for like
-			VideoFirebase.getVideoFromVideoId(value -> {
-				if (value != null) {
-					Log.d(TAG, "onCallback Video: " + value);
-					// event click notification to open activity
-					Intent intent = new Intent(this, WatchVideoActivity.class);
-					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-					intent.putExtra(Video.TAG, value);
+			VideoFirebase.getVideoByVideoIdOneTime(notification.getRedirectTo(), value -> {
+						if (value != null) {
+							Log.d(TAG, "onCallback Video: " + value);
+							// event click notification to open activity
+							Intent intent = new Intent(this, WatchVideoActivity.class);
+							intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+							intent.putExtra(Video.TAG, value);
 
-					PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-					Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-					NotificationCompat.Builder notificationBuilderVideo = new NotificationCompat.Builder(this)
-							.setSmallIcon(R.drawable.logo_toptop)
-							.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_liked))
-							.setContentTitle("Bạn có một lượt thích mới")
-							.setContentText(notification.getContent())
-							.setAutoCancel(true)
-							.setSound(soundUri)
-							.setContentIntent(pendingIntent)
-							.setVisibility(VISIBILITY_PUBLIC)
-							.setDefaults(android.app.Notification.DEFAULT_ALL)
-							.setOnlyAlertOnce(true)
-							.setChannelId("my_notification")
-							.setColor(Color.parseColor("#3F5996"));
-					assert notificationManager != null;
-					notificationManager.notify(NOTIFICATION_LIKE_ID, notificationBuilderVideo.build());
-				}
-			}, notification.getRedirectTo());
+							PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+							Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+							NotificationCompat.Builder notificationBuilderVideo = new NotificationCompat.Builder(this)
+									.setSmallIcon(R.drawable.logo_toptop)
+									.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_liked))
+									.setContentTitle("Bạn có một lượt thích mới")
+									.setContentText(notification.getContent())
+									.setAutoCancel(true)
+									.setSound(soundUri)
+									.setContentIntent(pendingIntent)
+									.setVisibility(VISIBILITY_PUBLIC)
+									.setDefaults(android.app.Notification.DEFAULT_ALL)
+									.setOnlyAlertOnce(true)
+									.setChannelId("my_notification")
+									.setColor(Color.parseColor("#3F5996"));
+							assert notificationManager != null;
+							notificationManager.notify(NOTIFICATION_LIKE_ID, notificationBuilderVideo.build());
+						}
+					}, error -> {
+						Log.e(TAG, "sendNotification: " + error.getMessage());
+					}
+			);
 		} else if (notification.getType().equals(com.toptop.models.Notification.TYPE_FOLLOW)) {
 			// event click notification to open activity
 			Intent intent = new Intent(this, WatchProfileActivity.class);

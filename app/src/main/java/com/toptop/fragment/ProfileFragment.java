@@ -46,7 +46,6 @@ import com.toptop.adapters.VideoGridAdapter;
 import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
-import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
@@ -108,47 +107,20 @@ public class ProfileFragment extends Fragment {
 	}
 
 	private void prepareRecyclerView(User user) {
-		Query query = FirebaseUtil.getVideoByUsername(user.getUsername());
-
-		// First time load
-		query.get().addOnSuccessListener(snapshot -> {
-			if (snapshot.exists()) {
-				List<Video> videos = new ArrayList<>();
-				for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-					Video video = new Video(dataSnapshot);
-					videos.add(video);
-				}
-				VideoGridAdapter adapter = new VideoGridAdapter(videos, context);
-				recyclerView.setAdapter(adapter);
-
-				recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
-			}
-		});
-
-		// Update when any video is changed
-		query.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				VideoGridAdapter videoGridAdapter = (VideoGridAdapter) recyclerView.getAdapter();
-				if (videoGridAdapter != null) {
-					List<Video> videos = videoGridAdapter.getVideos();
-					for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-						Video video = new Video(dataSnapshot);
-						if (videos.contains(video)) {
-							videos.set(videos.indexOf(video), video);
-						} else {
-							videos.add(video);
-						}
+		VideoFirebase.getVideoByUsernameOneTime(user.getUsername(),
+				listVideos -> {
+					VideoGridAdapter adapter = (VideoGridAdapter) recyclerView.getAdapter();
+					if (adapter != null) {
+						adapter.setVideos(listVideos);
+					} else {
+						adapter = new VideoGridAdapter(listVideos, context);
+						recyclerView.setAdapter(adapter);
+						recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
 					}
-					videoGridAdapter.setVideos(videos);
+				}, error -> {
+					Log.e(TAG, "prepareRecyclerView: " + error.getMessage());
 				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-
-			}
-		});
+		);
 	}
 
 

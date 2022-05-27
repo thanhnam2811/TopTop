@@ -83,9 +83,15 @@ public class Comment {
 		}
 
 		boolean hasChanged = false;
+		if (replies == null) {
+			replies = new HashMap<>();
+		}
 		if (this.numReplies != replies.size()) {
 			this.numReplies = (long) this.replies.size();
 			hasChanged = true;
+		}
+		if (likes == null) {
+			likes = new HashMap<>();
 		}
 		if (this.numLikes != likes.size()) {
 			this.numLikes = (long) this.likes.size();

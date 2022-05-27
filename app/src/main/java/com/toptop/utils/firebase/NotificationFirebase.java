@@ -18,6 +18,19 @@ public class NotificationFirebase {
 	public static final String TAG = "NotificationFirebase";
 	public static final DatabaseReference notificationRef = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_NOTIFICATIONS);
 
+	// Callback
+	public interface NotificationCallback {
+		void onCallback(Notification notification);
+	}
+
+	public interface ListNotificationCallback {
+		void onCallback(List<Notification> notifications);
+	}
+
+	public interface FailedCallback {
+		void onCallback(DatabaseError error);
+	}
+
 	// Add notification to firebase
 	public static void addNotification(Notification notification) {
 		if (notification.getNotificationId() == null)
@@ -41,14 +54,14 @@ public class NotificationFirebase {
 	public static void deleteNotificationByRedirectTo(String redirectTo) {
 		notificationRef.orderByChild("redirectTo").equalTo(redirectTo).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
 					postSnapshot.getRef().removeValue();
 				}
 			}
 
 			@Override
-			public void onCancelled(DatabaseError databaseError) {
+			public void onCancelled(@NonNull DatabaseError databaseError) {
 
 			}
 		});
@@ -56,7 +69,7 @@ public class NotificationFirebase {
 
 	// Get notification by username
 	public static void getNotificationByUsername(String username, final ListNotificationCallback listNotificationCallback, final FailedCallback failedCallback) {
-		notificationRef.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
+		notificationRef.orderByChild("username").equalTo(username).addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				List<Notification> notifications = new ArrayList<>();
@@ -72,18 +85,5 @@ public class NotificationFirebase {
 				failedCallback.onCallback(databaseError);
 			}
 		});
-	}
-
-	// Callback
-	public interface NotificationCallback {
-		void onCallback(Notification notification);
-	}
-
-	public interface ListNotificationCallback {
-		void onCallback(List<Notification> notifications);
-	}
-
-	public interface FailedCallback {
-		void onCallback(DatabaseError error);
 	}
 }

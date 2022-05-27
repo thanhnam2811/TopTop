@@ -24,6 +24,19 @@ public class CommentFirebase {
 	public static final String TAG = "CommentFirebase";
 	public static final DatabaseReference commentRef = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
 
+	// Callback
+	public interface CommentCallback {
+		void onCallback(Comment comment);
+	}
+
+	public interface ListCommentCallback {
+		void onCallback(List<Comment> comments);
+	}
+
+	public interface FailedCallback {
+		void onCallback(DatabaseError databaseError);
+	}
+
 	// Add comment to firebase
 	public static void addCommentToVideo(Comment comment, Video video) {
 		// add comment to video
@@ -110,13 +123,13 @@ public class CommentFirebase {
 	}
 
 	// Get comment by videoId
-	public static void getCommentByVideoId(String videoId, final ListCommentCallback callback, final FailedCallback failCallback) {
-		commentRef.orderByChild("videoId").equalTo(videoId).addListenerForSingleValueEvent(new ValueEventListener() {
+	public static void getCommentByVideoId(String videoId, final ListCommentCallback callback, final FailedCallback failedCallback) {
+		commentRef.orderByChild("videoId").equalTo(videoId).addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				List<Comment> comments = new ArrayList<>();
 				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-					Comment comment = snapshot.getValue(Comment.class);
+					Comment comment = new Comment(snapshot);
 					comments.add(comment);
 				}
 				callback.onCallback(comments);
@@ -124,17 +137,17 @@ public class CommentFirebase {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
-				failCallback.onCallback(databaseError);
+				failedCallback.onCallback(databaseError);
 			}
 		});
 	}
 
-	// Get comment by commentId
-	public static void getCommentByCommentId(String commentId, final CommentCallback callback, final FailedCallback failCallback) {
+	// Get comment by commentId one time
+	public static void getCommentByCommentIdOneTime(String commentId, final CommentCallback callback, final FailedCallback failCallback) {
 		commentRef.child(commentId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				Comment comment = dataSnapshot.getValue(Comment.class);
+				Comment comment = new Comment(dataSnapshot);
 				callback.onCallback(comment);
 			}
 
@@ -143,18 +156,5 @@ public class CommentFirebase {
 				failCallback.onCallback(databaseError);
 			}
 		});
-	}
-
-	// Callback
-	public interface CommentCallback {
-		void onCallback(Comment comment);
-	}
-
-	public interface ListCommentCallback {
-		void onCallback(List<Comment> comments);
-	}
-
-	public interface FailedCallback {
-		void onCallback(DatabaseError databaseError);
 	}
 }

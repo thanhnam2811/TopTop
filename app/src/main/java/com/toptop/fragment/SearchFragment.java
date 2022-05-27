@@ -6,10 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -96,9 +96,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 				//search for user
 				UserFirebase.getListUserLikeUsername(listUsers -> {
 					users.clear();
-					for (User user : listUsers) {
-						users.add(user);
-					}
+					users.addAll(listUsers);
 					SearchFragmentAdapter searchFragmentAdapter = new SearchFragmentAdapter(users, view.getContext());
 					if (recyclerView.getAdapter() == null && users.size() > 0) {
 						recyclerView.setAdapter(searchFragmentAdapter);
@@ -107,7 +105,7 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 					// Search for video
 					VideoFirebase.getVideoLikeContent(query,
 							listvideos -> {
-						System.out.println(listvideos.size());
+								System.out.println(listvideos.size());
 								videos.clear();
 								videos.addAll(listvideos);
 								SearchFragmentVideoAdapter searchFragmentAdapterForVideo = new SearchFragmentVideoAdapter(videos, view.getContext());

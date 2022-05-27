@@ -5,13 +5,20 @@
       <map>
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_admin_panel.xml" value="0.3465" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_dashboard.xml" value="0.3465" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/drawable/ic_search.xml" value="0.3465" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_admin.xml" value="0.34479166666666666" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/activity_main.xml" value="0.34479166666666666" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_dashboard.xml" value="0.34479166666666666" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_not_login_profile.xml" value="0.34479166666666666" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_profile.xml" value="0.34479166666666666" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_profile_no_login.xml" value="0.14629629629629629" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/fragment_search.xml" value="0.34479166666666666" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/input_comment_layout.xml" value="0.16770833333333332" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/item_account.xml" value="0.34479166666666666" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/item_followinform.xml" value="0.34479166666666666" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/item_listinform.xml" value="0.34479166666666666" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/items_video.xml" value="0.34479166666666666" />
+        <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/video_grid_item.xml" value="0.34479166666666666" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/layout/video_layout.xml" value="0.34479166666666666" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/menu/admin_left_nav_menu.xml" value="0.34479166666666666" />
         <entry key="..\:/IDE/AndroidStudio/TopTop/app/src/main/res/menu/fragment_profile_left_nav.xml" value="0.34479166666666666" />

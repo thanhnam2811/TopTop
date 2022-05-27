@@ -99,39 +99,53 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 
 			if (notification.getType().equals(Notification.TYPE_COMMENT)) {
 				//get video from commentID
-				VideoFirebase.getVideoFromCommentId(video -> {
-					if (video != null) {
-						Glide.with(context)
-								.load(video.getLinkVideo())
-								.error(R.drawable.avatar)
-								.into(((NotificationViewHolder) holder).privew_img);
-					}
-				}, notification.getRedirectTo());
+				VideoFirebase.getVideoFromCommentIdOneTime(notification.getRedirectTo(),
+						video -> {
+							Glide.with(context)
+									.load(video.getLinkVideo())
+									.error(R.drawable.bg)
+									.into(notificationViewHolder.preview_img);
+						}, error -> {
+							Log.e(TAG, "onBindViewHolder: " + error.getMessage());
+							Glide.with(context)
+									.load(R.drawable.bg)
+									.into(notificationViewHolder.preview_img);
+						}
+				);
 
 				//get user from notification
 				UserFirebase.getUsernameByCommentId(notification.getRedirectTo(), value -> {
 					if (value != null) {
-						UserFirebase.getUserByUsername(user -> {
-							if (user != null) {
-								notificationViewHolder.txt_username.setText(user.getFullname());
-							}
-							Glide.with(context)
-									.load(user.getAvatar())
-									.error(R.drawable.default_avatar)
-									.into(((NotificationViewHolder) holder).img_profile);
-						}, value);
+						UserFirebase.getUserByUsernameOneTime(value,
+								user -> {
+									Glide.with(context)
+											.load(user.getAvatar())
+											.error(R.drawable.default_avatar)
+											.into(((NotificationViewHolder) holder).img_profile);
+								}, databaseError -> {
+									Log.e(TAG, "onBindViewHolder: " + databaseError.getMessage());
+									Glide.with(context)
+											.load(R.drawable.default_avatar)
+											.into(((NotificationViewHolder) holder).img_profile);
+								}
+						);
 					}
 				});
 			} else if (notification.getType().equals(Notification.TYPE_LIKE)) {
 				//get video from likeID
-				VideoFirebase.getVideoFromVideoId(value -> {
-					if (value != null) {
-						Glide.with(context)
-								.load(value.getLinkVideo())
-								.error(R.drawable.avatar)
-								.into(((NotificationViewHolder) holder).privew_img);
-					}
-				}, notification.getRedirectTo());
+				VideoFirebase.getVideoByVideoIdOneTime(notification.getRedirectTo(),
+						video -> {
+							Glide.with(context)
+									.load(video.getLinkVideo())
+									.error(R.drawable.bg)
+									.into(notificationViewHolder.preview_img);
+						}, error -> {
+							Log.e(TAG, "onBindViewHolder: " + error.getMessage());
+							Glide.with(context)
+									.load(R.drawable.bg)
+									.into(notificationViewHolder.preview_img);
+						}
+				);
 
 				//hide username
 				notificationViewHolder.txt_username.setVisibility(View.GONE);
@@ -143,21 +157,23 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 			//set onclick listener for item
 			holder.itemView.setOnClickListener(v -> {
 				if (notification.getType().equals(Notification.TYPE_COMMENT)) {
-					VideoFirebase.getVideoFromCommentId(value -> {
-						if (value != null) {
-							Log.d(TAG, "forward Video: " + value);
-							MyUtil.goToVideo((Activity) context, value);
-							//go to comment in video
-
-						}
-					}, notification.getRedirectTo());
+					VideoFirebase.getVideoFromCommentIdOneTime(notification.getRedirectTo(),
+							video -> {
+								MainActivity mainActivity = (MainActivity) context;
+								MyUtil.goToVideo(mainActivity, video);
+							}, error -> {
+								Log.e(TAG, "onBindViewHolder: " + error.getMessage());
+							}
+					);
 				} else {
-					VideoFirebase.getVideoFromVideoId(value -> {
-						if (value != null) {
-							Log.d(TAG, "forward Video: " + value);
-							MyUtil.goToVideo((Activity) context, value);
-						}
-					}, notification.getRedirectTo());
+					VideoFirebase.getVideoByVideoIdOneTime(notification.getRedirectTo(),
+							video -> {
+								MainActivity mainActivity = (MainActivity) context;
+								MyUtil.goToVideo(mainActivity, video);
+							}, error -> {
+								Log.e(TAG, "onBindViewHolder: " + error.getMessage());
+							}
+					);
 				}
 			});
 			//set onclick listener for item
@@ -216,15 +232,19 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 			followViewHolder.txt_content.setText(notification.getContent());
 			followViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
 			//get user from username
-			UserFirebase.getUserByUsername(user -> {
-				if (user != null) {
-					followViewHolder.txt_username.setText(user.getFullname());
-					Glide.with(context)
-							.load(user.getAvatar())
-							.error(R.drawable.default_avatar)
-							.into(((FollowViewHolder) holder).img_profile);
-				}
-			}, notification.getRedirectTo());
+			UserFirebase.getUserByUsernameOneTime(notification.getUsername(),
+					user -> {
+						Glide.with(context)
+								.load(user.getAvatar())
+								.error(R.drawable.default_avatar)
+								.into(followViewHolder.img_profile);
+					}, databaseError -> {
+						Log.e(TAG, "onBindViewHolder: " + databaseError.getMessage());
+						Glide.with(context)
+								.load(R.drawable.default_avatar)
+								.into(followViewHolder.img_profile);
+					}
+			);
 			if (MainActivity.getCurrentUser().isFollowing(notification.getRedirectTo())) {
 				followViewHolder.btn_follow.setVisibility(View.GONE);
 			} else {
@@ -306,7 +326,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 	class NotificationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 		TextView txt_username, txt_content, tx_time;
 		CircularImageView img_profile;
-		ImageView privew_img;
+		ImageView preview_img;
 		private ItemClickListener itemClickListener;
 
 
@@ -316,7 +336,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 			txt_content = itemView.findViewById(R.id.txt_contentNotification);
 			tx_time = itemView.findViewById(R.id.txt_timeNotification);
 			img_profile = itemView.findViewById(R.id.img_avatarNotification);
-			privew_img = itemView.findViewById(R.id.img_Notification);
+			preview_img = itemView.findViewById(R.id.img_Notification);
 
 			itemView.setOnClickListener(this); // Mấu chốt ở đây , set sự kiên onClick cho View
 			itemView.setOnLongClickListener(this); // Mấu chốt ở đây , set sự kiên onLongClick cho View

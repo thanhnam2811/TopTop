@@ -20,6 +20,7 @@ import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +34,7 @@ import com.toptop.utils.ItemClickListener;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.ArrayList;
@@ -85,6 +87,20 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 		holder.txt_time_comment.setText(MyUtil.getTimeAgo(comment.getTime()));
 		holder.txt_num_likes_comment.setText(String.valueOf(comment.getNumLikes()));
 
+		UserFirebase.getUserByUsernameOneTime(comment.getUsername(),
+				user -> {
+					Glide.with(context)
+							.load(user.getAvatar())
+							.error(R.drawable.default_avatar)
+							.into(holder.img_avatar);
+				}, databaseError -> {
+					Log.e(TAG, "onBindViewHolder: " + databaseError.getMessage());
+					Glide.with(context)
+							.load(R.drawable.default_avatar)
+							.into(holder.img_avatar);
+				}
+		);
+
 		RecyclerView recycler_reply_comment = holder.recycler_reply_comment;
 		recycler_reply_comment.setLayoutManager(new LinearLayoutManager(context));
 
@@ -98,7 +114,9 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 				popupMenu.setGravity(Gravity.CENTER);
 
 				// Check owner
-				if (MainActivity.isLoggedIn() || MainActivity.getCurrentUser().getUsername().equals(comment.getUsername()))
+				if (MainActivity.isLoggedIn()
+						&& (MainActivity.getCurrentUser().getUsername().equals(comment.getUsername())
+						|| MainActivity.getCurrentUser().isAdmin()))
 					popupMenu.getMenu().findItem(R.id.menu_comment_delete).setVisible(true);
 
 				popupMenu.setOnMenuItemClickListener(item -> {
@@ -108,7 +126,7 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 							builder.setMessage("Bạn có chắc chắn muốn xóa bình luận này?");
 							builder
 									.setPositiveButton("Xóa", (dialog, which) -> {
-										VideoFirebase.getVideoById(comment.getVideoId(),
+										VideoFirebase.getVideoByVideoIdOneTime(comment.getVideoId(),
 												video -> {
 													CommentFirebase.deleteCommentFromVideo(comment, video);
 													comments.remove(comment);
@@ -149,9 +167,7 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 //				handleReplyComment(comment)
 		);
 
-		holder.ic_like_comment.setOnClickListener(view ->
-
-				handleLikeComment(comment));
+		holder.ic_like_comment.setOnClickListener(view -> handleLikeComment(comment));
 
 		if (comment.isLiked()) {
 			holder.ic_like_comment.setImageResource(R.drawable.ic_liked);

@@ -24,6 +24,7 @@ import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,54 +77,19 @@ public class VideoFragment extends Fragment {
 	}
 
 	private void loadVideos() {
-		if (recyclerView.getAdapter() == null) {
-			mDatabase = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_VIDEOS);
-
-			// For first time, get all videos
-			mDatabase.get().addOnCompleteListener(task -> {
-				if (task.isSuccessful()) {
-					videos.clear();
-					DataSnapshot dataSnapshot = task.getResult();
-					for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-						Video video = new Video(snapshot);
-						videos.add(video);
-					}
-					if (recyclerView.getAdapter() == null) {
-						VideoFragmentAdapter videoFragmentAdapter = new VideoFragmentAdapter(videos, context);
-						videoFragmentAdapter.setHasStableIds(true);
-						recyclerView.setAdapter(videoFragmentAdapter);
-//					recyclerView.smoothScrollToPosition(2);
+		VideoFirebase.getAllVideo(
+				listVideos -> {
+					VideoFragmentAdapter adapter = (VideoFragmentAdapter) recyclerView.getAdapter();
+					if (adapter != null) {
+						adapter.setVideos(listVideos);
 					} else {
-						recyclerView.getAdapter().notifyItemRangeChanged(0, videos.size());
+						adapter = new VideoFragmentAdapter(listVideos, context);
+						recyclerView.setAdapter(adapter);
 					}
+				}, error -> {
+					Log.e(TAG, "loadVideos: " + error.getMessage());
 				}
-			});
-
-			// For everytime, update videos if there is any change
-			mDatabase.addValueEventListener(new ValueEventListener() {
-				@Override
-				public void onDataChange(@NonNull DataSnapshot snapshot) {
-					VideoFragmentAdapter videoFragmentAdapter = (VideoFragmentAdapter) recyclerView.getAdapter();
-					if (videoFragmentAdapter != null) {
-						videos = videoFragmentAdapter.getVideos();
-						for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-							Video video = new Video(dataSnapshot);
-							if (videos.contains(video)) {
-								videos.set(videos.indexOf(video), video);
-							} else {
-								videos.add(video);
-							}
-						}
-						videoFragmentAdapter.setVideos(videos);
-					}
-				}
-
-				@Override
-				public void onCancelled(@NonNull DatabaseError error) {
-					Log.e(TAG, "onCancelled: ", error.toException());
-				}
-			});
-		}
+		);
 	}
 
 	public void goToVideo(Video video) {

@@ -1,5 +1,7 @@
 package com.toptop.models;
 
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
@@ -262,6 +264,8 @@ public class Video implements Serializable {
 			comments.remove(comment.getCommentId());
 			numComments--;
 		}
+		Log.i(TAG, "removeComment: " + comment.getCommentId());
+		Log.i(TAG, "removeComment: " + comments.toString());
 	}
 
 	public void addView() {

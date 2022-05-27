@@ -57,4 +57,5 @@
     <string name="exit_confirm">Bạn có chắc chắn muốn thoát?</string>
     <string name="yes">Có</string>
     <string name="no">Không</string>
+    <string name="search_video_or_user">Tìm kiếm video hoặc người dùng</string>
 </resources>

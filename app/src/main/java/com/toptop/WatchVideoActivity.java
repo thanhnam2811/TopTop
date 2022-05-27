@@ -41,7 +41,7 @@ public class WatchVideoActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_watch_video);
 		getWindow().setNavigationBarColor(Color.WHITE);
-		MyUtil.setLightStatusBar(this);
+		MyUtil.setDarkStatusBar(this);
 
 		// Get the Intent that started this activity and extract the string
 		Bundle extras = getIntent().getExtras();
@@ -49,7 +49,7 @@ public class WatchVideoActivity extends FragmentActivity {
 		recyclerView = findViewById(R.id.recycler_view_videos);
 		Context context = this;
 
-		VideoFirebase.getVideoById(video.getVideoId(),
+		VideoFirebase.getVideoByVideoId(video.getVideoId(),
 				v -> {
 					video = v;
 					if (recyclerView.getAdapter() == null) {

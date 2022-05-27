@@ -8,10 +8,13 @@
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/img_avatarNotification"
-        android:layout_width="74dp"
-        android:layout_height="63dp"
-        android:layout_marginStart="5dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/default_avatar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -20,53 +23,46 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
         android:text="Nguyễn Văn A"
-        android:textColor="#111212"
-        android:textSize="13sp"
+        android:textColor="@color/black"
+        android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.014"
         app:layout_constraintStart_toEndOf="@+id/img_avatarNotification"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/img_avatarNotification" />
 
     <TextView
         android:id="@+id/txt_contentNotification"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
         android:text="Đã thích bài viết của bạn"
-        android:textColor="#0E0E0E"
+        android:textColor="@color/black"
         android:textSize="12sp"
-        android:textStyle="italic"
-        app:layout_constraintStart_toEndOf="@+id/img_avatarNotification"
-        app:layout_constraintTop_toBottomOf="@+id/txt_usernameNotification" />
+        app:layout_constraintBottom_toBottomOf="@+id/img_avatarNotification"
+        app:layout_constraintEnd_toStartOf="@+id/img_Notification"
+        app:layout_constraintStart_toStartOf="@+id/txt_usernameNotification" />
 
     <TextView
         android:id="@+id/txt_timeNotification"
-        android:layout_width="40dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginTop="32dp"
-
-        android:layout_marginEnd="4dp"
-        android:gravity="center"
         android:text="10 phút"
-        android:textAlignment="center"
-        android:textColor="#0E0E0E"
+        android:textColor="@color/grey_500"
         android:textSize="10sp"
-        app:layout_constraintEnd_toStartOf="@+id/img_Notification"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/txt_contentNotification"
+        app:layout_constraintStart_toStartOf="@+id/txt_usernameNotification"
+        app:layout_constraintTop_toBottomOf="@+id/txt_usernameNotification" />
 
     <ImageView
         android:id="@+id/img_Notification"
-        android:layout_width="44dp"
-        android:layout_height="61dp"
-        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
         android:layout_marginEnd="5dp"
         android:src="@drawable/avatar"
+        app:layout_constraintBottom_toBottomOf="@+id/img_avatarNotification"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/img_avatarNotification" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,7 +20,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.Query;
 import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.fragment.CommentFragment;
@@ -28,7 +27,6 @@ import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.RecyclerViewDisabler;
-import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
@@ -92,6 +90,58 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			VideoFirebase.addView(video);
 			initVideo(holder.videoView, video);
 		}
+	}
+
+	private void handleClickAvatar(Video video) {
+		if (context instanceof MainActivity) {
+			MainActivity mainActivity = (MainActivity) context;
+			if (MainActivity.isLoggedIn() && MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
+				mainActivity.changeNavItem(3);
+			} else
+				mainActivity.goToProfileUser(video.getUsername());
+		}
+	}
+
+	private void updateUI(VideoViewHolder holder, Video video) {
+		// Set info video
+		holder.txt_username.setText(video.getUsername());
+		holder.txt_content.setText(video.getContent());
+		holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
+		holder.txt_num_comments.setText(String.valueOf(video.getNumComments()));
+
+		// Set img_follow
+		if (!MainActivity.isLoggedIn() || MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
+			holder.img_follow.setVisibility(View.GONE);
+		} else {
+			if (MainActivity.getCurrentUser().isFollowing(video.getUsername())) {
+				holder.img_follow.setImageResource(R.drawable.ic_following);
+			} else {
+				holder.img_follow.setImageResource(R.drawable.ic_follow);
+			}
+		}
+
+		// Check if video is liked or not
+		if (!MainActivity.isLoggedIn() || !video.isLiked()) {
+			holder.img_like.setImageResource(R.drawable.ic_like);
+		} else {
+			holder.img_like.setImageResource(R.drawable.ic_liked);
+		}
+
+		// Load avatar
+		UserFirebase.getUserByUsernameOneTime(video.getUsername(),
+				user -> {
+					Glide.with(context)
+							.load(user.getAvatar())
+							.error(R.drawable.default_avatar)
+							.into(holder.img_avatar);
+				}, databaseError -> {
+					Log.e(TAG, "updateUI: " + databaseError.getMessage());
+					Glide.with(context)
+							.load(R.drawable.default_avatar)
+							.into(holder.img_avatar);
+				}
+		);
+
 		// Set onClickListener for video
 		holder.videoView.setOnClickListener(v ->
 				handleClickVideo(holder.videoView, holder.img_pause));
@@ -120,59 +170,6 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		holder.img_avatar.setOnClickListener(v -> handleClickAvatar(video));
 	}
 
-	private void handleClickAvatar(Video video) {
-		if (context instanceof MainActivity) {
-			MainActivity mainActivity = (MainActivity) context;
-			if (MainActivity.isLoggedIn() && MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
-				mainActivity.changeNavItem(3);
-			} else
-				mainActivity.goToProfileUser(video.getUsername());
-		}
-	}
-
-	private void updateUI(VideoViewHolder holder, Video video) {
-		// Set info video
-		holder.txt_username.setText(video.getUsername());
-		holder.txt_content.setText(video.getContent());
-		holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
-		holder.txt_num_comments.setText(String.valueOf(video.getNumComments()));
-
-		// Set img_follow
-		if (MainActivity.isLoggedIn()) {
-			User user = MainActivity.getCurrentUser();
-			if (user.getUsername().equals(video.getUsername())) {
-				holder.img_follow.setVisibility(View.GONE);
-			} else {
-				if (user.isFollowing(video.getUsername())) {
-					holder.img_follow.setImageResource(R.drawable.ic_following);
-				} else {
-					holder.img_follow.setImageResource(R.drawable.ic_follow);
-				}
-			}
-		} else {
-			holder.img_follow.setVisibility(View.GONE);
-		}
-
-		// Check if video is liked or not
-		if (!MainActivity.isLoggedIn() || !video.isLiked()) {
-			holder.img_like.setImageResource(R.drawable.ic_like);
-		} else {
-			holder.img_like.setImageResource(R.drawable.ic_liked);
-		}
-
-		// Load avatar
-		Query query = FirebaseUtil.getUserByUsername(video.getUsername());
-		query.get().addOnSuccessListener(documentSnapshot -> {
-			if (documentSnapshot.exists()) {
-				User author = new User(documentSnapshot.getChildren().iterator().next());
-				Glide.with(context)
-						.load(author.getAvatar())
-						.error(R.drawable.default_avatar)
-						.into(holder.img_avatar);
-			}
-		});
-	}
-
 	private void handleClickFollow(Video video, ImageView img_follow) {
 		if (!MainActivity.isLoggedIn())
 			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
@@ -180,10 +177,8 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			User user = MainActivity.getCurrentUser();
 			if (user.isFollowing(video.getUsername())) {
 				UserFirebase.unfollowUser(video.getUsername());
-				img_follow.setImageResource(R.drawable.ic_follow);
 			} else {
 				UserFirebase.followUser(video.getUsername());
-				img_follow.setImageResource(R.drawable.ic_following);
 			}
 		}
 	}
@@ -323,6 +318,16 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 				notifyItemChanged(index, video);
 			}
 		}
+
+		for (Video video : videos) {
+			if (!newVideos.contains(video)) {
+				int index = videos.indexOf(video);
+				videos.remove(video);
+				notifyItemRemoved(index);
+			}
+		}
+
+		notifyItemRangeChanged(0, videos.size());
 	}
 
 	@Override

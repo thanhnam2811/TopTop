@@ -8,59 +8,75 @@
     tools:context=".fragment.SearchFragment">
 
     <ImageView
-        android:id="@+id/img_PriveVideo"
-        android:layout_width="198dp"
+        android:id="@+id/img_previewVideo"
+        android:layout_width="wrap_content"
         android:layout_height="240dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
         android:src="@drawable/bg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:background="@color/black"
+        android:alpha="0.6"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@+id/img_previewVideo"
+        app:layout_constraintTop_toTopOf="@+id/img_previewVideo"
+        app:layout_constraintEnd_toEndOf="@+id/img_previewVideo"
+        app:layout_constraintBottom_toBottomOf="@+id/img_previewVideo" />
+
 
     <TextView
         android:id="@+id/txt_timePost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="10dp"
-        android:shadowColor="#D66E6E"
         android:text="10h ago"
-        android:textColor="#F6F2F2"
-        android:textColorHint="#BAB5B5"
-        android:textSize="16sp"
-        android:textStyle="bold|italic"
-        app:layout_constraintBottom_toBottomOf="@+id/img_PriveVideo"
-        app:layout_constraintStart_toStartOf="@+id/img_PriveVideo" />
+        android:textColor="@color/grey_500"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/img_avatarUser"
+        app:layout_constraintEnd_toEndOf="@+id/txt_usernameVideo" />
 
     <TextView
         android:id="@+id/txt_contentVideo"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:maxLines="5"
+        android:textColor="@color/white"
+        android:ellipsize="end"
         android:text="Hot girl TopTop mới nhú"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_PriveVideo" />
+        app:layout_constraintBottom_toBottomOf="@+id/img_previewVideo"
+        app:layout_constraintEnd_toEndOf="@+id/img_previewVideo"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/img_previewVideo"
+        app:layout_constraintTop_toTopOf="@+id/img_previewVideo" />
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/img_avatarUser"
-        android:layout_width="39dp"
+        android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:src="@drawable/default_avatar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_contentVideo" />
+        app:layout_constraintTop_toBottomOf="@+id/img_previewVideo" />
 
     <TextView
         android:id="@+id/txt_usernameVideo"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:text="thanhnam1324"
-        android:textStyle="italic"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/img_previewVideo"
         app:layout_constraintStart_toEndOf="@+id/img_avatarUser"
-        app:layout_constraintTop_toBottomOf="@+id/txt_contentVideo" />
+        app:layout_constraintTop_toTopOf="@+id/img_avatarUser" />
 </androidx.constraintlayout.widget.ConstraintLayout>

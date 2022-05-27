@@ -100,7 +100,7 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 			txt_username = itemView.findViewById(R.id.txt_usernameVideo);
 			txt_content = itemView.findViewById(R.id.txt_contentVideo);
 			img_avatar = itemView.findViewById(R.id.img_avatarUser);
-			img_video = itemView.findViewById(R.id.img_PriveVideo);
+			img_video = itemView.findViewById(R.id.img_previewVideo);
 		}
 	}
 }

@@ -99,6 +99,11 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		if (activeFragment == null || activeFragment instanceof VideoFragment) {
+			MyUtil.setDarkStatusBar(this);
+		} else {
+			MyUtil.setLightStatusBar(this);
+		}
 		FirebaseUser currentUser = mAuth.getCurrentUser();
 		if (currentUser != null) {
 			User user = new User();
@@ -153,7 +158,6 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		MyUtil.setDarkStatusBar(this);
 
 		mAuth = FirebaseAuth.getInstance();
 		init();
@@ -170,19 +174,22 @@ public class MainActivity extends FragmentActivity {
 //				Toast.makeText(this, "CommentId: " + commentId, Toast.LENGTH_SHORT).show();
 				if (commentId != null && !commentId.isEmpty()) {
 					//Get video by commentId
-					VideoFirebase.getVideoFromCommentId(video -> {
-						if (video != null) {
-							//create new comment
-							Comment commentReply = new Comment();
-							commentReply.setContent(reply);
-							commentReply.setUsername(currentUser.getUsername()); // ? or currentUser.getUsername()
-							commentReply.setVideoId(video.getVideoId());
+					VideoFirebase.getVideoFromCommentIdOneTime(commentId,
+							video -> {
+								//create new comment
+								Comment commentReply = new Comment();
+								commentReply.setContent(reply);
+								commentReply.setUsername(currentUser.getUsername()); // ? or currentUser.getUsername()
+								commentReply.setVideoId(video.getVideoId());
 
-							//add comment to database
-							CommentFirebase.addCommentToVideo(commentReply, video);
-							Toast.makeText(this, "Đã trả lời bình luận!", Toast.LENGTH_SHORT).show();
-						}
-					}, commentId);
+								//add comment to database
+								CommentFirebase.addCommentToVideo(commentReply, video);
+								Toast.makeText(this, "Đã trả lời bình luận!", Toast.LENGTH_SHORT).show();
+							}, error -> {
+								Toast.makeText(this, "Lỗi trả lời bình luận!", Toast.LENGTH_SHORT).show();
+								Log.e(TAG, "onCreate: " + error.getMessage());
+							}
+					);
 				}
 
 			}
@@ -229,7 +236,6 @@ public class MainActivity extends FragmentActivity {
 			nav.setOnMenuItemClickListener((cbnMenuItem, integer) -> handleMenuItemClick(cbnMenuItem));
 
 			// Set the default fragment
-			MyUtil.setDarkStatusBar(this);
 			getSupportFragmentManager().beginTransaction()
 					.show(videoFragment)
 					.commit();
@@ -246,38 +252,39 @@ public class MainActivity extends FragmentActivity {
 	private Unit handleMenuItemClick(CbnMenuItem cbnMenuItem) {
 		switch (cbnMenuItem.getIcon()) {
 			case R.drawable.ic_video:
-				MyUtil.setDarkStatusBar(this);
 				getSupportFragmentManager().beginTransaction()
+						.runOnCommit(() -> MyUtil.setDarkStatusBar(this))
 						.hide(activeFragment).show(VideoFragment.getInstance())
 						.commit();
 				activeFragment = VideoFragment.getInstance();
 				Log.i(NAV_TAG, "Change to video fragment");
 				break;
 			case R.drawable.ic_search:
-				MyUtil.setLightStatusBar(this);
 				getSupportFragmentManager().beginTransaction()
+						.runOnCommit(() -> MyUtil.setLightStatusBar(this))
 						.hide(activeFragment).show(SearchFragment.getInstance())
 						.commit();
 				activeFragment = SearchFragment.getInstance();
 				Log.i(NAV_TAG, "Change to search fragment");
 				break;
 			case R.drawable.ic_notification:
-				MyUtil.setLightStatusBar(this);
 				getSupportFragmentManager().beginTransaction()
+						.runOnCommit(() -> MyUtil.setLightStatusBar(this))
 						.hide(activeFragment).show(NotificationFragment.getInstance())
 						.commit();
 				activeFragment = NotificationFragment.getInstance();
 				Log.i(NAV_TAG, "Change to notification fragment");
 				break;
 			case R.drawable.ic_profile:
-				MyUtil.setLightStatusBar(this);
 				if (isLoggedIn()) {
 					getSupportFragmentManager().beginTransaction()
+							.runOnCommit(() -> MyUtil.setLightStatusBar(this))
 							.hide(activeFragment).show(ProfileFragment.getInstance())
 							.commit();
 					activeFragment = ProfileFragment.getInstance();
 				} else {
 					getSupportFragmentManager().beginTransaction()
+							.runOnCommit(() -> MyUtil.setLightStatusBar(this))
 							.hide(activeFragment).show(NotLoginProfileFragment.getInstance())
 							.commit();
 					activeFragment = NotLoginProfileFragment.getInstance();

@@ -22,6 +22,23 @@ public class UserFirebase {
 	private static final String TAG = "UserFirebase";
 	private static final DatabaseReference userRef = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_USERS);
 
+	// Get user by username
+	public interface ListUserCallback {
+		void onCallBack(ArrayList<User> users);
+	}
+
+	public interface UserCallback {
+		void onCallBack(User user);
+	}
+
+	public interface FailedCallback {
+		void onCallBack(DatabaseError databaseError);
+	}
+
+	public interface MyCallback {
+		void onCallback(String value);
+	}
+
 	// Add user to firebase
 	public static void addUser(User user) {
 		userRef.child(user.getUsername()).setValue(user);
@@ -90,23 +107,32 @@ public class UserFirebase {
 	}
 
 	// get user by username
-	public static void getUserByUsername(UserCallback callback, String username) {
-		Query query = userRef.orderByChild("username").equalTo(username);
-		query.addListenerForSingleValueEvent(new ValueEventListener() {
+	public static void getUserByUsername(String username, UserCallback callback, FailedCallback failedCallback) {
+		userRef.child(username).addValueEventListener(new ValueEventListener() {
 			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				if (dataSnapshot.exists()) {
-					User user = new User(dataSnapshot.getChildren().iterator().next());
-					callback.onCallBack(user);
-				} else {
-					callback.onCallBack(null);
-
-				}
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				User user = new User(snapshot);
+				callback.onCallBack(user);
 			}
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError error) {
-				callback.onCallBack(null);
+				failedCallback.onCallBack(error);
+			}
+		});
+	}
+
+	public static void getUserByUsernameOneTime(String username, UserCallback callback, FailedCallback failedCallback) {
+		userRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				User user = new User(snapshot);
+				callback.onCallBack(user);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				failedCallback.onCallBack(error);
 			}
 		});
 	}
@@ -114,7 +140,7 @@ public class UserFirebase {
 	// get user by email
 	public static void getUserByEmail(UserCallback callback, String email) {
 		Query query = userRef.orderByChild("email").equalTo(email);
-		query.addListenerForSingleValueEvent(new ValueEventListener() {
+		query.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				if (dataSnapshot.exists()) {
@@ -141,6 +167,7 @@ public class UserFirebase {
 				if (dataSnapshot.exists()) {
 					Comment comment = dataSnapshot.getChildren().iterator().next().getValue(Comment.class);
 					Log.i(TAG, "getUsernameByCommentId: " + dataSnapshot);
+					assert comment != null;
 					callback.onCallback(comment.getUsername());
 				} else {
 					Log.i(TAG, "getUsernameByCommentId: " + "comment not found");
@@ -158,7 +185,7 @@ public class UserFirebase {
 	//get listUser like user
 	public static void getListUserLikeUsername(ListUserCallback callback, String username) {
 		Query query = FirebaseUtil.getUserByStringLikeUsername(username);
-		query.addListenerForSingleValueEvent(new ValueEventListener() {
+		query.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				ArrayList<User> listUser = new ArrayList<>();
@@ -179,7 +206,7 @@ public class UserFirebase {
 
 	public static void readDataUser(MyCallback myCallback, String username) {
 		Query myQuery = QuerygetUserByUsername(username);
-		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+		myQuery.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
 				String value = dataSnapshot.getChildren().iterator().next().child("avatar").getValue(String.class);
@@ -196,18 +223,5 @@ public class UserFirebase {
 
 	private static Query QuerygetUserByUsername(String username) {
 		return userRef.orderByChild("username").equalTo(username);
-	}
-
-	// Get user by username
-	public interface ListUserCallback {
-		void onCallBack(ArrayList<User> users);
-	}
-
-	public interface UserCallback {
-		void onCallBack(User user);
-	}
-
-	public interface MyCallback {
-		void onCallback(String value);
 	}
 }

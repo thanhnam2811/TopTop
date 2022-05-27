@@ -8,11 +8,11 @@
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/img_avatarUser"
-        android:layout_width="65dp"
+        android:layout_width="60dp"
         android:layout_height="54dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/default_avatar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,64 +22,62 @@
         android:id="@+id/txt_usernameSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:text="thanhnam1324"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/img_avatarUser"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="@color/grey_500"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/txtfollow"
+        app:layout_constraintStart_toStartOf="@+id/txt_fullnameSearch"
+        app:layout_constraintTop_toBottomOf="@+id/txt_fullnameSearch" />
 
     <TextView
         android:id="@+id/txt_fullnameSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="8dp"
         android:text="Thái Thành Nam"
-        android:textSize="12sp"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/img_avatarUser"
-        app:layout_constraintTop_toBottomOf="@+id/txt_usernameSearch" />
+        app:layout_constraintTop_toTopOf="@+id/img_avatarUser" />
 
     <TextView
         android:id="@+id/txtfollow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="76dp"
+        android:layout_marginStart="4dp"
         android:text="@string/followers"
-        android:textSize="12sp"
+        android:textColor="@color/grey_500"
+        android:textSize="10sp"
         android:textStyle="normal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/number_followerSearch"
+        app:layout_constraintStart_toEndOf="@+id/number_followerSearch"
+        app:layout_constraintTop_toTopOf="@+id/number_followerSearch" />
 
     <TextView
         android:id="@+id/number_followerSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="8dp"
         android:text="26"
-        android:textSize="12sp"
+        android:textColor="@color/black"
+        android:textSize="10sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/txtfollow"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/img_avatarUser"
+        app:layout_constraintStart_toStartOf="@+id/txt_fullnameSearch" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_followSearch"
         android:layout_width="wrap_content"
-        android:layout_height="34dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="28dp"
-        android:backgroundTint="#ED365A"
-        android:drawableTint="#ED365A"
+        android:layout_height="wrap_content"
+        android:background="@drawable/text_box_bg"
         android:insetTop="0dp"
         android:insetBottom="0dp"
-        android:text="Follow"
-        android:textColor="#F6F6F6"
+        android:text="@string/follow"
+        android:textColor="@color/main_color"
         android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_avatarUser"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/img_avatarUser" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

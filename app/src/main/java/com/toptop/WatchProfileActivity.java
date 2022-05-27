@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
@@ -17,16 +16,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.facebook.share.model.ShareOpenGraphAction;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.toptop.adapters.VideoGridAdapter;
 import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
-import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
@@ -34,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WatchProfileActivity extends AppCompatActivity {
+	// Tag
+	private static final String TAG = "WatchProfileActivity";
+
 	private static final int HEADER_HEIGHT = 8 * 2 + 32 + 1;
 	TextView fullname, numFollowers, numFollowing, numLikes, username, txt_follow_status;
 	ImageView avatar, ic_back;
@@ -94,30 +90,11 @@ public class WatchProfileActivity extends AppCompatActivity {
 //				updateUI(newUser);
 //			}
 //		});
-		UserFirebase.getUserByUsername(user -> {
-			Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
-			updateUI(user);
-		}, usernameText);
-
-		Query query = FirebaseUtil.getUserByUsername(usernameText);
-		// For listening to value changes
-		query.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				if (snapshot.exists()) {
-					User newUser = new User(snapshot.getChildren().iterator().next());
-
-					if (user == null || user.hasChangedInfo(newUser)) {
-						updateUI(newUser);
-					}
-				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-
-			}
-		});
+		UserFirebase.getUserByUsername(usernameText,
+				this::updateUI, error -> {
+					Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+					Log.e(TAG, "loadData: " + error.getMessage());
+				});
 	}
 
 	@SuppressLint("SetTextI18n")
@@ -152,7 +129,8 @@ public class WatchProfileActivity extends AppCompatActivity {
 	}
 
 	private void prepareRecyclerView(User user) {
-		VideoFirebase.getVideoByUsername(user.getUsername(), listvideos -> {
+		VideoFirebase.getVideoByUsernameOneTime(user.getUsername(),
+				listvideos -> {
 					if (listvideos.size() > 0) {
 						if (videos == null || !videos.equals(listvideos)) {
 							videos = listvideos;
@@ -165,7 +143,8 @@ public class WatchProfileActivity extends AppCompatActivity {
 							((VideoGridAdapter) recyclerView.getAdapter()).setVideos(videos);
 						}
 					}
-				}, error -> Toast.makeText(context, "Failed to load videos", Toast.LENGTH_SHORT).show()
+				},
+				error -> Toast.makeText(context, "Failed to load videos", Toast.LENGTH_SHORT).show()
 		);
 	}
 }

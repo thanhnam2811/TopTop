@@ -192,7 +192,9 @@ public class CommentFragment extends Fragment {
 	}
 
 	private void getCommentsFromFirebase() {
-		CommentFirebase.getCommentByVideoId(video.getVideoId(), comments -> {
+		CommentFirebase.getCommentByVideoId(video.getVideoId(), listComments -> {
+			comments.clear();
+			comments.addAll(listComments);
 			Comment.sortByTimeNewsest(comments);
 			if (recycler_view_comments.getAdapter() != null)
 				recycler_view_comments.getAdapter()
