@@ -3,6 +3,8 @@ package com.toptop.utils.firebase;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,6 +15,8 @@ import com.toptop.models.Notification;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class CommentFirebase {
@@ -99,9 +103,42 @@ public class CommentFirebase {
 		NotificationFirebase.deleteNotificationByRedirectTo(commentId);
 	}
 
-	 public static void deleteCommentFromVideo(Video video) {
+	public static void deleteCommentFromVideo(Video video) {
 		for (Map.Entry<String, Boolean> entry : video.getComments().entrySet()) {
 			deleteCommentByCommentId(entry.getKey());
 		}
-	 }
+	}
+
+	// Get comment by videoId
+	public static void getCommentByVideoId(String videoId, final ListCommentCallback callback, final FailCallback failCallback) {
+		commentRef.orderByChild("videoId").equalTo(videoId).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				List<Comment> comments = new ArrayList<>();
+				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+					Comment comment = snapshot.getValue(Comment.class);
+					comments.add(comment);
+				}
+				callback.onCallback(comments);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				failCallback.onCallback(databaseError.getMessage());
+			}
+		});
+	}
+
+	// Callback
+	public interface CommentCallback {
+		void onCallback(Comment comment);
+	}
+
+	public interface ListCommentCallback {
+		void onCallback(List<Comment> comments);
+	}
+
+	public interface FailCallback {
+		void onCallback(String error);
+	}
 }

@@ -20,9 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.WatchVideoActivity;
@@ -194,83 +192,19 @@ public class CommentFragment extends Fragment {
 	}
 
 	private void getCommentsFromFirebase() {
-		Query mDB_comment_query = FirebaseUtil.getCommentsByVideoId(video.getVideoId());
-		mDB_comment_query.get().addOnCompleteListener(task -> {
-			if (task.isSuccessful()) {
-				Log.i(TAG, "getCommentsFromFirebase: success");
-				if (task.getResult().exists()) {
-					// Get all comments from firebase
-					comments.clear();
-					for (DataSnapshot dataSnapshot : task.getResult().getChildren()) {
-						Comment comment = new Comment(dataSnapshot);
-						if (!comment.isReply())
-							comments.add(comment);
-					}
-					Comment.sortByTimeNewsest(comments);
-					if (recycler_view_comments.getAdapter() != null)
-						recycler_view_comments.getAdapter()
-								.notifyItemRangeChanged(0, comments.size());
-					else {
-						// Set adapter for recycler view
-						CommentFragmentAdapter adapter = new CommentFragmentAdapter(comments, context);
-						recycler_view_comments.setAdapter(adapter);
-					}
-				} else {
-					Log.i(TAG, "getCommentsFromFirebase: not exist");
-				}
-			} else {
-				Log.i(TAG, "getCommentsFromFirebase: failed");
+		CommentFirebase.getCommentByVideoId(video.getVideoId(), comments -> {
+			Comment.sortByTimeNewsest(comments);
+			if (recycler_view_comments.getAdapter() != null)
+				recycler_view_comments.getAdapter()
+						.notifyItemRangeChanged(0, comments.size());
+			else {
+				// Set adapter for recycler view
+				CommentFragmentAdapter adapter = new CommentFragmentAdapter(comments, context);
+				recycler_view_comments.setAdapter(adapter);
 			}
+		}, error -> {
+			Toast.makeText(context, "Lỗi khi lấy bình luận!", Toast.LENGTH_SHORT).show();
+			Log.e(TAG, "getCommentsFromFirebase: " + error);
 		});
-		/*
-		mDB_comment_query.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				if (recycler_view_comments.getAdapter() == null) {
-					// Get all comments from firebase
-					comments.clear();
-					for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-						Comment comment = new Comment(dataSnapshot);
-						if (!comment.isReply())
-							comments.add(new Comment(dataSnapshot));
-					}
-					// Set adapter for recycler view
-					Comment.sortByTimeNewsest(comments);
-					CommentFragmentAdapter adapter = new CommentFragmentAdapter(comments, context);
-					recycler_view_comments.setAdapter(adapter);
-				} else {
-					CommentFragmentAdapter adapter = (CommentFragmentAdapter) recycler_view_comments.getAdapter();
-					comments = adapter.getComments();
-
-					// Get all comments from firebase
-					for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-						Comment comment = new Comment(dataSnapshot);
-						if (!comment.isReply()) {
-							// Add comment to list if it is not in list
-							if (!comments.contains(comment))
-								comments.add(comment);
-								// if comment is in list, update it if changed
-							else{
-								int index = comments.indexOf(comment);
-								if (!comments.get(index).isEqual(comment)) {
-									comments.set(index, comment);
-									adapter.notifyItemChanged(index, comment);
-								}
-							}
-						}
-					}
-					// Sort by time
-					Comment.sortByTimeNewsest(comments);
-					// Notify adapter
-					recycler_view_comments.getAdapter().notifyItemRangeChanged(0, comments.size());
-				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-				Log.e(TAG, "onCancelled: ", error.toException());
-			}
-		});
-		*/
 	}
 }

@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -71,12 +70,14 @@ public class ProfileFragment extends Fragment {
 	NavigationView navigationView;
 	EditText edt_video_content;
 
-	Boolean isLogin = false;
 	StorageReference imageRef, videoRef;
 	Uri videoUri;
 
 	private static final ProfileFragment instance = new ProfileFragment();
-	private ProfileFragment() { }
+
+	private ProfileFragment() {
+	}
+
 	public static ProfileFragment getInstance() {
 		return instance;
 	}
@@ -84,10 +85,9 @@ public class ProfileFragment extends Fragment {
 	@SuppressLint("SetTextI18n")
 	public void updateUI(User user) {
 		if (user != null) {
+			Log.i(TAG, "updateUI: " + user.toString());
 			if (user.isAdmin())
 				navigationView.getMenu().findItem(R.id.admin_panel).setVisible(true);
-
-			Log.i(TAG, "updateUI: " + user.toString());
 			fullname.setText(user.getFullname());
 			numFollowers.setText(user.getNumFollowers() + "");
 			numFollowing.setText(user.getNumFollowing() + "");
@@ -103,12 +103,8 @@ public class ProfileFragment extends Fragment {
 
 	@SuppressLint("SetTextI18n")
 	public void updateUI() {
-		if (isLogin) {
-			User user = MainActivity.getCurrentUser();
-			updateUI(user);
-		} else {
-			Log.e(TAG, "updateUI: User is null");
-		}
+		User user = MainActivity.getCurrentUser();
+		updateUI(user);
 	}
 
 	private void prepareRecyclerView(User user) {
@@ -166,78 +162,61 @@ public class ProfileFragment extends Fragment {
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, requireActivity());
+		View view = inflater.inflate(R.layout.fragment_profile, container, false);
+		this.context = view.getContext();
 
-		if (MainActivity.isLoggedIn()) {
-			isLogin = true;
-			View view = inflater.inflate(R.layout.fragment_profile, container, false);
-			this.context = view.getContext();
+		// Bind view
+		fullname = view.findViewById(R.id.txt_fullname);
+		numFollowers = view.findViewById(R.id.txt_num_followers);
+		numFollowing = view.findViewById(R.id.txt_num_following);
+		numLikes = view.findViewById(R.id.txt_num_likes);
+		username = view.findViewById(R.id.txt_email);
+		avatar = view.findViewById(R.id.img_avatar);
+		recyclerView = view.findViewById(R.id.recycler_view_videos_grid);
+		scrollView = view.findViewById(R.id.scroll_view);
+		layoutProfile = view.findViewById(R.id.layout_profile);
+		ic_menu = view.findViewById(R.id.ic_menu);
+		ic_edit = view.findViewById(R.id.ic_edit);
+		ic_edit_avatar = view.findViewById(R.id.ic_edit_avatar);
+		navigationView = view.findViewById(R.id.nav_view);
+		DrawerLayout drawer = view.findViewById(R.id.drawer_layout);
+		imageRef = FirebaseUtil.getImageStorageReference();
+		videoRef = FirebaseUtil.getVideoStorageReference();
+		txt_post_video = view.findViewById(R.id.txt_post_video);
+		edt_video_content = view.findViewById(R.id.edt_video_content);
+		ic_add_video = view.findViewById(R.id.ic_add_video);
 
-			// Bind view
-			fullname = view.findViewById(R.id.txt_fullname);
-			numFollowers = view.findViewById(R.id.txt_num_followers);
-			numFollowing = view.findViewById(R.id.txt_num_following);
-			numLikes = view.findViewById(R.id.txt_num_likes);
-			username = view.findViewById(R.id.txt_email);
-			avatar = view.findViewById(R.id.img_avatar);
-			recyclerView = view.findViewById(R.id.recycler_view_videos_grid);
-			scrollView = view.findViewById(R.id.scroll_view);
-			layoutProfile = view.findViewById(R.id.layout_profile);
-			ic_menu = view.findViewById(R.id.ic_menu);
-			ic_edit = view.findViewById(R.id.ic_edit);
-			ic_edit_avatar = view.findViewById(R.id.ic_edit_avatar);
-			navigationView = view.findViewById(R.id.nav_view);
-			DrawerLayout drawer = view.findViewById(R.id.drawer_layout);
-			imageRef = FirebaseUtil.getImageStorageReference();
-			videoRef = FirebaseUtil.getVideoStorageReference();
-			txt_post_video = view.findViewById(R.id.txt_post_video);
-			edt_video_content = view.findViewById(R.id.edt_video_content);
-			ic_add_video = view.findViewById(R.id.ic_add_video);
+		ic_add_video.setOnClickListener(v -> handleAddVideo());
 
-			ic_add_video.setOnClickListener(v -> handleAddVideo());
+		txt_post_video.setOnClickListener(v -> handlePostVideo());
 
-			txt_post_video.setOnClickListener(v -> handlePostVideo());
+		ic_menu.setOnClickListener(v -> drawer.open());
 
-			ic_menu.setOnClickListener(v -> drawer.open());
+		ic_edit.setOnClickListener(v -> openEditProfileActivity());
 
-			ic_edit.setOnClickListener(v -> openEditProfileActivity());
+		ic_edit_avatar.setOnClickListener(v -> handleEditAvatar());
 
-			ic_edit_avatar.setOnClickListener(v -> handleEditAvatar());
+		navigationView.setNavigationItemSelectedListener(v -> {
+			switch (v.getItemId()) {
+				case R.id.log_out:
+					MainActivity mainActivity = (MainActivity) requireActivity();
+					mainActivity.logOut();
+					Toast.makeText(context, "Log out successfully", Toast.LENGTH_SHORT).show();
+					break;
+				case R.id.admin_panel:
+					Intent intent = new Intent(context, AdminActivity.class);
+					startActivity(intent);
+					break;
+			}
 
-			navigationView.setNavigationItemSelectedListener(v -> {
-				switch (v.getItemId()) {
-					case R.id.log_out:
-						MainActivity mainActivity = (MainActivity) requireActivity();
-						mainActivity.logOut();
-						Toast.makeText(context, "Log out successfully", Toast.LENGTH_SHORT).show();
-						break;
-					case R.id.admin_panel:
-						Intent intent = new Intent(context, AdminActivity.class);
-						startActivity(intent);
-						break;
-				}
-
-				drawer.close();
-				return false;
-			});
+			drawer.close();
+			return false;
+		});
 
 
-			updateUI();
+		updateUI();
 
-			return view;
-		} else {
-			isLogin = false;
-			View view = inflater.inflate(R.layout.fragment_profile_no_login, container, false);
-			this.context = view.getContext();
-
-			// Bind view
-			Button btnLogin = view.findViewById(R.id.btn_login);
-			btnLogin.setOnClickListener(v -> ((MainActivity) requireActivity()).openLoginActivity());
-
-			Button btnRegister = view.findViewById(R.id.btn_register);
-			btnRegister.setOnClickListener(v -> ((MainActivity) requireActivity()).openRegisterActivity());
-
-			return view;
-		}
+		return view;
 	}
 
 	private void handlePostVideo() {

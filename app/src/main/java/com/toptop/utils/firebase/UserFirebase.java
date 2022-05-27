@@ -89,6 +89,7 @@ public class UserFirebase {
 		});
 	}
 
+	// get user by username
 	public static void getUserByUsername(UserCallback callback, String username) {
 		Query query = userRef.orderByChild("username").equalTo(username);
 		query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -110,7 +111,28 @@ public class UserFirebase {
 		});
 	}
 
-	//get username by comment id
+	// get user by email
+	public static void getUserByEmail(UserCallback callback, String email) {
+		Query query = userRef.orderByChild("email").equalTo(email);
+		query.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				if (dataSnapshot.exists()) {
+					User user = new User(dataSnapshot.getChildren().iterator().next());
+					callback.onCallBack(user);
+				} else {
+					callback.onCallBack(null);
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				callback.onCallBack(null);
+			}
+		});
+	}
+
+	// get username by comment id
 	public static void getUsernameByCommentId(String commentId, MyCallback callback) {
 		Query query = FirebaseUtil.getCommentById(commentId);
 		query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -152,6 +174,8 @@ public class UserFirebase {
 			}
 		});
 	}
+
+
 
 	public static void readDataUser(MyCallback myCallback, String username) {
 		Query myQuery = QuerygetUserByUsername(username);

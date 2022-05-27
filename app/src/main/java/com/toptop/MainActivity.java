@@ -1,56 +1,38 @@
 package com.toptop;
 
-import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
-
 import android.annotation.SuppressLint;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.RemoteInput;
 import androidx.core.content.PermissionChecker;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.toptop.adapters.VideoFragmentAdapter;
+import com.toptop.fragment.NotLoginProfileFragment;
 import com.toptop.fragment.NotificationFragment;
 import com.toptop.fragment.ProfileFragment;
 import com.toptop.fragment.SearchFragment;
 import com.toptop.fragment.VideoFragment;
 import com.toptop.models.Comment;
-import com.toptop.models.Notification;
 import com.toptop.models.User;
-import com.toptop.models.Video;
-import com.toptop.service.NotificationService;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
-import com.toptop.utils.firebase.FirebaseUtil;
-import com.toptop.utils.firebase.NotificationFirebase;
+import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
-
-import java.util.ArrayList;
-import java.util.Objects;
 
 import kotlin.Unit;
 import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem;
@@ -73,6 +55,12 @@ public class MainActivity extends FragmentActivity {
 	@SuppressLint("StaticFieldLeak")
 	CurvedBottomNavigationView nav;
 	CbnMenuItem[] items;
+	Fragment activeFragment;
+	VideoFragment videoFragment = VideoFragment.getInstance();
+	ProfileFragment profileFragment = ProfileFragment.getInstance();
+	NotLoginProfileFragment notLoginProfileFragment = NotLoginProfileFragment.getInstance();
+	SearchFragment searchFragment = SearchFragment.getInstance();
+	NotificationFragment notificationFragment = NotificationFragment.getInstance();
 
 	public static User getCurrentUser() {
 		return currentUser;
@@ -80,28 +68,13 @@ public class MainActivity extends FragmentActivity {
 
 	public void setCurrentUser(User user) {
 		if (user != null) {
-			// Log
-			Log.i(TAG, "setCurrentUser: " + user.getUsername());
-
-			// If first time login or change user
-			if (currentUser == null || !currentUser.getUsername().equals(user.getUsername())) {
-				// Set current user
-				Query query = FirebaseUtil.getUserByUsername(user.getUsername());
-				query.addValueEventListener(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot snapshot) {
-						if (snapshot.exists()) {
-							currentUser = new User(snapshot.getChildren().iterator().next());
-							updateUI();
-						}
-					}
-
-					@Override
-					public void onCancelled(@NonNull DatabaseError error) {
-
-					}
-				});
-			}
+			UserFirebase.getUserByEmail(u -> {
+				if (u != null) {
+					Log.i(TAG, "setCurrentUser: " + u.getUsername());
+					currentUser = u;
+					updateUI();
+				}
+			}, user.getEmail());
 		} else {
 			currentUser = null;
 			updateUI();
@@ -116,18 +89,11 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void updateUI() {
-		ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG);
-		if (profileFragment != null) {
-			profileFragment.updateUI();
-		}
-		VideoFragment videoFragment = (VideoFragment) getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG);
-		if (videoFragment != null) {
-			videoFragment.updateUI();
-		}
-		NotificationFragment notificationFragment = (NotificationFragment) getSupportFragmentManager().findFragmentByTag(NotificationFragment.TAG);
-		if (notificationFragment != null) {
-			notificationFragment.updateUI();
-		}
+		profileFragment.updateUI();
+
+		videoFragment.updateUI();
+
+		notificationFragment.updateUI();
 	}
 
 	@Override
@@ -135,20 +101,9 @@ public class MainActivity extends FragmentActivity {
 		super.onStart();
 		FirebaseUser currentUser = mAuth.getCurrentUser();
 		if (currentUser != null) {
-			Query query = FirebaseUtil.getUserByEmail(currentUser.getEmail());
-			query.get().addOnSuccessListener(documentSnapshot -> {
-				if (documentSnapshot.exists()) {
-					User user = new User(documentSnapshot.getChildren().iterator().next());
-					setCurrentUser(user);
-					//start Service
-					startService(new Intent(this, NotificationService.class));
-				} else {
-					setCurrentUser(null);
-					//stop Service
-					stopService(new Intent(this, NotificationService.class));
-				}
-				init();
-			});
+			User user = new User();
+			user.setEmail(currentUser.getEmail());
+			setCurrentUser(user);
 		}
 	}
 
@@ -184,8 +139,7 @@ public class MainActivity extends FragmentActivity {
 			}
 		} else if (requestCode == REQUEST_CHANGE_AVATAR || requestCode == REQUEST_ADD_VIDEO) {
 			// Don't do anything
-		}
-		else {
+		} else {
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
@@ -247,21 +201,21 @@ public class MainActivity extends FragmentActivity {
 			items = new CbnMenuItem[]{
 					new CbnMenuItem(R.drawable.ic_video, R.drawable.ic_video_avd, 0),
 					new CbnMenuItem(R.drawable.ic_search, R.drawable.ic_search_avd, 0),
-//					add label to show the number of notifications
-
 					new CbnMenuItem(R.drawable.ic_notification, R.drawable.ic_notification_avd, 0),
 					new CbnMenuItem(R.drawable.ic_profile, R.drawable.ic_profile_avd, 0)
 			};
 
 			// Add fragment to the container
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.fragment_container, SearchFragment.getInstance(), SearchFragment.TAG)
+					.add(R.id.fragment_container, searchFragment, SearchFragment.TAG).hide(searchFragment)
 					.addToBackStack(SearchFragment.TAG)
-					.add(R.id.fragment_container, NotificationFragment.getInstance(), NotificationFragment.TAG)
+					.add(R.id.fragment_container, notificationFragment, NotificationFragment.TAG).hide(notificationFragment)
 					.addToBackStack(NotificationFragment.TAG)
-					.add(R.id.fragment_container, ProfileFragment.getInstance(), ProfileFragment.TAG)
+					.add(R.id.fragment_container, notLoginProfileFragment, NotLoginProfileFragment.TAG).hide(notLoginProfileFragment)
+					.addToBackStack(NotLoginProfileFragment.TAG)
+					.add(R.id.fragment_container, profileFragment, ProfileFragment.TAG).hide(profileFragment)
 					.addToBackStack(ProfileFragment.TAG)
-					.add(R.id.fragment_container, VideoFragment.getInstance(), VideoFragment.TAG)
+					.add(R.id.fragment_container, videoFragment, VideoFragment.TAG).hide(videoFragment)
 					.addToBackStack(VideoFragment.TAG)
 					.commit();
 
@@ -276,9 +230,9 @@ public class MainActivity extends FragmentActivity {
 
 			// Set the default fragment
 			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.fragment_container,
-							Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
+					.show(videoFragment)
 					.commit();
+			activeFragment = VideoFragment.getInstance();
 
 			// Set navigation bar color
 			getWindow().setNavigationBarColor(Color.WHITE);
@@ -292,30 +246,37 @@ public class MainActivity extends FragmentActivity {
 		switch (cbnMenuItem.getIcon()) {
 			case R.drawable.ic_video:
 				getSupportFragmentManager().beginTransaction()
-						.replace(R.id.fragment_container,
-								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(VideoFragment.TAG)))
+						.hide(activeFragment).show(VideoFragment.getInstance())
 						.commit();
+				activeFragment = VideoFragment.getInstance();
 				Log.i(NAV_TAG, "Change to video fragment");
 				break;
 			case R.drawable.ic_search:
 				getSupportFragmentManager().beginTransaction()
-						.replace(R.id.fragment_container,
-								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(SearchFragment.TAG)))
+						.hide(activeFragment).show(SearchFragment.getInstance())
 						.commit();
+				activeFragment = SearchFragment.getInstance();
 				Log.i(NAV_TAG, "Change to search fragment");
 				break;
 			case R.drawable.ic_notification:
 				getSupportFragmentManager().beginTransaction()
-						.replace(R.id.fragment_container,
-								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(NotificationFragment.TAG)))
+						.hide(activeFragment).show(NotificationFragment.getInstance())
 						.commit();
+				activeFragment = NotificationFragment.getInstance();
 				Log.i(NAV_TAG, "Change to notification fragment");
 				break;
 			case R.drawable.ic_profile:
-				getSupportFragmentManager().beginTransaction()
-						.replace(R.id.fragment_container,
-								Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(ProfileFragment.TAG)))
-						.commit();
+				if (isLoggedIn()) {
+					getSupportFragmentManager().beginTransaction()
+							.hide(activeFragment).show(ProfileFragment.getInstance())
+							.commit();
+					activeFragment = ProfileFragment.getInstance();
+				} else {
+					getSupportFragmentManager().beginTransaction()
+							.hide(activeFragment).show(NotLoginProfileFragment.getInstance())
+							.commit();
+					activeFragment = NotLoginProfileFragment.getInstance();
+				}
 				Log.i(NAV_TAG, "Change to profile fragment");
 				break;
 		}
@@ -348,7 +309,13 @@ public class MainActivity extends FragmentActivity {
 		if (findViewById(R.id.fragment_comment_container) != null &&
 				findViewById(R.id.fragment_comment_container).getVisibility() == View.VISIBLE) {
 			hideCommentFragment();
-		} else super.onBackPressed();
+		} else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.exit_confirm);
+			builder.setPositiveButton(R.string.yes, (dialog, which) -> finish());
+			builder.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());
+			builder.show();
+		}
 	}
 
 	// Open login activity

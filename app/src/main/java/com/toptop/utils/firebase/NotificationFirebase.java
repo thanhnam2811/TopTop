@@ -2,11 +2,16 @@ package com.toptop.utils.firebase;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.models.Notification;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationFirebase {
 	// Tag
@@ -49,4 +54,36 @@ public class NotificationFirebase {
 		});
 	}
 
+	// Get notification by username
+	public static void getNotificationByUsername(String username, final ListNotificationCallback listNotificationCallback, final FailedCallback failedCallback) {
+		notificationRef.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				List<Notification> notifications = new ArrayList<>();
+				for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+					Notification notification = new Notification(postSnapshot);
+					notifications.add(notification);
+				}
+				listNotificationCallback.onCallback(notifications);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				failedCallback.onCallback(databaseError);
+			}
+		});
+	}
+
+	// Callback
+	public interface NotificationCallback {
+		void onCallback(Notification notification);
+	}
+
+	public interface ListNotificationCallback {
+		void onCallback(List<Notification> notifications);
+	}
+
+	public interface FailedCallback {
+		void onCallback(DatabaseError error);
+	}
 }

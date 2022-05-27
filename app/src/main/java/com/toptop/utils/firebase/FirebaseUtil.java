@@ -22,24 +22,6 @@ public class FirebaseUtil {
 		return FirebaseDatabase.getInstance(FIREBASE_URL).getReference(tableName);
 	}
 
-	// Get comments by video id
-	public static Query getCommentsByVideoId(String videoId) {
-		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_COMMENTS);
-		return ref.orderByChild("videoId").equalTo(videoId);
-	}
-
-	// Get Comment by replyToCommentId
-	public static Query getCommentByReplyToCommentId(String replyToCommentId) {
-		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_COMMENTS);
-		return ref.orderByChild("replyToCommentId").equalTo(replyToCommentId);
-	}
-
-	// Get videos by username
-	public static Query getVideosByUsername(String username) {
-		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_VIDEOS);
-		return ref.orderByChild("username").equalTo(username);
-	}
-
 	//get notifications by username
 	public static Query getNotificationsByUsername(String username) {
 		DatabaseReference ref = FirebaseDatabase.getInstance(FIREBASE_URL).getReference(TABLE_NOTIFICATIONS);

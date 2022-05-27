@@ -16,6 +16,7 @@ import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class VideoFirebase {
 	// Tag
@@ -104,6 +105,7 @@ public class VideoFirebase {
 				System.out.println(value);
 				myCallback.onCallback(value);
 			}
+
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
 				Log.i(TAG, "onCancelled: ", databaseError.toException());
@@ -130,6 +132,7 @@ public class VideoFirebase {
 			});
 		}, commentId);
 	}
+
 	// get Video From VideoId
 	public static void getVideoFromVideoId(VideoCallback videoCallback, String videoId) {
 		Query myQuery = FirebaseUtil.getVideoById(videoId);
@@ -186,37 +189,65 @@ public class VideoFirebase {
 		StatisticFirebase.addView();
 	}
 
-	//get list Video like content
-	public static void getListVideoLikeContent(ListCallback listCallback, String content){
-		Query myQuery = FirebaseUtil.getVideoByStringLikeContent(content);
-		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+	// Get video by username
+	public static void getVideoByUsername(String username, ListVideoCallback listVideoCallback, FailedCallback failedCallback) {
+		videoRef.child("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
+
 			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
-				ArrayList<Video> videos = new ArrayList<>();
-				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-					videos.add(new Video(snapshot));
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				List<Video> videos = new ArrayList<>();
+				for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+					Video video = dataSnapshot.getValue(Video.class);
+					videos.add(video);
 				}
-				Log.d(TAG, "onDataChange: " + videos.size());
-				listCallback.onCallback(videos);
+				listVideoCallback.onCallback(videos);
 			}
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError error) {
-				Log.i(TAG, "onCancelled: ", error.toException());
-				listCallback.onCallback(null);
+				failedCallback.onCallback(error);
 			}
 		});
 	}
+
+	// Get list video like content
+	public static void getVideoLikeContent(String content, ListVideoCallback listVideoCallback, FailedCallback failedCallback) {
+		videoRef.orderByChild("content")
+				.startAt(content)
+				.endAt(content + "\uf8ff")
+				.addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(@NonNull DataSnapshot snapshot) {
+						List<Video> videos = new ArrayList<>();
+						for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+							Video video = dataSnapshot.getValue(Video.class);
+							videos.add(video);
+						}
+						listVideoCallback.onCallback(videos);
+					}
+
+					@Override
+					public void onCancelled(@NonNull DatabaseError error) {
+						failedCallback.onCallback(error);
+					}
+				});
+	}
+
 
 	//	Try fix
 	public interface MyCallback {
 		void onCallback(String value);
 	}
 
-	public  interface ListCallback {
-		void onCallback(ArrayList<Video> videos);
-	}
 	public interface VideoCallback {
 		void onCallback(Video video);
+	}
+
+	public interface ListVideoCallback {
+		void onCallback(List<Video> videos);
+	}
+
+	public interface FailedCallback {
+		void onCallback(DatabaseError error);
 	}
 }

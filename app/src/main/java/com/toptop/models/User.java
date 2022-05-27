@@ -9,6 +9,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.Query;
 import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
+import com.toptop.utils.firebase.VideoFirebase;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -115,23 +116,19 @@ public class User implements Serializable {
 		}
 
 		// Update numLikes if changed
-		Query query = FirebaseUtil.getVideosByUsername(username);
-		query.get().addOnCompleteListener(task -> {
-			if (task.isSuccessful()) {
-				long newNumLikes = 0;
-				DataSnapshot snapshot = task.getResult();
-				if (snapshot.exists())
-					for (DataSnapshot child : snapshot.getChildren()) {
-						Video video = new Video(child);
-						if (video.getNumLikes() != null)
-							newNumLikes = newNumLikes + video.getNumLikes();
+		VideoFirebase.getVideoByUsername(username,
+				videos -> {
+					long newNumLikes = 0;
+					for (Video video : videos) {
+						newNumLikes += video.getNumLikes();
 					}
-				if (newNumLikes != numLikes) {
-					this.numLikes = newNumLikes;
-					UserFirebase.updateUser(this);
-				}
-			}
-		});
+					if (newNumLikes != numLikes) {
+						numLikes = newNumLikes;
+						UserFirebase.updateUser(this);
+					}
+				}, error -> {
+					Log.e(TAG, "Error: " + error.getMessage());
+				});
 	}
 
 	public String getUsername() {

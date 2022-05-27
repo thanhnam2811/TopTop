@@ -10,17 +10,12 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.toptop.R;
 import com.toptop.adapters.SearchFragmentAdapter;
 import com.toptop.adapters.SearchFragmentVideoAdapter;
@@ -28,7 +23,6 @@ import com.toptop.adapters.SearchNotFoundAdapter;
 import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
-import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
@@ -110,23 +104,24 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 						recyclerView.setAdapter(searchFragmentAdapter);
 						lblAccount.setVisibility(View.VISIBLE);
 					}
-					//search for video
-					VideoFirebase.getListVideoLikeContent(listvideos -> {
-						videos.clear();
-						for (Video video : listvideos) {
-							videos.add(video);
-						}
-						SearchFragmentVideoAdapter searchFragmentAdapterForVideo = new SearchFragmentVideoAdapter(videos, view.getContext());
-						if (recyclerViewForVideo.getAdapter() == null && videos.size() > 0) {
-							lblVideo.setVisibility(View.VISIBLE);
-							recyclerViewForVideo.setAdapter(searchFragmentAdapterForVideo);
-						}
-						if (videos.size() == 0 && users.size() == 0) {
-							Toast.makeText(view.getContext(), "No result", Toast.LENGTH_SHORT).show();
-							SearchNotFoundAdapter searchNotFoundAdapter = new SearchNotFoundAdapter(view.getContext(), query + " không cho ra kết quả tìm kiếm");
-							recyclerView.setAdapter(searchNotFoundAdapter);
-						}
-					}, query);
+					// Search for video
+					VideoFirebase.getVideoLikeContent(query,
+							listvideos -> {
+								videos.clear();
+								videos.addAll(listvideos);
+								SearchFragmentVideoAdapter searchFragmentAdapterForVideo = new SearchFragmentVideoAdapter(videos, view.getContext());
+								if (recyclerViewForVideo.getAdapter() == null && videos.size() > 0) {
+									lblVideo.setVisibility(View.VISIBLE);
+									recyclerViewForVideo.setAdapter(searchFragmentAdapterForVideo);
+								}
+								if (videos.size() == 0 && users.size() == 0) {
+									Toast.makeText(view.getContext(), "No result", Toast.LENGTH_SHORT).show();
+									SearchNotFoundAdapter searchNotFoundAdapter = new SearchNotFoundAdapter(view.getContext(), query + " không cho ra kết quả tìm kiếm");
+									recyclerView.setAdapter(searchNotFoundAdapter);
+								}
+							}, error -> {
+								Toast.makeText(view.getContext(), "No result", Toast.LENGTH_SHORT).show();
+							});
 
 				}, query);
 

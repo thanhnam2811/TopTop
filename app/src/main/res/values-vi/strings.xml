@@ -54,4 +54,7 @@
     <string name="admin">Quản trị viên</string>
     <string name="dashboard">Bảng điều khiển</string>
     <string name="admin_panel">Trang quản trị</string>
+    <string name="exit_confirm">Bạn có chắc chắn muốn thoát?</string>
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
 </resources>
