@@ -136,6 +136,14 @@ public class MyUtil {
 		}
 	}
 
+	public static void setLightStatusBar(Activity activity) {
+		setStatusBarColor(STATUS_BAR_LIGHT_MODE, activity);
+	}
+
+	public static void setDarkStatusBar(Activity activity) {
+		setStatusBarColor(STATUS_BAR_DARK_MODE, activity);
+	}
+
 	public static String getCurrentTime() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		Date now = new Date();

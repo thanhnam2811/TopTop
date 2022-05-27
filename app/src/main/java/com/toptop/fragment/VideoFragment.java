@@ -71,9 +71,6 @@ public class VideoFragment extends Fragment {
 		SnapHelper snapHelper = new PagerSnapHelper();
 		snapHelper.attachToRecyclerView(recyclerView);
 
-		// Set status bar color
-		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_DARK_MODE, requireActivity());
-
 		// Inflate the layout for this fragment
 		return view;
 	}

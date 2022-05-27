@@ -24,7 +24,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_change_password);
-		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, this);
+		MyUtil.setLightStatusBar(this);
 
 		// Bind views
 		edtOldPassword = findViewById(R.id.edt_old_password);

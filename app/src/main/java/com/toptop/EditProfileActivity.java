@@ -47,7 +47,7 @@ public class EditProfileActivity extends AppCompatActivity {
 		txtSave.setOnClickListener(v -> handleSave(user));
 		txtChangePassword.setOnClickListener(v -> handleChangePassword());
 
-		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, this);
+		MyUtil.setLightStatusBar(this);
 	}
 
 	private void handleChangePassword() {

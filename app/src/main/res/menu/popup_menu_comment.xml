@@ -7,6 +7,7 @@
         android:id="@+id/menu_comment_report"
         android:title="@string/report" />
     <item
+        android:visible="false"
         android:id="@+id/menu_comment_delete"
         android:title="@string/delete" />
     <item

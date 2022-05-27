@@ -80,7 +80,7 @@ public class WatchProfileActivity extends AppCompatActivity {
 
 		loadData(usernameText);
 
-		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, this);
+		MyUtil.setLightStatusBar(this);
 	}
 
 	private void loadData(String usernameText) {

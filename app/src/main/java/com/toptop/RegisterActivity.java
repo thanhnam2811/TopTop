@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,18 +26,21 @@ public class RegisterActivity extends AppCompatActivity {
 	private static final String TAG = "RegisterActivity";
 
 	public User newUser;
+	Fragment activeFragment;
+	final InputAccountRegister inputAccountRegister = InputAccountRegister.getInstance();
+	final InputInfoRegister inputInfoRegister = InputInfoRegister.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register);
 
-		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_LIGHT_MODE, this);
+		MyUtil.setLightStatusBar(this);
 
 		getSupportFragmentManager().beginTransaction()
-				.add(R.id.input_fragment, InputInfoRegister.getInstance(), InputInfoRegister.TAG)
+				.add(R.id.input_fragment, inputAccountRegister, InputAccountRegister.TAG).hide(inputAccountRegister)
 				.addToBackStack(InputInfoRegister.TAG)
-				.add(R.id.input_fragment, InputAccountRegister.getInstance(), InputAccountRegister.TAG)
+				.add(R.id.input_fragment, inputInfoRegister, InputInfoRegister.TAG).hide(inputInfoRegister)
 				.addToBackStack(InputAccountRegister.TAG)
 				.commit();
 
@@ -44,8 +48,9 @@ public class RegisterActivity extends AppCompatActivity {
 		getSupportFragmentManager().executePendingTransactions();
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.input_fragment, Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag(InputInfoRegister.TAG)))
+				.show(inputInfoRegister)
 				.commit();
+		activeFragment = inputInfoRegister;
 
 		TextView txt_login = findViewById(R.id.txt_login);
 		txt_login.setOnClickListener(v -> {
@@ -65,8 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		super.onBackPressed();
+		finish();
 	}
 
 	// Finish activity
@@ -104,5 +108,21 @@ public class RegisterActivity extends AppCompatActivity {
 			setResult(RESULT_CANCELED, intent);
 			finish();
 		}
+	}
+
+	public void openInputAccountRegister() {
+		getSupportFragmentManager().beginTransaction()
+				.hide(activeFragment)
+				.show(inputAccountRegister)
+				.commit();
+		activeFragment = inputAccountRegister;
+	}
+
+	public void openInputInfoRegister() {
+		getSupportFragmentManager().beginTransaction()
+				.hide(activeFragment)
+				.show(inputInfoRegister)
+				.commit();
+		activeFragment = inputInfoRegister;
 	}
 }

@@ -8,12 +8,15 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.toptop.utils.MyUtil;
+
 @SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash_screen);
+		MyUtil.setDarkStatusBar(this);
 
 		new Handler().postDelayed(() -> {
 			// Start the next activity
@@ -22,6 +25,5 @@ public class SplashScreen extends AppCompatActivity {
 			finish();
 		}, 1000);
 
-		getWindow().setStatusBarColor(Color.BLACK);
 	}
 }

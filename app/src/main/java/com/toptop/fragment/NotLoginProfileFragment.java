@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import com.toptop.MainActivity;
 import com.toptop.R;
+import com.toptop.utils.MyUtil;
 
 public class NotLoginProfileFragment extends Fragment {
 

@@ -11,24 +11,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.toptop.adapters.VideoFragmentAdapter;
 import com.toptop.models.Comment;
 import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
-import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,7 +41,7 @@ public class WatchVideoActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_watch_video);
 		getWindow().setNavigationBarColor(Color.WHITE);
-		MyUtil.setStatusBarColor(MyUtil.STATUS_BAR_DARK_MODE, this);
+		MyUtil.setLightStatusBar(this);
 
 		// Get the Intent that started this activity and extract the string
 		Bundle extras = getIntent().getExtras();
@@ -54,13 +49,9 @@ public class WatchVideoActivity extends FragmentActivity {
 		recyclerView = findViewById(R.id.recycler_view_videos);
 		Context context = this;
 
-		Query query = FirebaseUtil.getVideoById(video.getVideoId());
-		query.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				Log.i(TAG, "onDataChange: Video has changed");
-				if (snapshot.exists()) {
-					video = new Video(snapshot.getChildren().iterator().next());
+		VideoFirebase.getVideoById(video.getVideoId(),
+				v -> {
+					video = v;
 					if (recyclerView.getAdapter() == null) {
 						Log.i(TAG, "onDataChange: " + video.getVideoId());
 						List<Video> videos = new ArrayList<>();
@@ -73,14 +64,9 @@ public class WatchVideoActivity extends FragmentActivity {
 						VideoFragmentAdapter adapter = (VideoFragmentAdapter) recyclerView.getAdapter();
 						adapter.notifyItemChanged(0, video);
 					}
-				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-
-			}
-		});
+				}, e -> {
+					Log.e(TAG, "onCancelled: " + e.getMessage());
+				});
 
 		SnapHelper snapHelper = new PagerSnapHelper();
 		snapHelper.attachToRecyclerView(recyclerView);

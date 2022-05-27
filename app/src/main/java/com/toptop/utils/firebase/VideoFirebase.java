@@ -1,6 +1,7 @@
 package com.toptop.utils.firebase;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -97,20 +98,9 @@ public class VideoFirebase {
 	}
 
 	public static void getDataVideoId(MyCallback myCallback, String commentId) {
-		Query myQuery = FirebaseUtil.getCommentById(commentId);
-		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				String value = dataSnapshot.getChildren().iterator().next().child("videoId").getValue(String.class);
-				System.out.println(value);
-				myCallback.onCallback(value);
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-				Log.i(TAG, "onCancelled: ", databaseError.toException());
-			}
-		});
+		CommentFirebase.getCommentByCommentId(commentId,
+				comment -> myCallback.onCallback(comment.getVideoId()),
+				databaseError -> Log.e(TAG, "getDataVideoId: " + databaseError.getMessage()));
 	}
 
 	//	get video by id from commentId
@@ -231,6 +221,22 @@ public class VideoFirebase {
 						failedCallback.onCallback(error);
 					}
 				});
+	}
+
+	// Get video by id
+	public static void getVideoById(String id, VideoCallback videoCallback, FailedCallback failedCallback) {
+		videoRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				Video video = new Video(snapshot);
+				videoCallback.onCallback(video);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				failedCallback.onCallback(error);
+			}
+		});
 	}
 
 
