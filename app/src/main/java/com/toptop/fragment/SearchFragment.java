@@ -29,6 +29,8 @@ import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.UserFirebase;
+import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.ArrayList;
 
@@ -70,18 +72,15 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 		//set animation for scrollview
 //		scrollView.setAnimation();
 		//handle click Search
-		txtSearch.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				searchView.setIconified(false);
-				String input = searchView.getQuery().toString();
-				System.out.println(input);
-				if (input.length() <= 0) {
-					searchView.setQuery("", false);
-					Toast.makeText(getContext(), "Please enter a keyword", Toast.LENGTH_SHORT).show();
-				} else {
-					searchView.setQuery(input, true);
-				}
+		txtSearch.setOnClickListener(v -> {
+			searchView.setIconified(false);
+			String input = searchView.getQuery().toString();
+			System.out.println(input);
+			if (input.length() <= 0) {
+				searchView.setQuery("", false);
+				Toast.makeText(getContext(), "Please enter a keyword", Toast.LENGTH_SHORT).show();
+			} else {
+				searchView.setQuery(input, true);
 			}
 		});
 		//forcus on searchview
@@ -101,54 +100,35 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 				lblAccount.setVisibility(View.GONE);
 				lblVideo.setVisibility(View.GONE);
 				//search for user
-				Query queryUser = FirebaseUtil.getUserByStringLikeUsername(query);
-				queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						users.clear();
-						for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-							users.add(new User(snapshot));
-						}
-						System.out.println("users: " + users);
-						SearchFragmentAdapter searchFragmentAdapter = new SearchFragmentAdapter(users, view.getContext());
-						if (recyclerView.getAdapter() == null && users.size() > 0) {
-							recyclerView.setAdapter(searchFragmentAdapter);
-							lblAccount.setVisibility(View.VISIBLE);
-						}
-						//	search for video
-						Query queryVideo = FirebaseUtil.getVideoByStringLikeContent(query);
-						queryVideo.addListenerForSingleValueEvent(new ValueEventListener() {
-							@Override
-							public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-								videos.clear();
-								for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-									videos.add(new Video(snapshot));
-								}
-								System.out.println("videos: " + videos);
-								SearchFragmentVideoAdapter searchFragmentAdapterForVideo = new SearchFragmentVideoAdapter(videos, view.getContext());
-								if (recyclerViewForVideo.getAdapter() == null && videos.size() > 0) {
-									lblVideo.setVisibility(View.VISIBLE);
-									recyclerViewForVideo.setAdapter(searchFragmentAdapterForVideo);
-								}
-								if (videos.size() == 0 && users.size() == 0) {
-									Toast.makeText(view.getContext(), "No result", Toast.LENGTH_SHORT).show();
-									SearchNotFoundAdapter searchNotFoundAdapter = new SearchNotFoundAdapter(view.getContext(), query + " không cho ra kết quả tìm kiếm");
-									recyclerView.setAdapter(searchNotFoundAdapter);
-								}
-							}
-
-							@Override
-							public void onCancelled(@NonNull DatabaseError error) {
-								Log.d(TAG, "onCancelled: " + error.getMessage());
-							}
-						});
+				UserFirebase.getListUserLikeUsername(listUsers -> {
+					users.clear();
+					for (User user : listUsers) {
+						users.add(user);
 					}
-
-					@Override
-					public void onCancelled(@NonNull DatabaseError error) {
-						Log.d(TAG, "onCancelled: " + error.getMessage());
+					SearchFragmentAdapter searchFragmentAdapter = new SearchFragmentAdapter(users, view.getContext());
+					if (recyclerView.getAdapter() == null && users.size() > 0) {
+						recyclerView.setAdapter(searchFragmentAdapter);
+						lblAccount.setVisibility(View.VISIBLE);
 					}
-				});
+					//search for video
+					VideoFirebase.getListVideoLikeContent(listvideos -> {
+						videos.clear();
+						for (Video video : listvideos) {
+							videos.add(video);
+						}
+						SearchFragmentVideoAdapter searchFragmentAdapterForVideo = new SearchFragmentVideoAdapter(videos, view.getContext());
+						if (recyclerViewForVideo.getAdapter() == null && videos.size() > 0) {
+							lblVideo.setVisibility(View.VISIBLE);
+							recyclerViewForVideo.setAdapter(searchFragmentAdapterForVideo);
+						}
+						if (videos.size() == 0 && users.size() == 0) {
+							Toast.makeText(view.getContext(), "No result", Toast.LENGTH_SHORT).show();
+							SearchNotFoundAdapter searchNotFoundAdapter = new SearchNotFoundAdapter(view.getContext(), query + " không cho ra kết quả tìm kiếm");
+							recyclerView.setAdapter(searchNotFoundAdapter);
+						}
+					}, query);
+
+				}, query);
 
 				return true;
 			}

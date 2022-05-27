@@ -15,6 +15,8 @@ import com.toptop.models.Notification;
 import com.toptop.models.User;
 import com.toptop.utils.MyUtil;
 
+import java.util.ArrayList;
+
 public class UserFirebase {
 	// Tag
 	private static final String TAG = "UserFirebase";
@@ -131,6 +133,26 @@ public class UserFirebase {
 		});
 	}
 
+	//get listUser like user
+	public static void getListUserLikeUsername(ListUserCallback callback, String username) {
+		Query query = FirebaseUtil.getUserByStringLikeUsername(username);
+		query.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				ArrayList<User> listUser = new ArrayList<>();
+				for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+					listUser.add(new User(snapshot));
+				}
+				callback.onCallBack(listUser);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				callback.onCallBack(null);
+			}
+		});
+	}
+
 	public static void readDataUser(MyCallback myCallback, String username) {
 		Query myQuery = QuerygetUserByUsername(username);
 		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -153,6 +175,10 @@ public class UserFirebase {
 	}
 
 	// Get user by username
+	public interface ListUserCallback {
+		void onCallBack(ArrayList<User> users);
+	}
+
 	public interface UserCallback {
 		void onCallBack(User user);
 	}

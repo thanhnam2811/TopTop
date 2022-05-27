@@ -15,6 +15,8 @@ import com.toptop.models.Notification;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 
+import java.util.ArrayList;
+
 public class VideoFirebase {
 	// Tag
 	public static final String TAG = "VideoFirebase";
@@ -184,12 +186,36 @@ public class VideoFirebase {
 		StatisticFirebase.addView();
 	}
 
+	//get list Video like content
+	public static void getListVideoLikeContent(ListCallback listCallback, String content){
+		Query myQuery = FirebaseUtil.getVideoByStringLikeContent(content);
+		myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				ArrayList<Video> videos = new ArrayList<>();
+				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+					videos.add(new Video(snapshot));
+				}
+				Log.d(TAG, "onDataChange: " + videos.size());
+				listCallback.onCallback(videos);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				Log.i(TAG, "onCancelled: ", error.toException());
+				listCallback.onCallback(null);
+			}
+		});
+	}
 
 	//	Try fix
 	public interface MyCallback {
 		void onCallback(String value);
 	}
 
+	public  interface ListCallback {
+		void onCallback(ArrayList<Video> videos);
+	}
 	public interface VideoCallback {
 		void onCallback(Video video);
 	}
