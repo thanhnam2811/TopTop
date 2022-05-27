@@ -85,4 +85,7 @@ dependencies {
 
     // Switch
     implementation 'com.github.angads25:toggle:1.1.0'
+
+    // Chart
+    implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
 }

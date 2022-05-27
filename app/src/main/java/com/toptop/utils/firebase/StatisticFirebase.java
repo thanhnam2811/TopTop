@@ -3,6 +3,7 @@ package com.toptop.utils.firebase;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.toptop.models.Statistic;
 import com.toptop.utils.MyUtil;
 
@@ -109,5 +110,10 @@ public class StatisticFirebase {
 				updateStatistic(statistic);
 			}
 		});
+	}
+
+	// Get statistic in week
+	public static Query getStatisticInWeek() {
+		return statisticRef.orderByChild("date").limitToLast(7);
 	}
 }

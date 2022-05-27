@@ -51,4 +51,7 @@
     <string name="report">Báo cáo</string>
     <string name="already_have_an_account">Bạn đã có tài khoản?</string>
     <string name="login_now">Đăng nhập ngay!</string>
+    <string name="admin">Quản trị viên</string>
+    <string name="dashboard">Bảng điều khiển</string>
+    <string name="admin_panel">Trang quản trị</string>
 </resources>

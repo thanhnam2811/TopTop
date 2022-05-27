@@ -39,6 +39,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.toptop.AdminActivity;
 import com.toptop.EditProfileActivity;
 import com.toptop.MainActivity;
 import com.toptop.R;
@@ -83,6 +84,9 @@ public class ProfileFragment extends Fragment {
 	@SuppressLint("SetTextI18n")
 	public void updateUI(User user) {
 		if (user != null) {
+			if (user.isAdmin())
+				navigationView.getMenu().findItem(R.id.admin_panel).setVisible(true);
+
 			Log.i(TAG, "updateUI: " + user.toString());
 			fullname.setText(user.getFullname());
 			numFollowers.setText(user.getNumFollowers() + "");
@@ -94,8 +98,6 @@ public class ProfileFragment extends Fragment {
 					.error(R.drawable.default_avatar)
 					.into(avatar);
 			prepareRecyclerView(user);
-		} else {
-
 		}
 	}
 
@@ -207,6 +209,11 @@ public class ProfileFragment extends Fragment {
 						MainActivity mainActivity = (MainActivity) requireActivity();
 						mainActivity.logOut();
 						Toast.makeText(context, "Log out successfully", Toast.LENGTH_SHORT).show();
+						break;
+					case R.id.admin_panel:
+						Intent intent = new Intent(context, AdminActivity.class);
+						startActivity(intent);
+						break;
 				}
 
 				drawer.close();
@@ -323,7 +330,7 @@ public class ProfileFragment extends Fragment {
 
 		User user = MainActivity.getCurrentUser();
 
-		String imageName = user.getUid() + ".jpg";
+		String imageName = user.getUsername() + ".jpg";
 		final StorageReference imageRef = FirebaseUtil.getImageStorageReference().child(imageName);
 		imageRef.putFile(uri)
 				.addOnSuccessListener(taskSnapshot -> {

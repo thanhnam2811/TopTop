@@ -2,6 +2,8 @@ package com.toptop.models;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.Query;
@@ -18,12 +20,12 @@ public class User implements Serializable {
 	// Tag
 	public static final String TAG = "User";
 
-	private String username, fullname, phoneNumber, email, avatar, uid, role;
+	private String username, fullname, phoneNumber, email, avatar, role;
 	private Long numFollowers, numFollowing, numLikes;
 	private HashMap<String, Boolean> followings, followers;
 
 	// For Firebase
-	public User(String username, String fullname, String email, String avatar, String uid) {
+	public User(String username, String fullname, String email, String avatar) {
 		this.username = username;
 		this.fullname = fullname;
 		this.email = email;
@@ -212,20 +214,15 @@ public class User implements Serializable {
 		this.followers = followers;
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
-		return "User {" +
-				"uid='" + uid + '\'' +
+		return "User{" +
 				"username='" + username + '\'' +
 				", fullname='" + fullname + '\'' +
 				", phoneNumber='" + phoneNumber + '\'' +
 				", email='" + email + '\'' +
-				", avatar='" + avatar + '\'' +
-				", numFollowers=" + numFollowers +
-				", numFollowing=" + numFollowing +
-				", numLikes=" + numLikes +
-				", followings=" + followings +
-				", followers=" + followers +
+				", role='" + role + '\'' +
 				'}';
 	}
 
@@ -286,14 +283,6 @@ public class User implements Serializable {
 			return username.equals(user.username);
 		}
 		return false;
-	}
-
-	public String getUid() {
-		return uid;
-	}
-
-	public void setUid(String uid) {
-		this.uid = uid;
 	}
 
 	public String getRole() {

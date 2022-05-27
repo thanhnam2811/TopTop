@@ -31,23 +31,6 @@ public class MyUtil {
 			STATUS_BAR_LIGHT_MODE = "status_bar_light_mode",
 			STATUS_BAR_DARK_MODE = "status_bar_dark_mode";
 
-	public static Date stringToDateTime(String date) {
-		String pattern = "dd-MM-yyyy HH:mm:ss";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-		try {
-			return simpleDateFormat.parse(date);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static String dateTimeToString(Date date) {
-		String pattern = "dd-MM-yyyy HH:mm:ss";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-		return simpleDateFormat.format(date);
-	}
-
 	// get time ago
 	public static String getTimeAgo(Date date) {
 		Date now = new Date();
@@ -165,6 +148,7 @@ public class MyUtil {
 		intent.putExtra(Video.TAG, video);
 		activity.startActivity(intent);
 	}
+
 	public static void goToUser(Activity activity, String username) {
 		Intent intent = new Intent(activity, WatchProfileActivity.class);
 		Log.d("forward to profile ", username);
@@ -173,19 +157,45 @@ public class MyUtil {
 	}
 
 	// Date to string
-	public static String dateToString(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+	// String to date
+
+	// Format date
+	public static final String YYYY_MM_DD = "yyyy-MM-dd";
+	public static final String DD_MM_YYYY = "dd-MM-yyyy";
+	public static final String DD_MM_YYYY_HH_MM_SS = "dd-MM-yyyy HH:mm:ss";
+
+
+	// Date to string
+	public static String dateToStringFormat(Date date, String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.format(date);
 	}
 
+	public static String dateTimeToString(Date date) {
+		return dateToStringFormat(date, DD_MM_YYYY_HH_MM_SS);
+	}
+
+	public static String dateToString(Date date) {
+		return dateToStringFormat(date, YYYY_MM_DD);
+	}
+
 	// String to date
-	public static Date stringToDate(String dateString) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	public static Date stringToDateFormat(String dateString, String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		try {
 			return sdf.parse(dateString);
 		} catch (ParseException e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static Date stringToDateTime(String date) {
+		return stringToDateFormat(date, DD_MM_YYYY_HH_MM_SS);
+	}
+
+	public static Date stringToDate(String dateString) {
+		return stringToDateFormat(dateString, YYYY_MM_DD);
 	}
 }

@@ -83,7 +83,6 @@ public class RegisterActivity extends AppCompatActivity {
 							FirebaseUser user = auth.getCurrentUser();
 							if (user != null) {
 								// Create new user
-								newUser.setUid(user.getUid());
 								newUser.setEmail(user.getEmail());
 								if (user.getPhotoUrl() != null) {
 									newUser.setAvatar(user.getPhotoUrl().toString());
