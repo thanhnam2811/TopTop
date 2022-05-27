@@ -36,6 +36,8 @@ public class CommentFirebase {
 
 		// add comment to video
 		VideoFirebase.addCommentToVideo(comment, video);
+
+		StatisticFirebase.addNewComment();
 	}
 
 	// Delete comment from firebase
@@ -88,26 +90,6 @@ public class CommentFirebase {
 
 		// Log
 		Log.i(TAG, "likeComment: " + comment.getCommentId() + " liked");
-	}
-
-	//delete comment by videoID
-	public static void deleteCommentByVideoId(String videoId) {
-		commentRef.orderByChild("videoId").equalTo(videoId).addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
-				for (DataSnapshot data : dataSnapshot.getChildren()) {
-					Comment comment = data.getValue(Comment.class);
-					deleteComment(comment);
-					//delete notification of comment
-					NotificationFirebase.deleteNotificationByRedirectTo(comment.getCommentId());
-				}
-			}
-
-			@Override
-			public void onCancelled(DatabaseError databaseError) {
-
-			}
-		});
 	}
 
 	// delete comment by commentId

@@ -62,7 +62,7 @@ public class Comment {
 			this.videoId = (String) data.get("videoId");
 			this.content = (String) data.get("content");
 
-			this.time = data.get("time") == null ? MyUtil.getFormattedDateStringFromDate(new Date()) :
+			this.time = data.get("time") == null ? MyUtil.dateTimeToString(new Date()) :
 					(String) data.get("time");
 			if (data.get("numReplies") != null)
 				this.numReplies = (Long) data.get("numReplies");
@@ -92,7 +92,7 @@ public class Comment {
 			hasChanged = true;
 		}
 		if (this.time == null) {
-			this.time = MyUtil.getFormattedDateStringFromDate(new Date());
+			this.time = MyUtil.dateTimeToString(new Date());
 			hasChanged = true;
 		}
 
@@ -110,8 +110,8 @@ public class Comment {
 	public static void sortByTimeNewsest(List<Comment> comments) {
 		// Sort comments by time
 		comments.sort((o1, o2) -> {
-			Date time1 = MyUtil.getDateFromFormattedDateString(o1.getTime());
-			Date time2 = MyUtil.getDateFromFormattedDateString(o2.getTime());
+			Date time1 = MyUtil.stringToDateTime(o1.getTime());
+			Date time2 = MyUtil.stringToDateTime(o2.getTime());
 			if (time1 != null && time2 != null) {
 				return time2.compareTo(time1);
 			}

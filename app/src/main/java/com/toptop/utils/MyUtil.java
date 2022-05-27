@@ -31,7 +31,7 @@ public class MyUtil {
 			STATUS_BAR_LIGHT_MODE = "status_bar_light_mode",
 			STATUS_BAR_DARK_MODE = "status_bar_dark_mode";
 
-	public static Date getDateFromFormattedDateString(String date) {
+	public static Date stringToDateTime(String date) {
 		String pattern = "dd-MM-yyyy HH:mm:ss";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 		try {
@@ -42,7 +42,7 @@ public class MyUtil {
 		}
 	}
 
-	public static String getFormattedDateStringFromDate(Date date) {
+	public static String dateTimeToString(Date date) {
 		String pattern = "dd-MM-yyyy HH:mm:ss";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 		return simpleDateFormat.format(date);
@@ -98,7 +98,7 @@ public class MyUtil {
 
 	// get time ago
 	public static String getTimeAgo(String dateString) {
-		Date date = getDateFromFormattedDateString(dateString);
+		Date date = stringToDateTime(dateString);
 		if (date != null) {
 			return getTimeAgo(date);
 		} else {
@@ -170,5 +170,22 @@ public class MyUtil {
 		Log.d("forward to profile ", username);
 		intent.putExtra(User.TAG, username);
 		activity.startActivity(intent);
+	}
+
+	// Date to string
+	public static String dateToString(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		return sdf.format(date);
+	}
+
+	// String to date
+	public static Date stringToDate(String dateString) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		try {
+			return sdf.parse(dateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

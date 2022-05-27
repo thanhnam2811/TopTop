@@ -24,6 +24,8 @@ public class UserFirebase {
 	public static void addUser(User user) {
 		userRef.child(user.getUsername()).setValue(user);
 		Log.i(TAG, "addUser: " + user.getUsername() + " added to firebase");
+
+		StatisticFirebase.addNewUser();
 	}
 
 	// Update user to firebase

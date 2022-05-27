@@ -117,7 +117,7 @@ public class WatchVideoActivity extends FragmentActivity {
 		String content = txt_comment_input.getText().toString().trim();
 		Comment newComment = new Comment();
 		newComment.setContent(content);
-		newComment.setTime(MyUtil.getFormattedDateStringFromDate(new Date()));
+		newComment.setTime(MyUtil.dateTimeToString(new Date()));
 		newComment.setUsername(MainActivity.getCurrentUser().getUsername());
 		newComment.setVideoId(video.getVideoId());
 

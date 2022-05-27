@@ -98,8 +98,8 @@ public class Notification {
     //sort by time
     public static void sortByTimeNewest(List<Notification> notifications) {
         notifications.sort((o1, o2) -> {
-            Date time1 = MyUtil.getDateFromFormattedDateString(o1.getTime());
-            Date time2 = MyUtil.getDateFromFormattedDateString(o2.getTime());
+            Date time1 = MyUtil.stringToDateTime(o1.getTime());
+            Date time2 = MyUtil.stringToDateTime(o2.getTime());
             if (time1 != null && time2 != null) {
                 return time2.compareTo(time1);
             }

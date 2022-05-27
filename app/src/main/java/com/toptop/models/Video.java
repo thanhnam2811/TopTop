@@ -263,4 +263,8 @@ public class Video implements Serializable {
 			numComments--;
 		}
 	}
+
+	public void addView() {
+		numViews++;
+	}
 }

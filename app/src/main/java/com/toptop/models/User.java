@@ -12,10 +12,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 public class User implements Serializable {
+	public static final String ROLE_ADMIN = "admin";
+	public static final String ROLE_USER = "user";
+
 	// Tag
 	public static final String TAG = "User";
 
-	private String username, fullname, phoneNumber, email, avatar, uid;
+	private String username, fullname, phoneNumber, email, avatar, uid, role;
 	private Long numFollowers, numFollowing, numLikes;
 	private HashMap<String, Boolean> followings, followers;
 
@@ -80,6 +83,13 @@ public class User implements Serializable {
 				this.followers = (HashMap<String, Boolean>) data.get("followers");
 			else
 				this.followers = new HashMap<>();
+
+			if (data.get("role") != null) {
+				this.role = (String) data.get("role");
+			} else {
+				this.role = ROLE_USER;
+				UserFirebase.updateUser(this);
+			}
 		}
 
 		// Prepare data
@@ -284,5 +294,18 @@ public class User implements Serializable {
 
 	public void setUid(String uid) {
 		this.uid = uid;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	@Exclude
+	public boolean isAdmin() {
+		return role.equals(ROLE_ADMIN);
 	}
 }

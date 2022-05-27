@@ -33,7 +33,9 @@ import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,7 +45,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 	private static final String DEF_AVATAR = "https://firebasestorage.googleapis.com/v0/b/toptop-4d369.appspot.com/o/user-default.png?alt=media&token=6a578948-c61e-4aef-873b-9b2ecc39f15e";
 	public static RecyclerView.OnItemTouchListener disableTouchListener = new RecyclerViewDisabler();
 	Context context;
-	boolean isVideoInitiated = false;
+	Map<String, Boolean> isVideoInitiated = new HashMap<>();
 	private final List<Video> videos;
 
 	public VideoFragmentAdapter(List<Video> videos, Context context) {
@@ -76,11 +78,20 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		Video video = videos.get(position);
 		updateUI(holder, video);
 
-		if (isVideoInitiated)
-			playVideo(holder.videoView, holder.img_pause);
-		else
-			initVideo(holder.videoView, video);
+		boolean isLoaded = false;
+		if (isVideoInitiated.containsKey(video.getVideoId())) {
+			isLoaded = Boolean.TRUE.equals(isVideoInitiated.get(video.getVideoId()));
+		} else {
+			isVideoInitiated.put(video.getVideoId(), false);
+		}
 
+		if (isLoaded)
+			playVideo(holder.videoView, holder.img_pause);
+		else {
+			Log.w(TAG, "onBindViewHolder: Initiate video");
+			VideoFirebase.addView(video);
+			initVideo(holder.videoView, video);
+		}
 		// Set onClickListener for video
 		holder.videoView.setOnClickListener(v ->
 				handleClickVideo(holder.videoView, holder.img_pause));
@@ -231,6 +242,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			videoView.setVideoURI(Uri.parse(video.getLinkVideo()));
 			videoView.requestFocus();
 			Log.i(TAG, "initVideo: " + video.getVideoId());
+			isVideoInitiated.put(video.getVideoId(), true);
 		} else {
 			Toast.makeText(context, "Video không tồn tại", Toast.LENGTH_SHORT).show();
 		}

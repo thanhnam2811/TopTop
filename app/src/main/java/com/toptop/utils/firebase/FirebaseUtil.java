@@ -11,6 +11,7 @@ public class FirebaseUtil {
 			TABLE_COMMENTS = "comments",
 			TABLE_NOTIFICATIONS = "notifications",
 			TABLE_VIDEOS = "videos",
+			TABLE_STATISTICS = "statistics",
 			FOLDER_IMAGES = "images",
 			FOLDER_VIDEOS = "videos";
 	private final static String TAG = "FirebaseUtil";

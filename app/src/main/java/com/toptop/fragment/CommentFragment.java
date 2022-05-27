@@ -167,7 +167,7 @@ public class CommentFragment extends Fragment {
 		// Get comment content
 		String content = txt_comment_input.getText().toString().trim();
 		newComment.setContent(content);
-		newComment.setTime(MyUtil.getFormattedDateStringFromDate(new Date()));
+		newComment.setTime(MyUtil.dateTimeToString(new Date()));
 		newComment.setUsername(MainActivity.getCurrentUser().getUsername());
 		newComment.setVideoId(video.getVideoId());
 

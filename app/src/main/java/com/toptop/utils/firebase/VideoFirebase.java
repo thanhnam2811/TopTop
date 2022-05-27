@@ -26,6 +26,8 @@ public class VideoFirebase {
 			video.setVideoId(videoRef.push().getKey());
 		videoRef.child(video.getVideoId()).setValue(video);
 		Log.i(TAG, "addVideo: " + video.getVideoId() + " added to firebase");
+
+		StatisticFirebase.addNewVideo();
 	}
 
 	// Update video to firebase
@@ -75,6 +77,8 @@ public class VideoFirebase {
 		notification.setTime(MyUtil.getCurrentTime());
 		notification.setRedirectTo(video.getVideoId());
 		NotificationFirebase.addNotification(notification);
+
+		StatisticFirebase.addNewLike();
 	}
 
 	// Unlike video
@@ -171,6 +175,13 @@ public class VideoFirebase {
 
 		// Log
 		Log.i(TAG, "deleteCommentFromVideo: " + comment.getCommentId() + " deleted from " + video.getVideoId());
+	}
+
+	public static void addView(Video video) {
+		video.addView();
+		updateVideo(video);
+
+		StatisticFirebase.addView();
 	}
 
 
