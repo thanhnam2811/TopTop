@@ -3,6 +3,7 @@ package com.toptop;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -51,6 +52,7 @@ public class WatchProfileActivity extends AppCompatActivity {
 		// Get the Intent that started this activity and extract the string
 		Bundle extras = getIntent().getExtras();
 		String usernameText = extras.getString(User.TAG);
+		Log.d("WatchProfileActivity", "usernameText: " + usernameText);
 
 		// Bind view
 		fullname = findViewById(R.id.txt_fullname);
@@ -82,17 +84,20 @@ public class WatchProfileActivity extends AppCompatActivity {
 	}
 
 	private void loadData(String usernameText) {
-		Query query = FirebaseUtil.getUserByUsername(usernameText);
-
 		// For first time load data
-		query.get().addOnSuccessListener(snapshot -> {
-			if (snapshot.exists()) {
-				Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT).show();
-				User newUser = new User(snapshot.getChildren().iterator().next());
-				updateUI(newUser);
-			}
-		});
+//		query.get().addOnSuccessListener(snapshot -> {
+//			if (snapshot.exists()) {
+//				Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT).show();
+//				User newUser = new User(snapshot.getChildren().iterator().next());
+//				updateUI(newUser);
+//			}
+//		});
+		UserFirebase.getUserByUsername(user -> {
+			Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
+			updateUI(user);
+		}, usernameText);
 
+		Query query = FirebaseUtil.getUserByUsername(usernameText);
 		// For listening to value changes
 		query.addValueEventListener(new ValueEventListener() {
 			@Override

@@ -79,7 +79,6 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public int getItemViewType(int position) {
         Notification notification = this.notifications.get(position);
-        Log.d(TAG, Notification.TYPE_FOLLOW + "---" + notification.getType());
         if(notification.getType().equals(Notification.TYPE_FOLLOW)){
             return VIEW_TYPE_ITEM_2;
         }else{
@@ -126,10 +125,8 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                 //get user from notification
                 UserFirebase.getUsernameByCommentId(notification.getRedirectTo(), value -> {
                     if (value != null) {
-                        Log.d(TAG, "onCallback User: " + value);
                         UserFirebase.getUserByUsername(user -> {
                             if (user != null) {
-                                Log.d(TAG, "onCallback User: " + user.getUsername());
                                 notificationViewHolder.txt_username.setText(user.getFullname());
                             }
                             Glide.with(context)
@@ -159,11 +156,10 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 
             //set onclick listener for item
             holder.itemView.setOnClickListener(v -> {
-                Log.d(TAG, "onClick: " + notification.getRedirectTo());
                 if(notification.getType().equals(Notification.TYPE_COMMENT)) {
                     VideoFirebase.getVideoFromCommentId(value -> {
                         if (value != null) {
-                            Log.d(TAG, "onCallback Video: " + value);
+                            Log.d(TAG, "forward Video: " + value);
                             MyUtil.goToVideo((Activity) context, value);
                             //go to comment in video
 
@@ -172,7 +168,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
                 }else{
                     VideoFirebase.getVideoFromVideoId(value -> {
                         if (value != null) {
-                            Log.d(TAG, "onCallback Video: " + value);
+                            Log.d(TAG, "forward Video: " + value);
                             MyUtil.goToVideo((Activity) context, value);
                         }
                     }, notification.getRedirectTo());
@@ -236,7 +232,6 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
             //get user from username
             UserFirebase.getUserByUsername(user -> {
                 if (user != null) {
-                    Log.d(TAG, "onCallback User: " + user.getUsername());
                     followViewHolder.txt_username.setText(user.getFullname());
                     Glide.with(context)
                             .load(user.getAvatar())

@@ -66,7 +66,6 @@ public class MainActivity extends FragmentActivity {
 	public static final int REQUEST_CHANGE_AVATAR = 3;
 	public static final int REQUEST_ADD_VIDEO = 4;
 	private static User currentUser;
-	private NotificationManagerCompat notificationManagerCompat;
 	private static final String KEY_TEXT_REPLY = "key_text_reply";
 	private static final int NOTIFICATION_ID = 1;
 	private static final String COMMENT_NOTIFICATION = "comment_notification";

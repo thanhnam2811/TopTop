@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
@@ -47,7 +48,12 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 
 		updateView(holder, video);
 
-		holder.txt_delete_video.setOnClickListener(v -> handleDeleteVideo(video, position));
+		//hide delete button if user is not author
+		if(video.getUsername().equals(MainActivity.getCurrentUser().getUsername()) || MainActivity.getCurrentUser().isAdmin()){
+			holder.txt_delete_video.setOnClickListener(v -> handleDeleteVideo(video, position));
+		} else {
+			holder.txt_delete_video.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
