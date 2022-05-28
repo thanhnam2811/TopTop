@@ -137,6 +137,14 @@ public class UserFirebase {
 		});
 	}
 
+	//get avartar of user
+	public static void getAvatar(MyCallback callback,String username){
+		userRef.child(username).child("avatar").get().addOnSuccessListener(dataSnapshot -> {
+			Log.d(TAG, "getAvatar: " + dataSnapshot.getValue());
+			callback.onCallback(dataSnapshot.getValue(String.class));
+		});
+	}
+
 	// get user by email
 	public static void getUserByEmail(UserCallback callback, String email) {
 		Query query = userRef.orderByChild("email").equalTo(email);

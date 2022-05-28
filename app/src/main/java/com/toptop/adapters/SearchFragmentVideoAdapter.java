@@ -20,6 +20,7 @@ import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.RecyclerViewDisabler;
 import com.toptop.utils.firebase.FirebaseUtil;
+import com.toptop.utils.firebase.UserFirebase;
 
 import java.util.List;
 
@@ -70,16 +71,11 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 				.into(holder.img_video);
 		holder.txt_username.setText(video.getUsername());
 		// Load avatar
-		Query query = FirebaseUtil.getUserByUsername(video.getUsername());
-		query.get().addOnSuccessListener(documentSnapshot -> {
-			if (documentSnapshot.exists()) {
-				User author = new User(documentSnapshot.getChildren().iterator().next());
-					Glide.with(context)
-							.load(author.getAvatar())
-							.error(R.drawable.default_avatar)
-							.into(holder.img_avatar);
-			}
-		});
+		UserFirebase.getAvatar(value -> Glide.with(context)
+				.load(value)
+				.error(R.drawable.default_avatar)
+				.into(holder.img_avatar),video.getUsername());
+
 		holder.itemView.setOnClickListener(v -> MyUtil.goToVideo((Activity) context, video));
 	}
 

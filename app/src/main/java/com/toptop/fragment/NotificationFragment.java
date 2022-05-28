@@ -80,6 +80,8 @@ public class NotificationFragment extends Fragment {
 					notifications.addAll(listNotifications);
 					// Set seen TRUE notifications
 					Notification.setSeen(notifications);
+					//sort by time newest to oldest
+					Notification.sortByTimeNewest(notifications);
 					NotificationFragmentAdapter notificationFragmentAdapter = new NotificationFragmentAdapter(notifications, context);
 					if (recyclerView.getAdapter() == null) {
 						recyclerView.setAdapter(notificationFragmentAdapter);
