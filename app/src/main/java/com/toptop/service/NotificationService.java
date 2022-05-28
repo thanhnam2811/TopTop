@@ -38,6 +38,7 @@ import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationService extends Service {
 
@@ -91,31 +92,15 @@ public class NotificationService extends Service {
 	}
 
 	private void notificationUnseen(User user) {
-		Query queryNotify = FirebaseUtil.getNotificationsByUsername(user.getUsername());
-		queryNotify.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				ArrayList<com.toptop.models.Notification> notifications = new ArrayList<>();
-				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-					com.toptop.models.Notification notification = new com.toptop.models.Notification(snapshot);
-					notifications.add(notification);
-				}
-				ArrayList<com.toptop.models.Notification> notifyUnseen = com.toptop.models.Notification.getNotificationUnseen(notifications);
-				if (notifyUnseen.size() > 0) {
-					com.toptop.models.Notification.setSeen(notifyUnseen);
-//					send notification
-					for (com.toptop.models.Notification notify : notifyUnseen) {
-						sendNotification(notify);
-						System.out.println("count: " + notifyUnseen.size());
-						NotificationFirebase.updateNotification(notify);
-					}
+		NotificationFirebase.getNotificationByUsername(user.getUsername(), notifications -> {
+			for (com.toptop.models.Notification notification : notifications) {
+				if (notification.getSeen() == false) {
+					sendNotification(notification);
+					notification.setSeen(true);
+					NotificationFirebase.updateNotification(notification);
 				}
 			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-			}
-		});
+		}, error -> Log.e(TAG, "Failed to get notification"));
 	}
 
 	private void sendNotification(com.toptop.models.Notification notification) {

@@ -74,12 +74,16 @@ public class MainActivity extends FragmentActivity {
 					Log.i(TAG, "setCurrentUser: " + u.getUsername());
 					currentUser = u;
 					updateUI();
+					//start service
+					startService(new Intent(this, NotificationService.class));
 				}
 			}, user.getEmail());
 		} else {
 			currentUser = null;
 			updateUI();
 			mAuth.signOut();
+			//stop service
+			stopService(new Intent(this, NotificationService.class));
 			// Log
 			Log.i(TAG, "setCurrentUser: logged out");
 		}
@@ -110,11 +114,6 @@ public class MainActivity extends FragmentActivity {
 			User user = new User();
 			user.setEmail(currentUser.getEmail());
 			setCurrentUser(user);
-			//start service
-			startService(new Intent(this, NotificationService.class));
-		} else {
-			//stop service
-			stopService(new Intent(this, NotificationService.class));
 		}
 	}
 
@@ -201,18 +200,6 @@ public class MainActivity extends FragmentActivity {
 			}
 			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			manager.cancel(NOTIFICATION_ID);
-		}
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		if(MainActivity.getCurrentUser() != null) {
-			//start service
-			startService(new Intent(this, NotificationService.class));
-		}else {
-			//stop service
-			stopService(new Intent(this, NotificationService.class));
 		}
 	}
 
