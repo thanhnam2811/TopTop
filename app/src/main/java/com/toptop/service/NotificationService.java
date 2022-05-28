@@ -163,7 +163,7 @@ public class NotificationService extends Service {
 			System.out.println("notification.getRedirectTo()" + notification.getRedirectTo());
 			intent.putExtra(COMMENT_NOTIFICATION, notification.getRedirectTo());
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 			Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 //			notification for comment
 			System.out.println("notification.getType() = " + notification.getType());
@@ -195,11 +195,7 @@ public class NotificationService extends Service {
 			resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //			PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			PendingIntent resultPendingIntent = null;
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-				resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_MUTABLE);
-			} else {
-				resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			}
+			resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE);
 
 			NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(R.drawable.ic_comment, "REPLY", resultPendingIntent)
 					.addRemoteInput(remoteInput)
@@ -209,7 +205,6 @@ public class NotificationService extends Service {
 			notificationBuilder.addAction(replyAction);
 
 			//.setProgress(100,50,false);
-			assert notificationManager != null;
 			notificationManager.notify(NOTIFICATION_COMMENT_ID, notificationBuilder.build());
 		}
 
