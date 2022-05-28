@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. -->
+
     <style name="Theme.TopTop" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -13,6 +14,7 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowSplashScreenBackground">@color/black</item>
         <!-- Default font family. -->
         <item name="android:fontFamily">@font/varela_round</item>
         <!-- Font size. -->

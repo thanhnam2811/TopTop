@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
 	// Tag
 	private static final String TAG = "LoginActivity";
 
-	private static final String GOOGLE_CLIENT_TOKEN = "409625614338-2nmpv2j05vqnno51icu7jfes7udn5l4k.apps.googleusercontent.com";
+	public static final String GOOGLE_CLIENT_TOKEN = "409625614338-2nmpv2j05vqnno51icu7jfes7udn5l4k.apps.googleusercontent.com";
 
 	private static final int LOGIN_GOOGLE = 1;
 	private static final int LOGIN_FACEBOOK = 2;

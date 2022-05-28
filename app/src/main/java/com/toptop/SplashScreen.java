@@ -2,7 +2,6 @@ package com.toptop;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -18,12 +17,18 @@ public class SplashScreen extends AppCompatActivity {
 		setContentView(R.layout.activity_splash_screen);
 		MyUtil.setDarkStatusBar(this);
 
-		new Handler().postDelayed(() -> {
-			// Start the next activity
-			Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-			startActivity(intent);
-			finish();
-		}, 1000);
+		// Android >= 12
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+			openMainActivity();
+		} else {
+			new Handler().postDelayed(this::openMainActivity, 1000);
+		}
+	}
 
+	void openMainActivity() {
+		// Start the next activity
+		Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+		startActivity(intent);
+		finish();
 	}
 }

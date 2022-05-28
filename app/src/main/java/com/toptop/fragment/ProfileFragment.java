@@ -39,6 +39,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.toptop.AdminActivity;
+import com.toptop.ChangePasswordActivity;
 import com.toptop.EditProfileActivity;
 import com.toptop.MainActivity;
 import com.toptop.R;
@@ -169,14 +170,19 @@ public class ProfileFragment extends Fragment {
 
 		navigationView.setNavigationItemSelectedListener(v -> {
 			switch (v.getItemId()) {
+				case R.id.admin_panel:
+					openAdminActivity();
+					break;
+				case R.id.edit_profile:
+					openEditProfileActivity();
+					break;
+				case R.id.change_password:
+					openChangePasswordActivity();
+					break;
 				case R.id.log_out:
 					MainActivity mainActivity = (MainActivity) requireActivity();
 					mainActivity.logOut();
 					Toast.makeText(context, "Log out successfully", Toast.LENGTH_SHORT).show();
-					break;
-				case R.id.admin_panel:
-					Intent intent = new Intent(context, AdminActivity.class);
-					startActivity(intent);
 					break;
 			}
 
@@ -188,6 +194,16 @@ public class ProfileFragment extends Fragment {
 		updateUI();
 
 		return view;
+	}
+
+	private void openChangePasswordActivity() {
+		Intent intent = new Intent(context, ChangePasswordActivity.class);
+		startActivity(intent);
+	}
+
+	private void openAdminActivity() {
+		Intent intent = new Intent(context, AdminActivity.class);
+		startActivity(intent);
 	}
 
 	private void handlePostVideo() {
@@ -303,7 +319,6 @@ public class ProfileFragment extends Fragment {
 
 	private void openEditProfileActivity() {
 		Intent intent = new Intent(context, EditProfileActivity.class);
-		intent.putExtra(User.TAG, MainActivity.getCurrentUser());
 		startActivity(intent);
 	}
 

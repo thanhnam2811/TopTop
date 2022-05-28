@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.RemoteInput;
@@ -255,7 +256,7 @@ public class MainActivity extends FragmentActivity {
 				getSupportFragmentManager().beginTransaction()
 						.runOnCommit(() -> MyUtil.setDarkStatusBar(this))
 						.hide(activeFragment).show(VideoFragment.getInstance())
-						.commit();
+						.commitAllowingStateLoss();
 				activeFragment = VideoFragment.getInstance();
 				Log.i(NAV_TAG, "Change to video fragment");
 				break;

@@ -17,7 +17,7 @@ public class Video implements Serializable {
 	// TAG
 	public static final String TAG = "Video";
 
-	private String videoId, preview, username, content, linkVideo;
+	private String videoId, username, content, linkVideo;
 	private Long numLikes, numComments, numViews;
 	private String dateUploaded = MyUtil.getCurrentTime();
 	private HashMap<String, Boolean> likes;
@@ -28,43 +28,11 @@ public class Video implements Serializable {
 		comments = new HashMap<>();
 	}
 
-	public Video(String videoId, String preview, String username,
-	             String content, String linkVideo, Long numLikes,
-	             Long numComments, Long numViews, String dateUploaded) {
-		this.videoId = videoId;
-		this.preview = preview;
-		this.username = username;
-		this.content = content;
-		this.linkVideo = linkVideo;
-		this.numLikes = numLikes;
-		this.numComments = numComments;
-		this.numViews = numViews;
-		this.dateUploaded = dateUploaded;
-	}
-
-	public Video(String videoId, String preview, String username,
-	             String content, String linkVideo, Long numLikes,
-	             Long numComments, Long numViews, String dateUploaded,
-	             HashMap<String, Boolean> likes, HashMap<String, Boolean> comments) {
-		this.videoId = videoId;
-		this.preview = preview;
-		this.username = username;
-		this.content = content;
-		this.linkVideo = linkVideo;
-		this.numLikes = numLikes;
-		this.numComments = numComments;
-		this.numViews = numViews;
-		this.dateUploaded = dateUploaded;
-		this.likes = likes;
-		this.comments = comments;
-	}
-
 	@SuppressWarnings("unchecked")
 	public Video(DataSnapshot dataSnapshot) {
 		HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.getValue();
 		if (data != null) {
 			this.videoId = dataSnapshot.getKey();
-			this.preview = (String) data.get("preview");
 			this.username = (String) data.get("username");
 			this.content = (String) data.get("content");
 			this.linkVideo = (String) data.get("linkVideo");
@@ -100,6 +68,7 @@ public class Video implements Serializable {
 			this.numViews = 0L;
 			hasChanged = true;
 		}
+
 		if (hasChanged) {
 			VideoFirebase.updateVideo(this);
 		}
@@ -130,14 +99,6 @@ public class Video implements Serializable {
 
 	public void setVideoId(String videoId) {
 		this.videoId = videoId;
-	}
-
-	public String getPreview() {
-		return preview;
-	}
-
-	public void setPreview(String preview) {
-		this.preview = preview;
 	}
 
 	public String getUsername() {
@@ -216,7 +177,6 @@ public class Video implements Serializable {
 	public String toString() {
 		return "Video {" +
 				"videoId='" + videoId + '\'' +
-				", preview='" + preview + '\'' +
 				", username='" + username + '\'' +
 				", content='" + content + '\'' +
 				", linkVideo='" + linkVideo + '\'' +

@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
 import com.toptop.MainActivity;
 import com.toptop.R;
@@ -90,6 +91,19 @@ public class CommentFragment extends Fragment {
 
 		// Get comments from firebase by video id
 		getCommentsFromFirebase();
+
+		// Avatar
+		ImageView avatar = view.findViewById(R.id.img_avatar);
+		if (MainActivity.getCurrentUser() != null) {
+			Glide.with(context)
+					.load(MainActivity.getCurrentUser().getAvatar())
+					.error(R.drawable.default_avatar)
+					.into(avatar);
+		} else {
+			Glide.with(context)
+					.load(R.drawable.default_avatar)
+					.into(avatar);
+		}
 
 		EditText txt_comment_input = view.findViewById(R.id.txt_comment_input);
 		ImageView ic_send_comment = view.findViewById(R.id.ic_send_comment);

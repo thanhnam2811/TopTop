@@ -72,8 +72,34 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		if (videos.get(position) == null)
 			return;
 
-		// Set info video
+		// Set info video once
 		Video video = videos.get(position);
+		holder.txt_username.setText(video.getUsername());
+		holder.txt_content.setText(video.getContent());
+
+		// Load avatar
+		UserFirebase.getUserByUsernameOneTime(video.getUsername(),
+				user -> {
+					Glide.with(context)
+							.load(user.getAvatar())
+							.error(R.drawable.default_avatar)
+							.into(holder.img_avatar);
+				}, databaseError -> {
+					Log.e(TAG, "updateUI: " + databaseError.getMessage());
+					Glide.with(context)
+							.load(R.drawable.default_avatar)
+							.into(holder.img_avatar);
+				}
+		);
+
+		// Set onPreparedListener for video
+		holder.videoView.setOnPreparedListener(mp -> {
+			mp.setLooping(true);
+			// Log
+			Log.i(TAG, "Loading video...");
+			playVideo(holder.videoView, holder.img_pause);
+		});
+
 		updateUI(holder, video);
 
 		boolean isLoaded = false;
@@ -103,9 +129,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 	}
 
 	private void updateUI(VideoViewHolder holder, Video video) {
-		// Set info video
-		holder.txt_username.setText(video.getUsername());
-		holder.txt_content.setText(video.getContent());
+		// Set info video if change
 		holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
 		holder.txt_num_comments.setText(String.valueOf(video.getNumComments()));
 
@@ -127,21 +151,6 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			holder.img_like.setImageResource(R.drawable.ic_liked);
 		}
 
-		// Load avatar
-		UserFirebase.getUserByUsernameOneTime(video.getUsername(),
-				user -> {
-					Glide.with(context)
-							.load(user.getAvatar())
-							.error(R.drawable.default_avatar)
-							.into(holder.img_avatar);
-				}, databaseError -> {
-					Log.e(TAG, "updateUI: " + databaseError.getMessage());
-					Glide.with(context)
-							.load(R.drawable.default_avatar)
-							.into(holder.img_avatar);
-				}
-		);
-
 		// Set onClickListener for video
 		holder.videoView.setOnClickListener(v ->
 				handleClickVideo(holder.videoView, holder.img_pause));
@@ -157,14 +166,6 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		// Set onClickListener for img_follow
 		holder.img_follow.setOnClickListener(v ->
 				handleClickFollow(video, holder.img_follow));
-
-		// Set onPreparedListener for video
-		holder.videoView.setOnPreparedListener(mp -> {
-			mp.setLooping(true);
-			// Log
-			Log.i(TAG, "Loading video...");
-			playVideo(holder.videoView, holder.img_pause);
-		});
 
 		// Set onClickListener for img_avatar
 		holder.img_avatar.setOnClickListener(v -> handleClickAvatar(video));
@@ -326,8 +327,6 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 				notifyItemRemoved(index);
 			}
 		}
-
-		notifyItemRangeChanged(0, videos.size());
 	}
 
 	@Override

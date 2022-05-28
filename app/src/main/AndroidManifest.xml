@@ -3,7 +3,7 @@
     package="com.toptop">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +12,7 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.RemoveSplashScreenTheme">
+        android:theme="@style/Theme.TopTop">
         <activity
             android:name=".ChangePasswordActivity"
             android:exported="false" />
@@ -59,7 +59,8 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <service android:name=".service.NotificationService"
+        <service
+            android:name=".service.NotificationService"
             android:exported="false" />
     </application>
 

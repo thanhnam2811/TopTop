@@ -33,12 +33,13 @@
         android:id="@+id/txt_timePost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="10h ago"
         android:textColor="@color/grey_500"
         android:textSize="10sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/img_avatarUser"
-        app:layout_constraintEnd_toEndOf="@+id/txt_usernameVideo" />
+        app:layout_constraintStart_toStartOf="@+id/txt_usernameVideo"
+        app:layout_constraintTop_toBottomOf="@+id/txt_usernameVideo" />
 
     <TextView
         android:id="@+id/txt_contentVideo"

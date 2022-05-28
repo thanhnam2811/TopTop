@@ -58,4 +58,5 @@
     <string name="yes">Có</string>
     <string name="no">Không</string>
     <string name="search_video_or_user">Tìm kiếm video hoặc người dùng</string>
+    <string name="edit_profile">Chỉnh sửa thông tin</string>
 </resources>

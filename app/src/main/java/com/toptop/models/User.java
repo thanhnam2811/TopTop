@@ -97,10 +97,13 @@ public class User implements Serializable {
 
 		// Prepare data
 		boolean hasChanged = false;
+		if (this.followings == null) followings = new HashMap<>();
 		if (numFollowing != followings.size()) {
 			this.numFollowing = (long) followings.size();
 			hasChanged = true;
 		}
+
+		if (this.followers == null) followers = new HashMap<>();
 		if (numFollowers != followers.size()) {
 			this.numFollowers = (long) followers.size();
 			hasChanged = true;

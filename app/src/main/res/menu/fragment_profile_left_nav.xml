@@ -7,6 +7,14 @@
             android:title="@string/admin_panel"
             android:visible="false" />
         <item
+            android:id="@+id/edit_profile"
+            android:icon="@drawable/ic_edit"
+            android:title="@string/edit_profile" />
+        <item
+            android:id="@+id/change_password"
+            android:icon="@drawable/ic_baseline_lock_24"
+            android:title="@string/change_password" />
+        <item
             android:id="@+id/log_out"
             android:icon="@drawable/ic_login"
             android:title="@string/logout" />
