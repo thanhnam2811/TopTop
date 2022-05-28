@@ -17,7 +17,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/txt_comment_input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txt_comment_input"
-        app:srcCompat="@drawable/demo_avatar" />
+        app:srcCompat="@drawable/default_avatar" />
 
     <EditText
         android:id="@+id/txt_comment_input"
