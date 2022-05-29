@@ -16,6 +16,7 @@ import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class CommentFirebase {
 			notification.setUsername(video.getUsername());
 			notification.setContent(MainActivity.getCurrentUser().getUsername() + " bình luận video của bạn");
 			notification.setType(Notification.TYPE_COMMENT);
-			notification.setTime(MyUtil.getCurrentTime());
+			notification.setTime(MyUtil.dateTimeToString(new Date()));
 			notification.setRedirectTo(commentId);
 			NotificationFirebase.addNotification(notification);
 		}
@@ -127,6 +128,26 @@ public class CommentFirebase {
 	// Get comment by videoId
 	public static void getCommentByVideoId(String videoId, final ListCommentCallback callback, final FailedCallback failedCallback) {
 		commentRef.orderByChild("videoId").equalTo(videoId).addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				List<Comment> comments = new ArrayList<>();
+				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+					Comment comment = new Comment(snapshot);
+					comments.add(comment);
+				}
+				callback.onCallback(comments);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				failedCallback.onCallback(databaseError);
+			}
+		});
+	}
+
+
+	public static void getCommentByVideoIdOneTime(String videoId, final ListCommentCallback callback, final FailedCallback failedCallback) {
+		commentRef.orderByChild("videoId").equalTo(videoId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				List<Comment> comments = new ArrayList<>();

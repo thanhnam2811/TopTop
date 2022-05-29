@@ -109,10 +109,15 @@ public class WatchProfileActivity extends AppCompatActivity {
 			setFollowStatus(MainActivity.getCurrentUser().isFollowing(user.getUsername()));
 		else
 			txt_follow_status.setVisibility(View.GONE);
-		Glide.with(getApplicationContext())
-				.load(user.getAvatar())
-				.error(R.drawable.default_avatar)
-				.into(avatar);
+		try {
+			Glide.with(context)
+					.load(user.getAvatar())
+					.error(R.drawable.default_avatar)
+					.into(avatar);
+		} catch (Exception e) {
+			Log.w(TAG, "Glide error: " + e.getMessage());
+		}
+
 		prepareRecyclerView(user);
 	}
 

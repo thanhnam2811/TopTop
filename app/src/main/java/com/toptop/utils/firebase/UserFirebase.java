@@ -16,6 +16,7 @@ import com.toptop.models.User;
 import com.toptop.utils.MyUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class UserFirebase {
 	// Tag
@@ -81,7 +82,7 @@ public class UserFirebase {
 			notification.setUsername(userToFollow.getUsername());
 			notification.setContent(user.getUsername() + " đã theo dõi bạn");
 			notification.setType(Notification.TYPE_FOLLOW);
-			notification.setTime(MyUtil.getCurrentTime());
+			notification.setTime(MyUtil.dateTimeToString(new Date()));
 			notification.setRedirectTo(user.getUsername());
 			NotificationFirebase.addNotification(notification);
 		});

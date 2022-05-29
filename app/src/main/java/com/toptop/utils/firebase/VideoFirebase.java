@@ -16,6 +16,7 @@ import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class VideoFirebase {
@@ -97,7 +98,7 @@ public class VideoFirebase {
 			notification.setUsername(video.getUsername());
 			notification.setType(Notification.TYPE_LIKE);
 			notification.setContent(MainActivity.getCurrentUser().getUsername() + " đã thích video của bạn");
-			notification.setTime(MyUtil.getCurrentTime());
+			notification.setTime(MyUtil.dateTimeToString(new Date()));
 			notification.setRedirectTo(video.getVideoId());
 			NotificationFirebase.addNotification(notification);
 		}

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.bumptech.glide.Glide;
 import com.toptop.adapters.VideoFragmentAdapter;
 import com.toptop.models.Comment;
 import com.toptop.models.Video;
@@ -45,11 +46,29 @@ public class WatchVideoActivity extends FragmentActivity {
 
 		// Get the Intent that started this activity and extract the string
 		Bundle extras = getIntent().getExtras();
-		video = (Video) extras.getSerializable(Video.TAG);
+		String videoId = extras.getString(Video.VIDEO_ID);
+		String commentId = extras.getString(Comment.COMMENT_ID);
 		recyclerView = findViewById(R.id.recycler_view_videos);
 		Context context = this;
 
-		VideoFirebase.getVideoByVideoId(video.getVideoId(),
+		ImageView img_avatar = findViewById(R.id.img_avatar);
+
+		try {
+			if (MainActivity.isLoggedIn())
+				Glide.with(this)
+						.load(MainActivity.getCurrentUser().getAvatar())
+						.error(R.drawable.default_avatar)
+						.into(img_avatar);
+			else
+				Glide.with(this)
+						.load(R.drawable.default_avatar)
+						.into(img_avatar);
+		} catch (Exception e) {
+			Log.w(TAG, "Glide error: " + e.getMessage());
+		}
+
+
+		VideoFirebase.getVideoByVideoId(videoId,
 				v -> {
 					video = v;
 					if (recyclerView.getAdapter() == null) {
@@ -57,6 +76,8 @@ public class WatchVideoActivity extends FragmentActivity {
 						List<Video> videos = new ArrayList<>();
 						videos.add(video);
 						VideoFragmentAdapter adapter = new VideoFragmentAdapter(videos, context);
+						if (commentId != null)
+							adapter.openCommentFragment(video, commentId);
 						recyclerView.setAdapter(adapter);
 						recyclerView.setLayoutManager(new LinearLayoutManager(context));
 					} else {

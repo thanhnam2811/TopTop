@@ -18,8 +18,6 @@ import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
-import com.toptop.utils.firebase.CommentFirebase;
-import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.List;
@@ -49,7 +47,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 		updateView(holder, video);
 
 		//hide delete button if user is not author
-		if(video.getUsername().equals(MainActivity.getCurrentUser().getUsername()) || MainActivity.getCurrentUser().isAdmin()){
+		if (video.getUsername().equals(MainActivity.getCurrentUser().getUsername()) || MainActivity.getCurrentUser().isAdmin()) {
 			holder.txt_delete_video.setOnClickListener(v -> handleDeleteVideo(video, position));
 		} else {
 			holder.txt_delete_video.setVisibility(View.GONE);
@@ -74,11 +72,15 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 		Log.i(TAG, "updateView: " + video.getContent());
 		holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
 		holder.txt_num_views.setText(String.valueOf(video.getNumViews()));
-		if (context != null)
+		try {
 			Glide.with(context)
 					.load(video.getLinkVideo())
 					.error(R.drawable.img_404)
 					.into(holder.img_preview);
+		} catch (Exception e) {
+			Log.w(TAG, "Glide error: " + e.getMessage());
+		}
+
 
 		holder.img_preview.setOnClickListener(v -> handleImageClick(video));
 	}
@@ -98,7 +100,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 	}
 
 	private void handleImageClick(Video video) {
-		MyUtil.goToVideo((Activity) context, video);
+		MyUtil.goToVideo((Activity) context, video.getVideoId());
 	}
 
 	@Override

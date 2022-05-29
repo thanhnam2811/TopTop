@@ -89,15 +89,22 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 
 		UserFirebase.getUserByUsernameOneTime(comment.getUsername(),
 				user -> {
-					Glide.with(context)
-							.load(user.getAvatar())
-							.error(R.drawable.default_avatar)
-							.into(holder.img_avatar);
+					try {
+						Glide.with(context)
+								.load(user.getAvatar())
+								.error(R.drawable.default_avatar)
+								.into(holder.img_avatar);
+					} catch (Exception e) {
+						Log.w(TAG, "Glide error: " + e.getMessage());
+					}
 				}, databaseError -> {
-					Log.e(TAG, "onBindViewHolder: " + databaseError.getMessage());
-					Glide.with(context)
-							.load(R.drawable.default_avatar)
-							.into(holder.img_avatar);
+					try {
+						Glide.with(context)
+								.load(R.drawable.default_avatar)
+								.into(holder.img_avatar);
+					} catch (Exception e) {
+						Log.w(TAG, "Glide error: " + e.getMessage());
+					}
 				}
 		);
 

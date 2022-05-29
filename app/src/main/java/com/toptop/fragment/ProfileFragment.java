@@ -33,10 +33,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.toptop.AdminActivity;
 import com.toptop.ChangePasswordActivity;
@@ -51,8 +47,6 @@ import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class ProfileFragment extends Fragment {
@@ -93,10 +87,15 @@ public class ProfileFragment extends Fragment {
 			numFollowing.setText(user.getNumFollowing() + "");
 			numLikes.setText(user.getNumLikes() + "");
 			username.setText(user.getUsername());
-			Glide.with(context)
-					.load(user.getAvatar())
-					.error(R.drawable.default_avatar)
-					.into(avatar);
+			try {
+				Glide.with(context)
+						.load(user.getAvatar())
+						.error(R.drawable.default_avatar)
+						.into(avatar);
+			} catch (Exception e) {
+				Log.w(TAG, "Glide error: " + e.getMessage());
+			}
+
 			prepareRecyclerView(user);
 		}
 	}
@@ -248,7 +247,11 @@ public class ProfileFragment extends Fragment {
 					VideoFirebase.addVideo(video);
 					Toast.makeText(context, "Đăng video thành công", Toast.LENGTH_SHORT).show();
 					progressDialog.dismiss();
-					Glide.with(context).load(R.drawable.ic_add_video).into(ic_add_video);
+					try {
+						Glide.with(context).load(R.drawable.ic_add_video).into(ic_add_video);
+					} catch (Exception e) {
+						Log.w(TAG, "Glide error: " + e.getMessage());
+					}
 					edt_video_content.setText("");
 					VideoGridAdapter videoGridAdapter = (VideoGridAdapter) recyclerView.getAdapter();
 					if (videoGridAdapter != null) {
@@ -285,7 +288,11 @@ public class ProfileFragment extends Fragment {
 			uploadImage(uri);
 		} else if (requestCode == REQUEST_ADD_VIDEO && resultCode == RESULT_OK && data != null) {
 			videoUri = data.getData();
-			Glide.with(context).load(videoUri).into(ic_add_video);
+			try {
+				Glide.with(context).load(videoUri).into(ic_add_video);
+			} catch (Exception e) {
+				Log.w(TAG, "Glide error: " + e.getMessage());
+			}
 		}
 	}
 

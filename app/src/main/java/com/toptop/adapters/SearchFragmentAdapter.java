@@ -15,16 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.Query;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.toptop.MainActivity;
 import com.toptop.R;
-import com.toptop.models.Notification;
 import com.toptop.models.User;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.RecyclerViewDisabler;
-import com.toptop.utils.firebase.FirebaseUtil;
-import com.toptop.utils.firebase.NotificationFirebase;
 import com.toptop.utils.firebase.UserFirebase;
 
 import java.util.List;
@@ -75,7 +71,7 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 			holder.txt_number_follow.setText(String.valueOf(user.getNumFollowers()));
 			//get user current
 			User currentUser = MainActivity.getCurrentUser();
-			if ((Integer.valueOf(String.valueOf(user.getNumFollowers())) > 0 && currentUser.isFollowing(user.getUsername())) || user.getUsername().equals(currentUser.getUsername())) {
+			if ((Integer.parseInt(String.valueOf(user.getNumFollowers())) > 0 && currentUser.isFollowing(user.getUsername())) || user.getUsername().equals(currentUser.getUsername())) {
 //				holder.btn_follow.setText("Following");
 //				//set backgroundTint to button
 //				holder.btn_follow.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.teal_200)));
@@ -85,15 +81,17 @@ public class SearchFragmentAdapter extends RecyclerView.Adapter<SearchFragmentAd
 			}
 		}
 		// Load avatar
-		UserFirebase.getAvatar(new UserFirebase.MyCallback() {
-			@Override
-			public void onCallback(String value) {
+		UserFirebase.getAvatar(value -> {
+			try {
 				Glide.with(context)
-					.load(value)
+						.load(value)
 						.error(R.drawable.default_avatar)
 						.into(holder.img_avatar);
+			} catch (Exception e) {
+				Log.w(TAG, "Glide error: " + e.getMessage());
 			}
 		}, user.getUsername());
+
 		//handle follow button
 		holder.btn_follow.setOnClickListener(v -> {
 			UserFirebase.followUser(user.getUsername());

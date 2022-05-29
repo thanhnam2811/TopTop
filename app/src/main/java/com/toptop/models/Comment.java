@@ -16,11 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Comment {
-	// Tag
-	private static final String TAG = "Comment";
+	public static final String TAG = "Comment";
+	public static final String COMMENT_ID = "commentId";
+
 	private String commentId, username, videoId, content, replyToCommentId;
 	private Long numReplies = 0L, numLikes = 0L;
-	private String time = MyUtil.getCurrentTime();
+	private String time = MyUtil.dateTimeToString(new Date());
 	private HashMap<String, Boolean> replies;
 	private HashMap<String, Boolean> likes;
 

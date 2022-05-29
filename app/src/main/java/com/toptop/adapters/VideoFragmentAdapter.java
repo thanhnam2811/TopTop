@@ -65,6 +65,10 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		return new VideoViewHolder(view);
 	}
 
+	public void openCommentFragment(Video video, String commentId) {
+		handleClickComment(video, commentId);
+	}
+
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
@@ -80,15 +84,23 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		// Load avatar
 		UserFirebase.getUserByUsernameOneTime(video.getUsername(),
 				user -> {
-					Glide.with(context)
-							.load(user.getAvatar())
-							.error(R.drawable.default_avatar)
-							.into(holder.img_avatar);
+					try {
+						Glide.with(context)
+								.load(user.getAvatar())
+								.error(R.drawable.default_avatar)
+								.into(holder.img_avatar);
+					} catch (Exception e) {
+						Log.w(TAG, "Glide error: " + e.getMessage());
+					}
 				}, databaseError -> {
 					Log.e(TAG, "updateUI: " + databaseError.getMessage());
-					Glide.with(context)
-							.load(R.drawable.default_avatar)
-							.into(holder.img_avatar);
+					try {
+						Glide.with(context)
+								.load(R.drawable.default_avatar)
+								.into(holder.img_avatar);
+					} catch (Exception e) {
+						Log.w(TAG, "Glide error: " + e.getMessage());
+					}
 				}
 		);
 
@@ -157,7 +169,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 
 		// Set onClickListener for img_comment
 		holder.img_comment.setOnClickListener(v ->
-				handleClickComment(video));
+				handleClickComment(video, null));
 
 		// Set onClickListener for img_like
 		holder.img_like.setOnClickListener(v ->
@@ -195,13 +207,21 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
 	}
 
-	private void handleClickComment(Video video) {
+	private void handleClickComment(Video video, String commentId) {
 		FragmentActivity activity = (FragmentActivity) context;
+
+		CommentFragment commentFragment;
+
+		if (commentId == null) {
+			commentFragment = CommentFragment.getInstance(video, context);
+		} else {
+			commentFragment = CommentFragment.getInstance(video, context, commentId);
+		}
 
 		// Add layout_comment to MainActivity
 		activity.getSupportFragmentManager()
 				.beginTransaction()
-				.replace(R.id.fragment_comment_container, CommentFragment.getInstance(video, context))
+				.replace(R.id.fragment_comment_container, commentFragment)
 				.commit();
 
 		// Show layout_comment

@@ -101,15 +101,23 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 				//get video from commentID
 				VideoFirebase.getVideoFromCommentIdOneTime(notification.getRedirectTo(),
 						video -> {
-							Glide.with(context)
-									.load(video.getLinkVideo())
-									.error(R.drawable.bg)
-									.into(notificationViewHolder.preview_img);
+							try {
+								Glide.with(context)
+										.load(video.getLinkVideo())
+										.error(R.drawable.bg)
+										.into(notificationViewHolder.preview_img);
+							} catch (Exception e) {
+								Log.w(TAG, "Glide error: " + e.getMessage());
+							}
 						}, error -> {
 							Log.e(TAG, "onBindViewHolder: " + error.getMessage());
-							Glide.with(context)
-									.load(R.drawable.bg)
-									.into(notificationViewHolder.preview_img);
+							try {
+								Glide.with(context)
+										.load(R.drawable.bg)
+										.into(notificationViewHolder.preview_img);
+							} catch (Exception e) {
+								Log.w(TAG, "Glide error: " + e.getMessage());
+							}
 						}
 				);
 
@@ -118,16 +126,25 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 					if (value != null) {
 						UserFirebase.getUserByUsernameOneTime(value,
 								user -> {
-									Glide.with(context)
-											.load(user.getAvatar())
-											.error(R.drawable.default_avatar)
-											.into(((NotificationViewHolder) holder).img_profile);
+									try {
+										Glide.with(context)
+												.load(user.getAvatar())
+												.error(R.drawable.default_avatar)
+												.into(((NotificationViewHolder) holder).img_profile);
+									} catch (Exception e) {
+										Log.w(TAG, "Glide error: " + e.getMessage());
+									}
+
 									((NotificationViewHolder) holder).txt_username.setText(user.getFullname());
 								}, databaseError -> {
 									Log.e(TAG, "onBindViewHolder: " + databaseError.getMessage());
-									Glide.with(context)
-											.load(R.drawable.default_avatar)
-											.into(((NotificationViewHolder) holder).img_profile);
+									try {
+										Glide.with(context)
+												.load(R.drawable.default_avatar)
+												.into(((NotificationViewHolder) holder).img_profile);
+									} catch (Exception e) {
+										Log.w(TAG, "Glide error: " + e.getMessage());
+									}
 								}
 						);
 					}
@@ -136,15 +153,23 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 				//get video from likeID
 				VideoFirebase.getVideoByVideoIdOneTime(notification.getRedirectTo(),
 						video -> {
-							Glide.with(context)
-									.load(video.getLinkVideo())
-									.error(R.drawable.bg)
-									.into(notificationViewHolder.preview_img);
+							try {
+								Glide.with(context)
+										.load(video.getLinkVideo())
+										.error(R.drawable.bg)
+										.into(notificationViewHolder.preview_img);
+							} catch (Exception e) {
+								Log.w(TAG, "Glide error: " + e.getMessage());
+							}
 						}, error -> {
 							Log.e(TAG, "onBindViewHolder: " + error.getMessage());
-							Glide.with(context)
-									.load(R.drawable.bg)
-									.into(notificationViewHolder.preview_img);
+							try {
+								Glide.with(context)
+										.load(R.drawable.bg)
+										.into(notificationViewHolder.preview_img);
+							} catch (Exception e) {
+								Log.w(TAG, "Glide error: " + e.getMessage());
+							}
 						}
 				);
 
@@ -157,24 +182,11 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 
 			//set onclick listener for item
 			holder.itemView.setOnClickListener(v -> {
+				MainActivity mainActivity = (MainActivity) context;
 				if (notification.getType().equals(Notification.TYPE_COMMENT)) {
-					VideoFirebase.getVideoFromCommentIdOneTime(notification.getRedirectTo(),
-							video -> {
-								MainActivity mainActivity = (MainActivity) context;
-								MyUtil.goToVideo(mainActivity, video);
-							}, error -> {
-								Log.e(TAG, "onBindViewHolder: " + error.getMessage());
-							}
-					);
+					MyUtil.goToComment(mainActivity, notification.getRedirectTo());
 				} else {
-					VideoFirebase.getVideoByVideoIdOneTime(notification.getRedirectTo(),
-							video -> {
-								MainActivity mainActivity = (MainActivity) context;
-								MyUtil.goToVideo(mainActivity, video);
-							}, error -> {
-								Log.e(TAG, "onBindViewHolder: " + error.getMessage());
-							}
-					);
+					MyUtil.goToVideo(mainActivity, notification.getRedirectTo());
 				}
 			});
 			//set onclick listener for item
@@ -237,16 +249,27 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 			//get user from username
 			UserFirebase.getUserByUsernameOneTime(notification.getUsername(),
 					user -> {
-						Glide.with(context)
-								.load(user.getAvatar())
-								.error(R.drawable.default_avatar)
-								.into(followViewHolder.img_profile);
+						try {
+							Glide.with(context)
+									.load(user.getAvatar())
+									.error(R.drawable.default_avatar)
+									.into(followViewHolder.img_profile);
+						} catch (Exception e) {
+							Log.w(TAG, "Glide error: " + e.getMessage());
+						}
+
 						((FollowViewHolder) holder).txt_username.setText(user.getUsername());
 					}, databaseError -> {
 						Log.e(TAG, "onBindViewHolder: " + databaseError.getMessage());
-						Glide.with(context)
-								.load(R.drawable.default_avatar)
-								.into(followViewHolder.img_profile);
+
+						try {
+							Glide.with(context)
+									.load(R.drawable.default_avatar)
+									.into(followViewHolder.img_profile);
+						} catch (Exception e) {
+							Log.w(TAG, "Glide error: " + e.getMessage());
+						}
+
 					}
 			);
 			if (MainActivity.getCurrentUser().isFollowing(notification.getRedirectTo())) {

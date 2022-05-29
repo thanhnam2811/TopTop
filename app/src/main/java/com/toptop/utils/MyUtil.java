@@ -2,19 +2,21 @@ package com.toptop.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.toptop.MainActivity;
 import com.toptop.WatchProfileActivity;
 import com.toptop.WatchVideoActivity;
+import com.toptop.models.Comment;
 import com.toptop.models.User;
 import com.toptop.models.Video;
+import com.toptop.utils.firebase.CommentFirebase;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -146,25 +148,30 @@ public class MyUtil {
 		setStatusBarColor(STATUS_BAR_DARK_MODE, activity);
 	}
 
-	public static String getCurrentTime() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		Date now = new Date();
-		return sdf.format(now);
+	public static void goToVideo(Activity activity, String videoId) {
+		Intent intent = new Intent(activity, WatchVideoActivity.class);
+		intent.putExtra(Video.VIDEO_ID, videoId);
+		activity.startActivity(intent);
 	}
 
-
-	public static void goToVideo(Activity activity, Video video) {
-		Intent intent = new Intent(activity, WatchVideoActivity.class);
-		intent.putExtra(Video.TAG, video);
-		activity.startActivity(intent);
+	public static void goToComment(Activity activity, String commentId) {
+		CommentFirebase.getCommentByCommentIdOneTime(commentId,
+				comment -> {
+					Intent intent = new Intent(activity, WatchVideoActivity.class);
+					intent.putExtra(Video.VIDEO_ID, comment.getVideoId());
+					intent.putExtra(Comment.COMMENT_ID, comment.getCommentId());
+					activity.startActivity(intent);
+				}, databaseError -> {
+					Toast.makeText(activity, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+				}
+		);
 	}
 
 	public static void goToUser(Activity activity, String username) {
 		MainActivity mainActivity = (MainActivity) activity;
-		if(MainActivity.getCurrentUser().getUsername().equals(username)) {
+		if (MainActivity.getCurrentUser().getUsername().equals(username)) {
 			mainActivity.changeNavItem(3);
-		}
-		else {
+		} else {
 			Intent intent = new Intent(activity, WatchProfileActivity.class);
 			Log.d("forward to profile ", username);
 			intent.putExtra(User.TAG, username);

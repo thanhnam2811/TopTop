@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -89,6 +90,11 @@ public class NotificationFragment extends Fragment {
 						LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
 						linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 						recyclerView.setLayoutManager(linearLayoutManager);
+
+						recyclerView.setHasFixedSize(true);
+
+						// Decorate the list
+						recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 					}
 				}, error -> {
 					Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();

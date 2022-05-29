@@ -11,15 +11,17 @@ import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Video implements Serializable {
 	// TAG
 	public static final String TAG = "Video";
+	public static final String VIDEO_ID = "videoId";
 
 	private String videoId, username, content, linkVideo;
 	private Long numLikes, numComments, numViews;
-	private String dateUploaded = MyUtil.getCurrentTime();
+	private String dateUploaded = MyUtil.dateTimeToString(new Date());
 	private HashMap<String, Boolean> likes;
 	private HashMap<String, Boolean> comments;
 
@@ -126,6 +128,8 @@ public class Video implements Serializable {
 	}
 
 	public Long getNumLikes() {
+		if (numLikes == null)
+			numLikes = 0L;
 		return numLikes;
 	}
 
@@ -142,6 +146,8 @@ public class Video implements Serializable {
 	}
 
 	public Long getNumViews() {
+		if (numViews == null)
+			numViews = 0L;
 		return numViews;
 	}
 

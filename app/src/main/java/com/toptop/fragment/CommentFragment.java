@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,6 +46,7 @@ public class CommentFragment extends Fragment {
 	Context context;
 	RecyclerView recycler_view_comments, recycler_view_videos;
 	List<Comment> comments = new ArrayList<>();
+	static String commentId;
 	private final DatabaseReference mDB_comment;
 
 	private static List<CommentFragment> instances = new ArrayList<>();
@@ -67,6 +69,11 @@ public class CommentFragment extends Fragment {
 		return instance;
 	}
 
+	public static CommentFragment getInstance(Video video, Context context, String cID) {
+		commentId = cID;
+		return getInstance(video, context);
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,22 +94,28 @@ public class CommentFragment extends Fragment {
 		recycler_view_comments = view.findViewById(R.id.recycler_view_comments);
 		recycler_view_videos = requireActivity().findViewById(R.id.recycler_view_videos);
 		recycler_view_videos.addOnItemTouchListener(VideoFragmentAdapter.disableTouchListener);
-		recycler_view_comments.setLayoutManager(new LinearLayoutManager(context));
+		recycler_view_comments.setLayoutManager(new LinearLayoutManager(context));// Decorate the list
+		recycler_view_comments.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
 		// Get comments from firebase by video id
 		getCommentsFromFirebase();
 
 		// Avatar
 		ImageView avatar = view.findViewById(R.id.img_avatar);
-		if (MainActivity.getCurrentUser() != null) {
-			Glide.with(context)
-					.load(MainActivity.getCurrentUser().getAvatar())
-					.error(R.drawable.default_avatar)
-					.into(avatar);
-		} else {
-			Glide.with(context)
-					.load(R.drawable.default_avatar)
-					.into(avatar);
+
+		try {
+			if (MainActivity.getCurrentUser() != null) {
+				Glide.with(context)
+						.load(MainActivity.getCurrentUser().getAvatar())
+						.error(R.drawable.default_avatar)
+						.into(avatar);
+			} else {
+				Glide.with(context)
+						.load(R.drawable.default_avatar)
+						.into(avatar);
+			}
+		} catch (Exception e) {
+			Log.w(TAG, "Glide error: " + e.getMessage());
 		}
 
 		EditText txt_comment_input = view.findViewById(R.id.txt_comment_input);
@@ -206,7 +219,7 @@ public class CommentFragment extends Fragment {
 	}
 
 	private void getCommentsFromFirebase() {
-		CommentFirebase.getCommentByVideoId(video.getVideoId(), listComments -> {
+		CommentFirebase.getCommentByVideoIdOneTime(video.getVideoId(), listComments -> {
 			comments.clear();
 			comments.addAll(listComments);
 			Comment.sortByTimeNewsest(comments);
@@ -218,9 +231,28 @@ public class CommentFragment extends Fragment {
 				CommentFragmentAdapter adapter = new CommentFragmentAdapter(comments, context);
 				recycler_view_comments.setAdapter(adapter);
 			}
+			if (commentId != null) {
+				// Scroll to comment
+				scrollToComment(commentId);
+			}
 		}, error -> {
 			Toast.makeText(context, "Lỗi khi lấy bình luận!", Toast.LENGTH_SHORT).show();
 			Log.e(TAG, "getCommentsFromFirebase: " + error);
 		});
+	}
+
+	public void scrollToComment(String commentId) {
+		boolean found = false;
+		// Scroll to comment
+		for (int i = 0; i < comments.size(); i++) {
+			if (comments.get(i).getCommentId().equals(commentId)) {
+				recycler_view_comments.scrollToPosition(i);
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			Toast.makeText(context, "Không tìm thấy bình luận!", Toast.LENGTH_SHORT).show();
+		}
 	}
 }

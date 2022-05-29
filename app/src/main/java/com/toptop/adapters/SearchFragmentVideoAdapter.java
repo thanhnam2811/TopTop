@@ -2,6 +2,7 @@ package com.toptop.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.Query;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.toptop.R;
-import com.toptop.models.User;
 import com.toptop.models.Video;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.RecyclerViewDisabler;
-import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 
 import java.util.List;
@@ -65,18 +63,29 @@ public class SearchFragmentVideoAdapter extends RecyclerView.Adapter<SearchFragm
 		holder.txt_timePost.setText(MyUtil.getTimeAgo(video.getDateUploaded()));
 		holder.txt_content.setText(video.getContent());
 		//load image priview
-		Glide.with(context)
-				.load(video.getLinkVideo())
-				.error(R.drawable.bg)
-				.into(holder.img_video);
+		try {
+			Glide.with(context)
+					.load(video.getLinkVideo())
+					.error(R.drawable.bg)
+					.into(holder.img_video);
+		} catch (Exception e) {
+			Log.w(TAG, "Glide error: " + e.getMessage());
+		}
+
 		holder.txt_username.setText(video.getUsername());
 		// Load avatar
-		UserFirebase.getAvatar(value -> Glide.with(context)
-				.load(value)
-				.error(R.drawable.default_avatar)
-				.into(holder.img_avatar),video.getUsername());
+		UserFirebase.getAvatar(value -> {
+			try {
+				Glide.with(context)
+						.load(value)
+						.error(R.drawable.default_avatar)
+						.into(holder.img_avatar);
+			} catch (Exception e) {
+				Log.w(TAG, "Glide error: " + e.getMessage());
+			}
+		}, video.getUsername());
 
-		holder.itemView.setOnClickListener(v -> MyUtil.goToVideo((Activity) context, video));
+		holder.itemView.setOnClickListener(v -> MyUtil.goToVideo((Activity) context, video.getVideoId()));
 	}
 
 	@Override

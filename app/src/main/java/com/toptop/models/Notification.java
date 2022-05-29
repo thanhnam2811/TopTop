@@ -12,7 +12,7 @@ public class Notification {
     public static final String TYPE_FOLLOW = "follow";
     public static final String TYPE_COMMENT = "comment";
     public static final String TYPE_LIKE = "like";
-    private String notificationId, username, content, type, time = MyUtil.getCurrentTime(), redirectTo;
+    private String notificationId, username, content, type, time = MyUtil.dateTimeToString(new Date()), redirectTo;
     private Boolean seen = false;
 
     public Notification() {
