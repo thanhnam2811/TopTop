@@ -2,6 +2,7 @@ package com.toptop.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -181,6 +182,17 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 
 		// Set onClickListener for img_avatar
 		holder.img_avatar.setOnClickListener(v -> handleClickAvatar(video));
+
+		// Set onClickListener for img_share
+		holder.img_share.setOnClickListener(v -> handleClickShare(video));
+	}
+
+	private void handleClickShare(Video video) {
+		// Share video
+		Intent shareIntent = new Intent(Intent.ACTION_SEND);
+		shareIntent.setType("text/plain");
+		shareIntent.putExtra(Intent.EXTRA_TEXT, video.getLinkVideo());
+		context.startActivity(Intent.createChooser(shareIntent, context.getResources().getString(R.string.share)));
 	}
 
 	private void handleClickFollow(Video video, ImageView img_follow) {
@@ -358,7 +370,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 	static class VideoViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username, txt_content, txt_num_likes, txt_num_comments;
 		VideoView videoView;
-		ImageView img_comment, img_pause, img_like, img_follow, img_avatar;
+		ImageView img_comment, img_pause, img_like, img_follow, img_avatar, img_share;
 
 		public VideoViewHolder(@NonNull View itemView) {
 			super(itemView);
@@ -372,6 +384,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			img_like = itemView.findViewById(R.id.img_like);
 			img_follow = itemView.findViewById(R.id.img_follow);
 			img_avatar = itemView.findViewById(R.id.img_avatar);
+			img_share = itemView.findViewById(R.id.img_share);
 		}
 	}
 }
