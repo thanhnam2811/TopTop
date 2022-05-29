@@ -54,9 +54,13 @@ public class VideoFirebase {
 
 	// Update video to firebase
 	public static void updateVideo(Video video) {
-		Log.i(TAG, "updateVideo: " + video.getComments().toString());
-		videoRef.child(video.getVideoId()).setValue(video);
-		Log.i(TAG, "updateVideo: " + video.getVideoId() + " updated to firebase");
+		if (video.getVideoId() == null)
+			Log.e(TAG, "updateVideo: videoId is null");
+		else {
+			Log.i(TAG, "updateVideo: " + video.getComments().toString());
+			videoRef.child(video.getVideoId()).setValue(video);
+			Log.i(TAG, "updateVideo: " + video.getVideoId() + " updated to firebase");
+		}
 	}
 
 	// Delete video to firebase
@@ -92,7 +96,7 @@ public class VideoFirebase {
 		// Update video
 		updateVideo(video);
 
-		if(!MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
+		if (!MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
 			//Add notification like video
 			Notification notification = new Notification();
 			notification.setUsername(video.getUsername());

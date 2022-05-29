@@ -1,5 +1,7 @@
 package com.toptop.utils.firebase;
 
+import static com.google.firebase.database.DatabaseError.UNAVAILABLE;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -124,6 +126,9 @@ public class UserFirebase {
 	}
 
 	public static void getUserByUsernameOneTime(String username, UserCallback callback, FailedCallback failedCallback) {
+		if (username == null) {
+			failedCallback.onCallBack(null);
+		}
 		userRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
