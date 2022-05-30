@@ -1,7 +1,5 @@
 package com.toptop.utils.firebase;
 
-import static com.google.firebase.database.DatabaseError.UNAVAILABLE;
-
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -34,8 +32,8 @@ public class UserFirebase {
 		void onCallBack(User user);
 	}
 
-	public interface FailedCallback {
-		void onCallBack(DatabaseError databaseError);
+	public interface FailureCallback {
+		void onCallBack(DatabaseError error);
 	}
 
 	public interface MyCallback {
@@ -110,7 +108,7 @@ public class UserFirebase {
 	}
 
 	// get user by username
-	public static void getUserByUsername(String username, UserCallback callback, FailedCallback failedCallback) {
+	public static void getUserByUsername(String username, UserCallback callback, FailureCallback failureCallback) {
 		userRef.child(username).addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -120,14 +118,14 @@ public class UserFirebase {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError error) {
-				failedCallback.onCallBack(error);
+				failureCallback.onCallBack(error);
 			}
 		});
 	}
 
-	public static void getUserByUsernameOneTime(String username, UserCallback callback, FailedCallback failedCallback) {
+	public static void getUserByUsernameOneTime(String username, UserCallback callback, FailureCallback failureCallback) {
 		if (username == null) {
-			failedCallback.onCallBack(null);
+			failureCallback.onCallBack(null);
 		}
 		userRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
@@ -138,7 +136,7 @@ public class UserFirebase {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError error) {
-				failedCallback.onCallBack(error);
+				failureCallback.onCallBack(error);
 			}
 		});
 	}

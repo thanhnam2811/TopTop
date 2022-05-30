@@ -75,8 +75,6 @@
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:scrollbars="none"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -103,7 +101,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/fragment_profile_left_nav_header"
+        app:headerLayout="@layout/left_nav_header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

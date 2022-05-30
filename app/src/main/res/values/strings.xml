@@ -57,6 +57,20 @@
     <string name="exit_confirm">Are you sure you want to exit?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="search_video_or_user">Tìm kiếm video hoặc người dùng</string>
+    <string name="search_video_or_user">Search video or user</string>
     <string name="edit_profile">Edit profile</string>
+    <string name="number_of_new_views">Number of new views</string>
+    <string name="number_of_new_likes">Number of new likes</string>
+    <string name="number_of_new_comments">Number of new comments</string>
+    <string name="number_of_new_videos">Number of new videos</string>
+    <string name="number_of_new_users">Number of new users</string>
+    <string name="number_of_new_reports">Number of new reports</string>
+    <string name="statistic_in_week">Statistic in last 7 days</string>
+    <string name="today">Today</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="all_time">All time</string>
+    <string name="statistic_month">Statistic in this month</string>
+    <string name="statistic_year">Statistic in this year</string>
+    <string name="statistic_all_time">Statistic all time</string>
 </resources>

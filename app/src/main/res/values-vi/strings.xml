@@ -59,4 +59,18 @@
     <string name="no">Không</string>
     <string name="search_video_or_user">Tìm kiếm video hoặc người dùng</string>
     <string name="edit_profile">Chỉnh sửa thông tin</string>
+    <string name="number_of_new_views">Lượt xem mới</string>
+    <string name="number_of_new_likes">Lượt thích mới</string>
+    <string name="number_of_new_comments">Bình luận mới</string>
+    <string name="number_of_new_videos">Video mới</string>
+    <string name="number_of_new_users">Người dùng mới</string>
+    <string name="number_of_new_reports">Báo cáo mới</string>
+    <string name="statistic_in_week">Thống kê 7 ngày gần nhất</string>
+    <string name="today">Hôm nay</string>
+    <string name="month">Tháng</string>
+    <string name="year">Năm nay</string>
+    <string name="all_time">Tất cả</string>
+    <string name="statistic_month">Thống kê trong tháng này</string>
+    <string name="statistic_year">Thống kê trong năm nay</string>
+    <string name="statistic_all_time">Thống kê tất cả</string>
 </resources>

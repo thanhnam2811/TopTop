@@ -27,7 +27,7 @@ public class NotificationFirebase {
 		void onCallback(List<Notification> notifications);
 	}
 
-	public interface FailedCallback {
+	public interface FailureCallback {
 		void onCallback(DatabaseError error);
 	}
 
@@ -68,7 +68,7 @@ public class NotificationFirebase {
 	}
 
 	// Get notification by username
-	public static void getNotificationByUsername(String username, final ListNotificationCallback listNotificationCallback, final FailedCallback failedCallback) {
+	public static void getNotificationByUsername(String username, final ListNotificationCallback listNotificationCallback, final FailureCallback failureCallback) {
 		notificationRef.orderByChild("username").equalTo(username).addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -82,7 +82,7 @@ public class NotificationFirebase {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
-				failedCallback.onCallback(databaseError);
+				failureCallback.onCallback(databaseError);
 			}
 		});
 	}

@@ -38,7 +38,7 @@ public class VideoFirebase {
 		void onCallback(List<Video> videos);
 	}
 
-	public interface FailedCallback {
+	public interface FailureCallback {
 		void onCallback(DatabaseError error);
 	}
 
@@ -129,13 +129,13 @@ public class VideoFirebase {
 	}
 
 	//	get video by id from commentId
-	public static void getVideoFromCommentIdOneTime(String commentId, VideoCallback videoCallback, FailedCallback failedCallback) {
+	public static void getVideoFromCommentIdOneTime(String commentId, VideoCallback videoCallback, FailureCallback failureCallback) {
 		CommentFirebase.getCommentByCommentIdOneTime(commentId,
-				comment -> getVideoByVideoIdOneTime(comment.getVideoId(), videoCallback, failedCallback),
+				comment -> getVideoByVideoIdOneTime(comment.getVideoId(), videoCallback, failureCallback),
 				databaseError -> Log.e(TAG, "getVideoFromCommentId: " + databaseError.getMessage()));
 	}
 
-	public static void getVideoByVideoId(String videoId, VideoCallback videoCallback, FailedCallback failedCallback) {
+	public static void getVideoByVideoId(String videoId, VideoCallback videoCallback, FailureCallback failureCallback) {
 		videoRef.child(videoId).addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -145,12 +145,12 @@ public class VideoFirebase {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
-				failedCallback.onCallback(databaseError);
+				failureCallback.onCallback(databaseError);
 			}
 		});
 	}
 
-	public static void getVideoByVideoIdOneTime(String videoId, VideoCallback videoCallback, FailedCallback failedCallback) {
+	public static void getVideoByVideoIdOneTime(String videoId, VideoCallback videoCallback, FailureCallback failureCallback) {
 		videoRef.child(videoId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -160,7 +160,7 @@ public class VideoFirebase {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
-				failedCallback.onCallback(databaseError);
+				failureCallback.onCallback(databaseError);
 			}
 		});
 	}
@@ -204,7 +204,7 @@ public class VideoFirebase {
 	}
 
 	// Get video by username
-	public static void getVideoByUsername(String username, ListVideoCallback listVideoCallback, FailedCallback failedCallback) {
+	public static void getVideoByUsername(String username, ListVideoCallback listVideoCallback, FailureCallback failureCallback) {
 		videoRef.orderByChild("username")
 				.equalTo(username)
 				.addValueEventListener(new ValueEventListener() {
@@ -220,13 +220,13 @@ public class VideoFirebase {
 
 					@Override
 					public void onCancelled(@NonNull DatabaseError error) {
-						failedCallback.onCallback(error);
+						failureCallback.onCallback(error);
 					}
 				});
 	}
 
 	// Get video by username
-	public static void getVideoByUsernameOneTime(String username, ListVideoCallback listVideoCallback, FailedCallback failedCallback) {
+	public static void getVideoByUsernameOneTime(String username, ListVideoCallback listVideoCallback, FailureCallback failureCallback) {
 		videoRef.orderByChild("username")
 				.equalTo(username)
 				.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -242,13 +242,13 @@ public class VideoFirebase {
 
 					@Override
 					public void onCancelled(@NonNull DatabaseError error) {
-						failedCallback.onCallback(error);
+						failureCallback.onCallback(error);
 					}
 				});
 	}
 
 	// Get list video like content
-	public static void getVideoLikeContent(String content, ListVideoCallback listVideoCallback, FailedCallback failedCallback) {
+	public static void getVideoLikeContent(String content, ListVideoCallback listVideoCallback, FailureCallback failureCallback) {
 		videoRef.orderByChild("content")
 				.startAt(content)
 				.endAt(content + "\uf8ff")
@@ -265,13 +265,13 @@ public class VideoFirebase {
 
 					@Override
 					public void onCancelled(@NonNull DatabaseError error) {
-						failedCallback.onCallback(error);
+						failureCallback.onCallback(error);
 					}
 				});
 	}
 
 	// Get all video
-	public static void getAllVideo(ListVideoCallback listVideoCallback, FailedCallback failedCallback) {
+	public static void getAllVideo(ListVideoCallback listVideoCallback, FailureCallback failureCallback) {
 		videoRef.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -285,7 +285,7 @@ public class VideoFirebase {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError error) {
-				failedCallback.onCallback(error);
+				failureCallback.onCallback(error);
 			}
 		});
 	}

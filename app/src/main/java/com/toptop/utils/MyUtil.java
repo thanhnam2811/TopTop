@@ -26,6 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -220,5 +221,22 @@ public class MyUtil {
 
 	public static Date stringToDate(String dateString) {
 		return stringToDateFormat(dateString, YYYY_MM_DD);
+	}
+
+	public static boolean isInMonth(String dateString) {
+		String now = dateToString(new Date());
+		if (isInYear(dateString)) {
+			String month = dateString.substring(5, 7);
+			String nowMonth = now.substring(5, 7);
+			return month.equals(nowMonth);
+		}
+		return false;
+	}
+
+	public static boolean isInYear(String dateString) {
+		String now = dateToString(new Date());
+		String year = dateString.substring(0, 4);
+		String nowYear = now.substring(0, 4);
+		return year.equals(nowYear);
 	}
 }

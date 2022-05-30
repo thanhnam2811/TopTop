@@ -88,4 +88,7 @@ dependencies {
 
     // Chart
     implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
+
+    // Multi state switch
+    implementation 'com.github.davidmigloz:multi-state-switch:2.0.1'
 }

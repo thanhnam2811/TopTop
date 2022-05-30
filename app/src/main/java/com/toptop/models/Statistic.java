@@ -1,10 +1,21 @@
 package com.toptop.models;
 
+import com.google.firebase.database.Exclude;
 import com.toptop.utils.MyUtil;
 
 import java.util.Date;
 
 public class Statistic {
+	@Exclude
+	public static final String NEW_VIEWS = "newViews",
+			NEW_USERS = "newUsers",
+			NEW_VIDEOS = "newVideos",
+			NEW_COMMENTS = "newComments",
+			NEW_LIKES = "newLikes",
+			NEW_REPORTS = "newReports",
+			MONTH = "month",
+			YEAR = "year",
+			ALL_TIME = "allTime";
 	private String date;
 
 	private Long numberOfNewUsers = 0L;

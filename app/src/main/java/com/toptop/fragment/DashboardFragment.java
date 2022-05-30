@@ -1,15 +1,26 @@
 package com.toptop.fragment;
 
-import android.content.Context;
+import static com.toptop.models.Statistic.ALL_TIME;
+import static com.toptop.models.Statistic.MONTH;
+import static com.toptop.models.Statistic.NEW_COMMENTS;
+import static com.toptop.models.Statistic.NEW_LIKES;
+import static com.toptop.models.Statistic.NEW_REPORTS;
+import static com.toptop.models.Statistic.NEW_USERS;
+import static com.toptop.models.Statistic.NEW_VIDEOS;
+import static com.toptop.models.Statistic.NEW_VIEWS;
+import static com.toptop.models.Statistic.YEAR;
+
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
@@ -23,10 +34,9 @@ import com.anychart.enums.Anchor;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
+import com.davidmiguel.multistateswitch.MultiStateSwitch;
 import com.toptop.R;
+import com.toptop.adapters.DashboardItemAdapter;
 import com.toptop.models.Statistic;
 import com.toptop.utils.firebase.StatisticFirebase;
 
@@ -34,13 +44,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardFragment extends Fragment {
+	// Tag
+	private static final String TAG = "DashboardFragment";
 
 	private DashboardFragment() {
 	}
+
 	private static final DashboardFragment instance = new DashboardFragment();
+
 	public static DashboardFragment getInstance() {
 		return instance;
 	}
+
+	ProgressBar progressBar;
+	RecyclerView recyclerView;
+	MultiStateSwitch multiStateSwitch;
+	Cartesian cartesian;
+	AnyChartView anyChartView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,17 +73,57 @@ public class DashboardFragment extends Fragment {
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-		AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
-		anyChartView.setProgressBar(view.findViewById(R.id.progress_bar));
+		anyChartView = view.findViewById(R.id.any_chart_view);
+		progressBar = view.findViewById(R.id.progress_bar);
+		anyChartView.setProgressBar(progressBar);
+		cartesian = AnyChart.line();
+		initChart();
 
-		Cartesian cartesian = AnyChart.line();
+		recyclerView = view.findViewById(R.id.recycler_view);
+		LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+		layoutManager.setOrientation(RecyclerView.HORIZONTAL);
+		recyclerView.setLayoutManager(layoutManager);
 
-		prepareChartData(cartesian, anyChartView);
+		StatisticFirebase.getStatisticToday(
+				statistic -> {
+					List<DashboardItemAdapter.Data> data = new ArrayList<>();
+					data.add(new DashboardItemAdapter.Data(getString(R.string.number_of_new_views), statistic.getNumberOfNewViews()));
+					data.add(new DashboardItemAdapter.Data(getString(R.string.number_of_new_users), statistic.getNumberOfNewUsers()));
+					data.add(new DashboardItemAdapter.Data(getString(R.string.number_of_new_likes), statistic.getNumberOfNewLikes()));
+					data.add(new DashboardItemAdapter.Data(getString(R.string.number_of_new_comments), statistic.getNumberOfNewComments()));
+					data.add(new DashboardItemAdapter.Data(getString(R.string.number_of_new_videos), statistic.getNumberOfNewVideos()));
+					data.add(new DashboardItemAdapter.Data(getString(R.string.number_of_new_reports), statistic.getNumberOfNewReports()));
+
+					DashboardItemAdapter adapter = (DashboardItemAdapter) recyclerView.getAdapter();
+					if (adapter != null) {
+						adapter.setData(data);
+					} else {
+						recyclerView.setAdapter(new DashboardItemAdapter(data));
+					}
+				}, error -> {
+					Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+				}
+		);
+
+		multiStateSwitch = view.findViewById(R.id.switch_state);
+		multiStateSwitch.addStateFromString(getString(R.string.month));
+		multiStateSwitch.addStateFromString(getString(R.string.year));
+		multiStateSwitch.addStateFromString(getString(R.string.all_time));
+
+		multiStateSwitch.addStateListener((i, state) -> {
+			if (i == 0)
+				prepareChartData(MONTH);
+			else if (i == 1)
+				prepareChartData(YEAR);
+			else
+				prepareChartData(ALL_TIME);
+		});
 
 		return view;
 	}
 
-	private void prepareChartData(Cartesian cartesian, AnyChartView anyChartView) {
+	private void initChart() {
+		Log.i(TAG, "initChart: ");
 		cartesian.animation(true);
 		cartesian.padding(10d, 20d, 5d, 20d);
 
@@ -74,54 +134,61 @@ public class DashboardFragment extends Fragment {
 
 		cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
 
-		cartesian.title("Thống kê");
-
 		cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
 
+		prepareChartData(MONTH);
+	}
+
+	private void prepareChartData(String period) {
+		String title = "";
+		switch (period) {
+			case MONTH:
+				title = getString(R.string.statistic_month);
+				break;
+			case YEAR:
+				title = getString(R.string.statistic_year);
+				break;
+			case ALL_TIME:
+				title = getString(R.string.statistic_all_time);
+				break;
+		}
+		cartesian.title(title);
+		StatisticFirebase.getStatistic(period, this::prepareChartData,
+				error -> Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show()
+		);
+	}
+
+	private void prepareChartData(List<Statistic> listStatistic) {
 		List<DataEntry> seriesData = new ArrayList<>();
-		StatisticFirebase.getStatisticInWeek().addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-					Statistic statistic = dataSnapshot.getValue(Statistic.class);
-					if (statistic != null) {
-						seriesData.add(new CustomDataEntry(statistic));
-					}
-				}
+		for (Statistic statistic : listStatistic) {
+			seriesData.add(new CustomDataEntry(statistic));
+		}
+		Set set = Set.instantiate();
+		set.data(seriesData);
 
-				Set set = Set.instantiate();
-				set.data(seriesData);
+		Mapping newViews = set.mapAs(String.format("{ x: 'x', value: '%s' }", NEW_VIEWS));
+		prepareLine(cartesian, newViews, "New Views");
 
-				Mapping newViews = set.mapAs(String.format("{ x: 'x', value: '%s' }", CustomDataEntry.NEW_VIEWS));
-				prepareLine(cartesian, newViews, "New Views");
+		Mapping newUsers = set.mapAs(String.format("{ x: 'x', value: '%s' }", NEW_USERS));
+		prepareLine(cartesian, newUsers, "New Users");
 
-				Mapping newUsers = set.mapAs(String.format("{ x: 'x', value: '%s' }", CustomDataEntry.NEW_USERS));
-				prepareLine(cartesian, newUsers, "New Users");
+		Mapping newVideos = set.mapAs(String.format("{ x: 'x', value: '%s' }", NEW_VIDEOS));
+		prepareLine(cartesian, newVideos, "New Videos");
 
-				Mapping newVideos = set.mapAs(String.format("{ x: 'x', value: '%s' }", CustomDataEntry.NEW_VIDEOS));
-				prepareLine(cartesian, newVideos, "New Videos");
+		Mapping newComments = set.mapAs(String.format("{ x: 'x', value: '%s' }", NEW_COMMENTS));
+		prepareLine(cartesian, newComments, "New Comments");
 
-				Mapping newComments = set.mapAs(String.format("{ x: 'x', value: '%s' }", CustomDataEntry.NEW_COMMENTS));
-				prepareLine(cartesian, newComments, "New Comments");
+		Mapping newLikes = set.mapAs(String.format("{ x: 'x', value: '%s' }", NEW_LIKES));
+		prepareLine(cartesian, newLikes, "New Likes");
 
-				Mapping newLikes = set.mapAs(String.format("{ x: 'x', value: '%s' }", CustomDataEntry.NEW_LIKES));
-				prepareLine(cartesian, newLikes, "New Likes");
+		Mapping newReports = set.mapAs(String.format("{ x: 'x', value: '%s' }", NEW_REPORTS));
+		prepareLine(cartesian, newReports, "New Reports");
 
-				Mapping newReports = set.mapAs(String.format("{ x: 'x', value: '%s' }", CustomDataEntry.NEW_REPORTS));
-				prepareLine(cartesian, newReports, "New Reports");
+		cartesian.legend().enabled(true);
+		cartesian.legend().fontSize(13d);
+		cartesian.legend().padding(0d, 0d, 10d, 0d);
 
-				cartesian.legend().enabled(true);
-				cartesian.legend().fontSize(13d);
-				cartesian.legend().padding(0d, 0d, 10d, 0d);
-
-				anyChartView.setChart(cartesian);
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-				Toast.makeText(getContext(), "Lỗi khi lấy dữ liệu", Toast.LENGTH_SHORT).show();
-			}
-		});
+		anyChartView.setChart(cartesian);
 	}
 
 	private void prepareLine(Cartesian cartesian, Mapping seriesMapping, String name) {
@@ -139,13 +206,6 @@ public class DashboardFragment extends Fragment {
 	}
 
 	private static class CustomDataEntry extends ValueDataEntry {
-		static final String NEW_VIEWS = "newViews",
-		NEW_USERS = "newUsers",
-		NEW_VIDEOS = "newVideos",
-		NEW_COMMENTS = "newComments",
-		NEW_LIKES = "newLikes",
-		NEW_REPORTS = "newReports";
-
 		CustomDataEntry(Statistic statistic) {
 			super(statistic.getDate(), statistic.getNumberOfNewViews());
 			setValue(NEW_VIEWS, statistic.getNumberOfNewViews());
