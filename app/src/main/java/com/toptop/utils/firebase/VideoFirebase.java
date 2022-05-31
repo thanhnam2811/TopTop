@@ -57,7 +57,6 @@ public class VideoFirebase {
 		if (video.getVideoId() == null)
 			Log.e(TAG, "updateVideo: videoId is null");
 		else {
-			Log.i(TAG, "updateVideo: " + video.getComments().toString());
 			videoRef.child(video.getVideoId()).setValue(video);
 			Log.i(TAG, "updateVideo: " + video.getVideoId() + " updated to firebase");
 		}
@@ -170,14 +169,14 @@ public class VideoFirebase {
 			Query myQuery = FirebaseUtil.getVideoById(value);
 			myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
 				@Override
-				public void onDataChange(DataSnapshot dataSnapshot) {
+				public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 					String value = dataSnapshot.getChildren().iterator().next().child("preview").getValue(String.class);
 					System.out.println(value);
 					myCallback.onCallback(value);
 				}
 
 				@Override
-				public void onCancelled(DatabaseError databaseError) {
+				public void onCancelled(@NonNull DatabaseError databaseError) {
 					Log.i(TAG, "onCancelled: ", databaseError.toException());
 				}
 			});
@@ -212,7 +211,7 @@ public class VideoFirebase {
 					public void onDataChange(@NonNull DataSnapshot snapshot) {
 						List<Video> videos = new ArrayList<>();
 						for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-							Video video = dataSnapshot.getValue(Video.class);
+							Video video = new Video(dataSnapshot);
 							videos.add(video);
 						}
 						listVideoCallback.onCallback(videos);
@@ -234,7 +233,7 @@ public class VideoFirebase {
 					public void onDataChange(@NonNull DataSnapshot snapshot) {
 						List<Video> videos = new ArrayList<>();
 						for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-							Video video = dataSnapshot.getValue(Video.class);
+							Video video = new Video(dataSnapshot);
 							videos.add(video);
 						}
 						listVideoCallback.onCallback(videos);
@@ -257,7 +256,7 @@ public class VideoFirebase {
 					public void onDataChange(@NonNull DataSnapshot snapshot) {
 						List<Video> videos = new ArrayList<>();
 						for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-							Video video = dataSnapshot.getValue(Video.class);
+							Video video = new Video(dataSnapshot);
 							videos.add(video);
 						}
 						listVideoCallback.onCallback(videos);
@@ -277,7 +276,7 @@ public class VideoFirebase {
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
 				List<Video> videos = new ArrayList<>();
 				for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-					Video video = dataSnapshot.getValue(Video.class);
+					Video video = new Video(dataSnapshot);
 					videos.add(video);
 				}
 				listVideoCallback.onCallback(videos);

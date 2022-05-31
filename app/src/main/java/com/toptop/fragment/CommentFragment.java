@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DatabaseReference;
 import com.toptop.MainActivity;
 import com.toptop.R;
 import com.toptop.WatchVideoActivity;
@@ -33,7 +32,6 @@ import com.toptop.models.Video;
 import com.toptop.utils.KeyboardUtils;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
-import com.toptop.utils.firebase.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,12 +45,10 @@ public class CommentFragment extends Fragment {
 	RecyclerView recycler_view_comments, recycler_view_videos;
 	List<Comment> comments = new ArrayList<>();
 	static String commentId;
-	private final DatabaseReference mDB_comment;
 
 	private static List<CommentFragment> instances = new ArrayList<>();
 
 	private CommentFragment(Video video, Context context) {
-		mDB_comment = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
 		this.video = video;
 		this.context = context;
 	}
@@ -219,26 +215,32 @@ public class CommentFragment extends Fragment {
 	}
 
 	private void getCommentsFromFirebase() {
-		CommentFirebase.getCommentByVideoIdOneTime(video.getVideoId(), listComments -> {
-			comments.clear();
-			comments.addAll(listComments);
-			Comment.sortByTimeNewsest(comments);
-			if (recycler_view_comments.getAdapter() != null)
-				recycler_view_comments.getAdapter()
-						.notifyItemRangeChanged(0, comments.size());
-			else {
-				// Set adapter for recycler view
-				CommentFragmentAdapter adapter = new CommentFragmentAdapter(comments, context);
-				recycler_view_comments.setAdapter(adapter);
-			}
-			if (commentId != null) {
-				// Scroll to comment
-				scrollToComment(commentId);
-			}
-		}, error -> {
-			Toast.makeText(context, "Lỗi khi lấy bình luận!", Toast.LENGTH_SHORT).show();
-			Log.e(TAG, "getCommentsFromFirebase: " + error);
-		});
+		comments.clear();
+		if (video.getComments() != null) {
+			video.getComments().forEach((commentId, value) -> {
+				CommentFirebase.getCommentByCommentIdOneTime(commentId,
+						comment -> {
+							comments.add(comment);
+							if (comments.size() == video.getComments().size()) {
+								if (recycler_view_comments.getAdapter() != null)
+									recycler_view_comments.getAdapter()
+											.notifyItemRangeChanged(0, comments.size());
+								else {
+									// Set adapter for recycler view
+									CommentFragmentAdapter adapter = new CommentFragmentAdapter(comments, context);
+									recycler_view_comments.setAdapter(adapter);
+								}
+								if (CommentFragment.commentId != null) {
+									// Scroll to comment
+									scrollToComment(commentId);
+								}
+							}
+						}, error -> {
+							Toast.makeText(context, "Lỗi khi lấy bình luận!", Toast.LENGTH_SHORT).show();
+						}
+				);
+			});
+		}
 	}
 
 	public void scrollToComment(String commentId) {
