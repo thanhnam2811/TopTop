@@ -2,6 +2,7 @@ package com.toptop.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -168,15 +169,22 @@ public class MyUtil {
 		);
 	}
 
-	public static void goToUser(Activity activity, String username) {
-		MainActivity mainActivity = (MainActivity) activity;
-		if (MainActivity.getCurrentUser().getUsername().equals(username)) {
-			mainActivity.changeNavItem(3);
+	public static void goToUser(Context context, String username) {
+		if (context instanceof MainActivity) {
+			MainActivity mainActivity = (MainActivity) context;
+			if (MainActivity.getCurrentUser().getUsername().equals(username)) {
+				mainActivity.changeNavItem(3);
+			} else {
+				Intent intent = new Intent(mainActivity, WatchProfileActivity.class);
+				Log.d("forward to profile ", username);
+				intent.putExtra(User.TAG, username);
+				mainActivity.startActivity(intent);
+			}
 		} else {
-			Intent intent = new Intent(activity, WatchProfileActivity.class);
+			Intent intent = new Intent(context, WatchProfileActivity.class);
 			Log.d("forward to profile ", username);
 			intent.putExtra(User.TAG, username);
-			activity.startActivity(intent);
+			context.startActivity(intent);
 		}
 	}
 

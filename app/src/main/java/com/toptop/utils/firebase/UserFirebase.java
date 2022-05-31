@@ -126,19 +126,20 @@ public class UserFirebase {
 	public static void getUserByUsernameOneTime(String username, UserCallback callback, FailureCallback failureCallback) {
 		if (username == null) {
 			failureCallback.onCallBack(null);
-		}
-		userRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				User user = new User(snapshot);
-				callback.onCallBack(user);
-			}
+		} else {
+			userRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(@NonNull DataSnapshot snapshot) {
+					User user = new User(snapshot);
+					callback.onCallBack(user);
+				}
 
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-				failureCallback.onCallBack(error);
-			}
-		});
+				@Override
+				public void onCancelled(@NonNull DatabaseError error) {
+					failureCallback.onCallBack(error);
+				}
+			});
+		}
 	}
 
 	//get avartar of user

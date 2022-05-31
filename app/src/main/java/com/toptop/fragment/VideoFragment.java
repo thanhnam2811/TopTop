@@ -92,14 +92,17 @@ public class VideoFragment extends Fragment {
 		);
 	}
 
-	public void goToVideo(Video video) {
-		recyclerView.smoothScrollToPosition(videos.indexOf(video));
+	public void pauseVideo() {
+		VideoFragmentAdapter adapter = (VideoFragmentAdapter) recyclerView.getAdapter();
+		if (adapter != null) {
+			adapter.pauseVideo();
+		}
 	}
 
 	public void updateUI() {
 		if (recyclerView.getAdapter() != null) {
-			videos = ((VideoFragmentAdapter) recyclerView.getAdapter()).getVideos();
-			recyclerView.getAdapter().notifyItemRangeChanged(0, videos.size());
+			VideoFragmentAdapter adapter = (VideoFragmentAdapter) recyclerView.getAdapter();
+			adapter.setVideos(adapter.getVideos());
 		}
 	}
 

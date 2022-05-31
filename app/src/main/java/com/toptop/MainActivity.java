@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
@@ -76,7 +75,7 @@ public class MainActivity extends FragmentActivity {
 					Log.i(TAG, "setCurrentUser: " + u.getUsername());
 					currentUser = u;
 					updateUI();
-					//start service
+					// start service
 					startService(new Intent(this, NotificationService.class));
 				}
 			}, user.getEmail());
@@ -96,10 +95,8 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void updateUI() {
-		profileFragment.updateUI();
-
 		videoFragment.updateUI();
-
+		profileFragment.updateUI();
 		notificationFragment.updateUI();
 	}
 
@@ -237,8 +234,9 @@ public class MainActivity extends FragmentActivity {
 						.runOnCommit(() -> MyUtil.setLightStatusBar(this))
 						.hide(activeFragment).show(SearchFragment.getInstance())
 						.commit();
-				activeFragment = SearchFragment.getInstance();
+				VideoFragment.getInstance().pauseVideo();
 				Log.i(NAV_TAG, "Change to search fragment");
+				activeFragment = SearchFragment.getInstance();
 				break;
 			case R.drawable.ic_notification:
 				getSupportFragmentManager().beginTransaction()
@@ -246,6 +244,7 @@ public class MainActivity extends FragmentActivity {
 						.hide(activeFragment).show(NotificationFragment.getInstance())
 						.commit();
 				activeFragment = NotificationFragment.getInstance();
+				VideoFragment.getInstance().pauseVideo();
 				Log.i(NAV_TAG, "Change to notification fragment");
 				break;
 			case R.drawable.ic_profile:
@@ -262,6 +261,7 @@ public class MainActivity extends FragmentActivity {
 							.commit();
 					activeFragment = NotLoginProfileFragment.getInstance();
 				}
+				VideoFragment.getInstance().pauseVideo();
 				Log.i(NAV_TAG, "Change to profile fragment");
 				break;
 		}

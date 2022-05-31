@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.toptop.MainActivity;
 import com.toptop.R;
+import com.toptop.WatchProfileActivity;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.User;
 import com.toptop.models.Video;
@@ -32,6 +33,7 @@ import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 	Context context;
 	Map<String, Boolean> isVideoInitiated = new HashMap<>();
 	private final List<Video> videos;
+	private final List<VideoViewHolder> holders = new ArrayList<>();
 
 	public VideoFragmentAdapter(List<Video> videos, Context context) {
 		this.videos = videos;
@@ -76,6 +79,8 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		// Check video is exist or not
 		if (videos.get(position) == null)
 			return;
+
+		holders.add(holder);
 
 		// Set info video once
 		Video video = videos.get(position);
@@ -108,9 +113,6 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		// Set onPreparedListener for video
 		holder.videoView.setOnPreparedListener(mp -> {
 			mp.setLooping(true);
-			// Log
-			Log.i(TAG, "Loading video...");
-			playVideo(holder.videoView, holder.img_pause);
 		});
 
 		updateUI(holder, video);
@@ -132,19 +134,13 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 	}
 
 	private void handleClickAvatar(Video video) {
-		if (context instanceof MainActivity) {
-			MainActivity mainActivity = (MainActivity) context;
-			if (MainActivity.isLoggedIn() && MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
-				mainActivity.changeNavItem(3);
-			} else
-				mainActivity.goToProfileUser(video.getUsername());
-		}
+		MyUtil.goToUser(context, video.getUsername());
 	}
 
 	private void updateUI(VideoViewHolder holder, Video video) {
 		// Set info video if change
-		holder.txt_num_likes.setText(String.valueOf(video.getNumLikes()));
-		holder.txt_num_comments.setText(String.valueOf(video.getNumComments()));
+		holder.txt_num_likes.setText(MyUtil.getNumberToText(video.getNumLikes()));
+		holder.txt_num_comments.setText(MyUtil.getNumberToText(video.getNumComments()));
 
 		// Set img_follow
 		if (!MainActivity.isLoggedIn() || MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
@@ -200,11 +196,10 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
 		else {
 			User user = MainActivity.getCurrentUser();
-			if (user.isFollowing(video.getUsername())) {
+			if (user.isFollowing(video.getUsername()))
 				UserFirebase.unfollowUser(video.getUsername());
-			} else {
+			else
 				UserFirebase.followUser(video.getUsername());
-			}
 		}
 	}
 
@@ -212,9 +207,8 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		if (MainActivity.isLoggedIn()) {
 			if (video.isLiked())
 				VideoFirebase.unlikeVideo(video);
-			else {
+			else
 				VideoFirebase.likeVideo(video);
-			}
 		} else
 			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
 	}
@@ -224,11 +218,10 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 
 		CommentFragment commentFragment;
 
-		if (commentId == null) {
+		if (commentId == null)
 			commentFragment = CommentFragment.getInstance(video, context);
-		} else {
+		else
 			commentFragment = CommentFragment.getInstance(video, context, commentId);
-		}
 
 		// Add layout_comment to MainActivity
 		activity.getSupportFragmentManager()
@@ -366,6 +359,13 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		Video video = videos.get(position);
 		return video.getVideoId().hashCode();
 	}
+
+	public void pauseVideo() {
+		for (VideoViewHolder holder : holders) {
+			pauseVideo(holder.videoView, holder.img_pause);
+		}
+	}
+
 
 	static class VideoViewHolder extends RecyclerView.ViewHolder {
 		TextView txt_username, txt_content, txt_num_likes, txt_num_comments;

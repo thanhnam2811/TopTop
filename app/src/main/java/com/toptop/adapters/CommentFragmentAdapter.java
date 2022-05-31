@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
 import com.toptop.R;
+import com.toptop.WatchProfileActivity;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.Comment;
 import com.toptop.utils.ItemClickListener;
@@ -181,6 +183,12 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 		} else {
 			holder.ic_like_comment.setImageResource(R.drawable.ic_like_outline);
 		}
+
+		holder.img_avatar.setOnClickListener(view -> {
+			MainActivity mainActivity = (MainActivity) context;
+			mainActivity.hideCommentFragment();
+			MyUtil.goToUser(context, comment.getUsername());
+		});
 	}
 
 	private void handleLikeComment(Comment comment) {
@@ -279,6 +287,26 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 
 	public int getPosition(Comment comment) {
 		return comments.indexOf(comment);
+	}
+
+	public void setComments(List<Comment> newComments) {
+		for (Comment comment : comments) {
+			if (!comments.contains(comment)) {
+				comments.add(comment);
+				notifyItemInserted(comments.size() - 1);
+			} else {
+				int index = comments.indexOf(comment);
+				notifyItemChanged(index, comment);
+			}
+		}
+
+		for (Comment comment : newComments) {
+			if (!newComments.contains(comment)) {
+				int index = comments.indexOf(comment);
+				comments.remove(comment);
+				notifyItemRemoved(index);
+			}
+		}
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {

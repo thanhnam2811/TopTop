@@ -280,4 +280,9 @@ public class Comment {
 	public String getInfo() {
 		return "Comment: " + content + " | " + numLikes + " likes | " + numReplies + " replies" + " | " + "Owner: " + username;
 	}
+
+	public boolean isValid() {
+		return content != null && !content.isEmpty() &&
+				username != null && !username.isEmpty();
+	}
 }

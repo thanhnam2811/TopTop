@@ -47,7 +47,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 		updateView(holder, video);
 
 		//hide delete button if user is not author
-		if (video.getUsername().equals(MainActivity.getCurrentUser().getUsername()) || MainActivity.getCurrentUser().isAdmin()) {
+		if (MainActivity.getCurrentUser().getUsername().equals(video.getUsername()) || MainActivity.getCurrentUser().isAdmin()) {
 			holder.txt_delete_video.setOnClickListener(v -> handleDeleteVideo(video, position));
 		} else {
 			holder.txt_delete_video.setVisibility(View.GONE);

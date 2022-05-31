@@ -8,7 +8,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Exclude;
 import com.toptop.MainActivity;
 import com.toptop.utils.MyUtil;
-import com.toptop.utils.firebase.VideoFirebase;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -38,42 +37,21 @@ public class Video implements Serializable {
 			this.username = (String) data.get("username");
 			this.content = (String) data.get("content");
 			this.linkVideo = (String) data.get("linkVideo");
-			this.numLikes = (Long) data.get("numLikes");
-			this.numComments = (Long) data.get("numComments");
 			this.numViews = (Long) data.get("numViews");
 			this.dateUploaded = (String) data.get("dateUploaded");
 			this.likes = (HashMap<String, Boolean>) data.get("likes");
 			this.comments = (HashMap<String, Boolean>) data.get("comments");
 		}
 
-		boolean hasChanged = false;
-		if (this.likes == null)
-			this.likes = new HashMap<>();
+		if (comments == null)
+			numComments = 0L;
+		else
+			numComments = (long) comments.size();
 
-		if (this.comments == null) {
-			this.comments = new HashMap<>();
-		}
-
-		// If number of likes is not quantity of likes
-		if (this.numLikes == null || this.numLikes != this.likes.size()) {
-			this.numLikes = (long) this.likes.size();
-			hasChanged = true;
-		}
-
-		// If number of comments is not quantity of comments
-		if (this.numComments == null || this.numComments != this.comments.size()) {
-			this.numComments = (long) this.comments.size();
-			hasChanged = true;
-		}
-
-		if (this.numViews == null) {
-			this.numViews = 0L;
-			hasChanged = true;
-		}
-
-		if (hasChanged) {
-			VideoFirebase.updateVideo(this);
-		}
+		if (likes == null)
+			numLikes = 0L;
+		else
+			numLikes = (long) likes.size();
 	}
 
 	@Override
