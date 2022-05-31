@@ -222,12 +222,16 @@ public class CommentFragment extends Fragment {
 						comment -> {
 							comments.add(comment);
 							if (comments.size() == video.getComments().size()) {
-								if (recycler_view_comments.getAdapter() != null)
-									recycler_view_comments.getAdapter()
-											.notifyItemRangeChanged(0, comments.size());
+								comments.removeIf(c -> !c.isValid());
+								// Sort comments by time
+								Comment.sortByTimeNewsest(comments);
+
+								CommentFragmentAdapter adapter = (CommentFragmentAdapter) recycler_view_comments.getAdapter();
+								if (adapter != null)
+									adapter.setComments(comments);
 								else {
 									// Set adapter for recycler view
-									CommentFragmentAdapter adapter = new CommentFragmentAdapter(comments, context);
+									adapter = new CommentFragmentAdapter(comments, context);
 									recycler_view_comments.setAdapter(adapter);
 								}
 								if (CommentFragment.commentId != null) {

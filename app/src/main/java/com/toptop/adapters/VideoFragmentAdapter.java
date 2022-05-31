@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.toptop.MainActivity;
 import com.toptop.R;
+import com.toptop.WatchProfileActivity;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.User;
 import com.toptop.models.Video;
@@ -133,13 +134,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 	}
 
 	private void handleClickAvatar(Video video) {
-		if (context instanceof MainActivity) {
-			MainActivity mainActivity = (MainActivity) context;
-			if (MainActivity.isLoggedIn() && MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
-				mainActivity.changeNavItem(3);
-			} else
-				mainActivity.goToProfileUser(video.getUsername());
-		}
+		MyUtil.goToUser(context, video.getUsername());
 	}
 
 	private void updateUI(VideoViewHolder holder, Video video) {
