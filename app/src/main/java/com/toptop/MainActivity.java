@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.RemoteInput;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
@@ -168,40 +169,6 @@ public class MainActivity extends FragmentActivity {
 		mAuth = FirebaseAuth.getInstance();
 		init();
 
-		//get reply from notification
-		Intent intent = this.getIntent();
-		Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
-		if (remoteInput != null) {
-			String reply = remoteInput.getCharSequence(KEY_TEXT_REPLY).toString();
-			if (reply != null && !reply.isEmpty()) {
-//				Toast.makeText(this, "Reply: " + reply, Toast.LENGTH_SHORT).show();
-				Bundle extras = getIntent().getExtras();
-				String commentId = extras.getString(COMMENT_NOTIFICATION);
-//				Toast.makeText(this, "CommentId: " + commentId, Toast.LENGTH_SHORT).show();
-				if (commentId != null && !commentId.isEmpty()) {
-					//Get video by commentId
-					VideoFirebase.getVideoFromCommentIdOneTime(commentId,
-							video -> {
-								//create new comment
-								Comment commentReply = new Comment();
-								commentReply.setContent(reply);
-								commentReply.setUsername(currentUser.getUsername()); // ? or currentUser.getUsername()
-								commentReply.setVideoId(video.getVideoId());
-
-								//add comment to database
-								CommentFirebase.addCommentToVideo(commentReply, video);
-								Toast.makeText(this, "Đã trả lời bình luận!", Toast.LENGTH_SHORT).show();
-							}, error -> {
-								Toast.makeText(this, "Lỗi trả lời bình luận!", Toast.LENGTH_SHORT).show();
-								Log.e(TAG, "onCreate: " + error.getMessage());
-							}
-					);
-				}
-
-			}
-			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			manager.cancel(NOTIFICATION_ID);
-		}
 	}
 
 	private void init() {

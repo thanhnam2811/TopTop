@@ -1,6 +1,7 @@
 package com.toptop;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -43,13 +44,14 @@ public class WatchVideoActivity extends FragmentActivity {
 		setContentView(R.layout.activity_watch_video);
 		getWindow().setNavigationBarColor(Color.WHITE);
 		MyUtil.setDarkStatusBar(this);
+		Context context = this;
 
 		// Get the Intent that started this activity and extract the string
 		Bundle extras = getIntent().getExtras();
 		String videoId = extras.getString(Video.VIDEO_ID);
+
 		String commentId = extras.getString(Comment.COMMENT_ID);
 		recyclerView = findViewById(R.id.recycler_view_videos);
-		Context context = this;
 
 		ImageView img_avatar = findViewById(R.id.img_avatar);
 

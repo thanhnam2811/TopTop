@@ -66,7 +66,11 @@ public class NotificationFirebase {
 			}
 		});
 	}
-
+	//delete notification by notificationId
+	public static void deleteNotificationByNotificationId(String notificationId) {
+		notificationRef.child(notificationId).removeValue();
+		Log.i(TAG, "deleteNotification: " + notificationId + " deleted from firebase");
+	}
 	// Get notification by username
 	public static void getNotificationByUsername(String username, final ListNotificationCallback listNotificationCallback, final FailureCallback failureCallback) {
 		notificationRef.orderByChild("username").equalTo(username).addValueEventListener(new ValueEventListener() {

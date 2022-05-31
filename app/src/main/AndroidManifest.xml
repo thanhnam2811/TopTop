@@ -60,6 +60,8 @@
         <service
             android:name=".service.NotificationService"
             android:exported="false" />
+        <receiver android:name=".broadcastReceiver.NotificationReceiver"/>
+
     </application>
 
 </manifest>
