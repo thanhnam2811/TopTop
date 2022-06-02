@@ -58,11 +58,6 @@ public class MainActivity extends FragmentActivity {
 	CurvedBottomNavigationView nav;
 	CbnMenuItem[] items;
 	Fragment activeFragment;
-	VideoFragment videoFragment = VideoFragment.getInstance();
-	ProfileFragment profileFragment = ProfileFragment.getInstance();
-	NotLoginProfileFragment notLoginProfileFragment = NotLoginProfileFragment.getInstance();
-	SearchFragment searchFragment = SearchFragment.getInstance();
-	NotificationFragment notificationFragment = NotificationFragment.getInstance();
 
 	public static User getCurrentUser() {
 		return currentUser;
@@ -95,9 +90,9 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	public void updateUI() {
-		videoFragment.updateUI();
-		profileFragment.updateUI();
-		notificationFragment.updateUI();
+		VideoFragment.getInstance().updateUI();
+		ProfileFragment.getInstance().updateUI();
+		NotificationFragment.getInstance().updateUI();
 	}
 
 	@Override
@@ -135,10 +130,12 @@ public class MainActivity extends FragmentActivity {
 			}
 		} else if (requestCode == REGISTER_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
-				User user = (User) data.getSerializableExtra(RegisterActivity.USER);
-				setCurrentUser(user);
-				changeNavItem(0);
-				Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+				if (data != null) {
+					User user = (User) data.getSerializableExtra(RegisterActivity.USER);
+					setCurrentUser(user);
+					changeNavItem(0);
+					Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+				}
 			} else {
 				if (data != null && data.getBooleanExtra(EXTRA_LOGIN, false)) {
 					openLoginActivity();
@@ -184,15 +181,15 @@ public class MainActivity extends FragmentActivity {
 
 			// Add fragment to the container
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.fragment_container, searchFragment, SearchFragment.TAG).hide(searchFragment)
+					.add(R.id.fragment_container, SearchFragment.getInstance(), SearchFragment.TAG).hide(SearchFragment.getInstance())
 					.addToBackStack(SearchFragment.TAG)
-					.add(R.id.fragment_container, notificationFragment, NotificationFragment.TAG).hide(notificationFragment)
+					.add(R.id.fragment_container, NotificationFragment.getInstance(), NotificationFragment.TAG).hide(NotificationFragment.getInstance())
 					.addToBackStack(NotificationFragment.TAG)
-					.add(R.id.fragment_container, notLoginProfileFragment, NotLoginProfileFragment.TAG).hide(notLoginProfileFragment)
+					.add(R.id.fragment_container, NotLoginProfileFragment.getInstance(), NotLoginProfileFragment.TAG).hide(NotLoginProfileFragment.getInstance())
 					.addToBackStack(NotLoginProfileFragment.TAG)
-					.add(R.id.fragment_container, profileFragment, ProfileFragment.TAG).hide(profileFragment)
+					.add(R.id.fragment_container, ProfileFragment.getInstance(), ProfileFragment.TAG).hide(ProfileFragment.getInstance())
 					.addToBackStack(ProfileFragment.TAG)
-					.add(R.id.fragment_container, videoFragment, VideoFragment.TAG).hide(videoFragment)
+					.add(R.id.fragment_container, VideoFragment.getInstance(), VideoFragment.TAG).hide(VideoFragment.getInstance())
 					.addToBackStack(VideoFragment.TAG)
 					.commit();
 
@@ -207,7 +204,7 @@ public class MainActivity extends FragmentActivity {
 
 			// Set the default fragment
 			getSupportFragmentManager().beginTransaction()
-					.show(videoFragment)
+					.show(VideoFragment.getInstance())
 					.commit();
 			activeFragment = VideoFragment.getInstance();
 
@@ -215,7 +212,6 @@ public class MainActivity extends FragmentActivity {
 			getWindow().setNavigationBarColor(Color.WHITE);
 
 			getPermission();
-
 		}
 	}
 

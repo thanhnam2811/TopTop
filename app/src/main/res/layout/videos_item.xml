@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/img_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:adjustViewBounds="true"
+        app:civ_border_color="@color/secondary_color"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txt_username"
+        app:srcCompat="@drawable/default_avatar" />
+
+    <TextView
+        android:id="@+id/txt_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/username"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/img_preview"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_date_uploaded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/date_upload"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/label_comments"
+        app:layout_constraintEnd_toEndOf="@+id/txt_delete"
+        app:layout_constraintTop_toTopOf="@+id/label_comments" />
+
+    <TextView
+        android:id="@+id/txt_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:lines="3"
+        android:text="@string/content"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toStartOf="@+id/txt_delete"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/txt_username"
+        app:layout_constraintTop_toBottomOf="@+id/txt_username" />
+
+    <TextView
+        android:id="@+id/txt_num_views"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/label_views"
+        app:layout_constraintStart_toEndOf="@+id/label_views"
+        app:layout_constraintTop_toTopOf="@+id/label_views" />
+
+    <TextView
+        android:id="@+id/label_views"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/number_of_views"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/img_preview"
+        app:layout_constraintTop_toBottomOf="@+id/img_preview" />
+
+    <TextView
+        android:id="@+id/txt_num_likes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/label_likes"
+        app:layout_constraintStart_toEndOf="@+id/label_likes"
+        app:layout_constraintTop_toTopOf="@+id/label_likes" />
+
+    <TextView
+        android:id="@+id/label_likes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/likes"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_num_views"
+        app:layout_constraintStart_toEndOf="@+id/txt_num_views"
+        app:layout_constraintTop_toTopOf="@+id/txt_num_views" />
+
+    <TextView
+        android:id="@+id/txt_num_comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/label_comments"
+        app:layout_constraintStart_toEndOf="@+id/label_comments"
+        app:layout_constraintTop_toTopOf="@+id/label_comments" />
+
+    <TextView
+        android:id="@+id/label_comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/comments"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_num_likes"
+        app:layout_constraintStart_toEndOf="@+id/txt_num_likes"
+        app:layout_constraintTop_toTopOf="@+id/txt_num_likes" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/text_box_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/delete"
+        android:textColor="@color/main_color"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_delete"
+        app:layout_constraintBottom_toBottomOf="@+id/label_comments"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

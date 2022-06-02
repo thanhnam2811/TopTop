@@ -73,4 +73,14 @@
     <string name="statistic_month">Thống kê trong tháng này</string>
     <string name="statistic_year">Thống kê trong năm nay</string>
     <string name="statistic_all_time">Thống kê tất cả</string>
+    <string name="users">Người dùng</string>
+    <string name="comments">Bình luận</string>
+    <string name="videos">Videos</string>
+    <string name="filter">Lọc:</string>
+    <string name="role">Quyền</string>
+    <string name="number_of_views">Lượt xem</string>
+    <string name="number_of_likes">Lượt thích</string>
+    <string name="number_of_comments">Lượt bình luận</string>
+    <string name="date_upload">Ngày tải lên</string>
+    <string name="content">Nội dung</string>
 </resources>

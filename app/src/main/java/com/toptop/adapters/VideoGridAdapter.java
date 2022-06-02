@@ -118,6 +118,14 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.View
 				notifyItemChanged(index, video);
 			}
 		}
+
+		for (Video video : videos) {
+			if (!newVideos.contains(video)) {
+				int index = videos.indexOf(video);
+				videos.remove(video);
+				notifyItemRemoved(index);
+			}
+		}
 	}
 
 	public List<Video> getVideos() {

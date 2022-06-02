@@ -111,9 +111,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		);
 
 		// Set onPreparedListener for video
-		holder.videoView.setOnPreparedListener(mp -> {
-			mp.setLooping(true);
-		});
+		holder.videoView.setOnPreparedListener(mp -> mp.setLooping(true));
 
 		updateUI(holder, video);
 
@@ -139,8 +137,8 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 
 	private void updateUI(VideoViewHolder holder, Video video) {
 		// Set info video if change
-		holder.txt_num_likes.setText(MyUtil.getNumberToText(video.getNumLikes()));
-		holder.txt_num_comments.setText(MyUtil.getNumberToText(video.getNumComments()));
+		holder.txt_num_likes.setText(MyUtil.getNumberToText(video.getNumLikes(), 2));
+		holder.txt_num_comments.setText(MyUtil.getNumberToText(video.getNumComments(), 2));
 
 		// Set img_follow
 		if (!MainActivity.isLoggedIn() || MainActivity.getCurrentUser().getUsername().equals(video.getUsername())) {
@@ -262,6 +260,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		if (video.getLinkVideo() != null) {
 			videoView.setVideoURI(Uri.parse(video.getLinkVideo()));
 			videoView.requestFocus();
+			videoView.start();
 			Log.i(TAG, "initVideo: " + video.getVideoId());
 			isVideoInitiated.put(video.getVideoId(), true);
 		} else {

@@ -6,8 +6,6 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.Query;
-import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
@@ -296,5 +294,15 @@ public class User implements Serializable {
 	@Exclude
 	public boolean isAdmin() {
 		return role.equals(ROLE_ADMIN);
+	}
+
+	@Exclude
+	public boolean contains(String search) {
+		if (search == null) return true;
+		search = search.toLowerCase();
+		return username.toLowerCase().contains(search) ||
+				fullname.toLowerCase().contains(search) ||
+				phoneNumber.toLowerCase().contains(search) ||
+				email.toLowerCase().contains(search);
 	}
 }

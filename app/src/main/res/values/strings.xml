@@ -73,4 +73,14 @@
     <string name="statistic_month">Statistic in this month</string>
     <string name="statistic_year">Statistic in this year</string>
     <string name="statistic_all_time">Statistic all time</string>
+    <string name="users">Users</string>
+    <string name="comments">Comments</string>
+    <string name="videos">Videos</string>
+    <string name="filter">Filter:</string>
+    <string name="role">Role:</string>
+    <string name="number_of_views">Views</string>
+    <string name="number_of_likes">Likes</string>
+    <string name="number_of_comments">Comments</string>
+    <string name="date_upload">Date upload</string>
+    <string name="content">Content</string>
 </resources>

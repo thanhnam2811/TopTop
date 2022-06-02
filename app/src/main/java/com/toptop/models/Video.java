@@ -215,4 +215,10 @@ public class Video implements Serializable {
 	public void addView() {
 		numViews++;
 	}
+
+	public boolean contains(String search) {
+		return search == null ||
+				this.content.toLowerCase().contains(search.toLowerCase()) ||
+				this.username.toLowerCase().contains(search.toLowerCase());
+	}
 }

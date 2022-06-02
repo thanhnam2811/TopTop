@@ -221,14 +221,14 @@ public class UserFirebase {
 		Query myQuery = QuerygetUserByUsername(username);
 		myQuery.addValueEventListener(new ValueEventListener() {
 			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				String value = dataSnapshot.getChildren().iterator().next().child("avatar").getValue(String.class);
 				System.out.println(value);
 				myCallback.onCallback(value);
 			}
 
 			@Override
-			public void onCancelled(DatabaseError databaseError) {
+			public void onCancelled(@NonNull DatabaseError databaseError) {
 				Log.e(TAG, "onCancelled: ", databaseError.toException());
 			}
 		});
@@ -236,5 +236,23 @@ public class UserFirebase {
 
 	private static Query QuerygetUserByUsername(String username) {
 		return userRef.orderByChild("username").equalTo(username);
+	}
+
+	public static void getAllUsers(ListUserCallback callback, FailureCallback failureCallback) {
+		userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				ArrayList<User> listUser = new ArrayList<>();
+				for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+					listUser.add(new User(dataSnapshot));
+				}
+				callback.onCallBack(listUser);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				failureCallback.onCallBack(error);
+			}
+		});
 	}
 }

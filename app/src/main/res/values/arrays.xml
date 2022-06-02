@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="number_filter">
+        <item>All</item>
+        <item>&lt; 1K</item>
+        <item>1K - 10K</item>
+        <item>10K - 100K</item>
+        <item>100K - 1M</item>
+        <item>&gt; 1M</item>
+    </string-array>
+    <string-array name="role_filter">
+        <item>All</item>
+        <item>Admin</item>
+        <item>User</item>
+    </string-array>
+</resources>

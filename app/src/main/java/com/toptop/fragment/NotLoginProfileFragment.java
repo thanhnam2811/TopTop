@@ -18,10 +18,10 @@ public class NotLoginProfileFragment extends Fragment {
 
 	public static final String TAG = "NotLoginProfileFragment";
 
-	private NotLoginProfileFragment() {
+	public NotLoginProfileFragment() {
 		// Required empty public constructor
 	}
-	private static NotLoginProfileFragment instance = new NotLoginProfileFragment();
+	private static final NotLoginProfileFragment instance = new NotLoginProfileFragment();
 	public static NotLoginProfileFragment getInstance() {
 		return instance;
 	}

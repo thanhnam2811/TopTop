@@ -25,7 +25,7 @@ public class DashboardItemAdapter extends RecyclerView.Adapter<DashboardItemAdap
 
 		public Data(String title, Long value) {
 			this.title = title;
-			this.value = MyUtil.getNumberToText(value);
+			this.value = MyUtil.getNumberToText(value, 0);
 		}
 	}
 	List<Data> dataList;

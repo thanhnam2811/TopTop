@@ -32,7 +32,7 @@ public class NotificationFragment extends Fragment {
 
 	private static final NotificationFragment instance = new NotificationFragment();
 
-	private NotificationFragment() {
+	public NotificationFragment() {
 
 	}
 

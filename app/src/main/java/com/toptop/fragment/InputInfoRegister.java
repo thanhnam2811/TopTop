@@ -14,8 +14,6 @@ import com.toptop.R;
 import com.toptop.RegisterActivity;
 import com.toptop.utils.firebase.FirebaseUtil;
 
-import java.util.Objects;
-
 
 public class InputInfoRegister extends Fragment {
 	public final static String TAG = "InputInfoRegister";
@@ -42,7 +40,7 @@ public class InputInfoRegister extends Fragment {
 		// Binding
 		Button btnContinue = view.findViewById(R.id.btn_continue_register);
 		mEditTextName = view.findViewById(R.id.txt_fullname);
-		mEditTextPhone = view.findViewById(R.id.txt_phone_number);
+		mEditTextPhone = view.findViewById(R.id.txt_phonenumber);
 		mEditTextEmail = view.findViewById(R.id.txt_email);
 
 		btnContinue.setOnClickListener(v -> handleContinueButton());

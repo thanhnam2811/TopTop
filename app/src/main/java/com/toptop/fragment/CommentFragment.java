@@ -46,7 +46,7 @@ public class CommentFragment extends Fragment {
 	List<Comment> comments = new ArrayList<>();
 	static String commentId;
 
-	private static List<CommentFragment> instances = new ArrayList<>();
+	private static final List<CommentFragment> instances = new ArrayList<>();
 
 	private CommentFragment(Video video, Context context) {
 		this.video = video;

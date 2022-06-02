@@ -27,7 +27,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -73,13 +72,11 @@ public class MyUtil {
 
 	// get number to text if large
 	@SuppressLint("DefaultLocale")
-	public static String getNumberToText(long number) {
+	public static String getNumberToText(long number, int digit) {
 		if (number > 999 && number < 1000000) {
-			return String.format("%.2f", number / 1000.0) + "K";
+			return String.format("%." + digit + "f", number / 1000.0) + "k";
 		} else if (number > 999999) {
-			return String.format("%.2f", number / 1000000.0) + "M";
-		} else if (number > 9999999) {
-			return String.format("%.2f", number / 1000000000.0) + "B";
+			return String.format("%." + digit + "f", number / 1000000.0) + "m";
 		} else {
 			return String.valueOf(number);
 		}
@@ -246,5 +243,47 @@ public class MyUtil {
 		String year = dateString.substring(0, 4);
 		String nowYear = now.substring(0, 4);
 		return year.equals(nowYear);
+	}
+
+	public static Long getMin(String period) {
+		if (period == null) {
+			return Long.MIN_VALUE;
+		}
+
+		period = period.replace(" ", "")
+				.replace(",", "")
+				.replace("K", "000")
+				.replace("M", "000000");
+
+		if (period.contains(">"))
+			return Long.parseLong(period.substring(1));
+
+		if (period.contains("-")) {
+			String[] parts = period.split("-");
+			return Long.parseLong(parts[0]);
+		}
+
+		return Long.MIN_VALUE;
+	}
+
+	public static Long getMax(String period) {
+		if (period == null) {
+			return Long.MAX_VALUE;
+		}
+
+		period = period.replace(" ", "")
+				.replace(",", "")
+				.replace("K", "000")
+				.replace("M", "000000");
+
+		if (period.contains("<"))
+			return Long.parseLong(period.substring(1));
+
+		if (period.contains("-")) {
+			String[] parts = period.split("-");
+			return Long.parseLong(parts[1]);
+		}
+
+		return Long.MAX_VALUE;
 	}
 }

@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
 		Button login = findViewById(R.id.btnLogin);
 		ImageView loginGoogle = findViewById(R.id.loginGoogle);
 		ImageView loginFacebook = findViewById(R.id.loginFacebook);
-		email = findViewById(R.id.txtEmail);
+		email = findViewById(R.id.txt_email);
 		password = findViewById(R.id.txtPassword);
 		TextView forgotPassword = findViewById(R.id.txt_forgot_password);
 

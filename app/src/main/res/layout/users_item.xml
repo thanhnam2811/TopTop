@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/img_avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:adjustViewBounds="true"
+        app:civ_border_color="@color/secondary_color"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_phonenumber"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txt_username"
+        app:srcCompat="@drawable/default_avatar" />
+
+    <TextView
+        android:id="@+id/txt_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/username"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/img_avatar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_fullname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/full_name"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="@+id/txt_username"
+        app:layout_constraintTop_toBottomOf="@+id/txt_username" />
+
+    <TextView
+        android:id="@+id/txt_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/email"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="@+id/txt_fullname"
+        app:layout_constraintTop_toBottomOf="@+id/txt_fullname" />
+
+    <TextView
+        android:id="@+id/txt_phonenumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/phone_number"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="@+id/txt_email"
+        app:layout_constraintTop_toBottomOf="@+id/txt_email" />
+
+    <TextView
+        android:id="@+id/txt_num_followers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/label_followers"
+        app:layout_constraintStart_toEndOf="@+id/label_followers"
+        app:layout_constraintTop_toTopOf="@+id/label_followers" />
+
+    <TextView
+        android:id="@+id/label_followers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/followers"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/img_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/img_avatar" />
+
+    <TextView
+        android:id="@+id/txt_num_following"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/label_following"
+        app:layout_constraintStart_toEndOf="@+id/label_following"
+        app:layout_constraintTop_toTopOf="@+id/label_following" />
+
+    <TextView
+        android:id="@+id/label_following"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/following"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_num_followers"
+        app:layout_constraintStart_toEndOf="@+id/txt_num_followers"
+        app:layout_constraintTop_toTopOf="@+id/txt_num_followers" />
+
+    <TextView
+        android:id="@+id/txt_num_likes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/label_likes"
+        app:layout_constraintStart_toEndOf="@+id/label_likes"
+        app:layout_constraintTop_toTopOf="@+id/label_likes" />
+
+    <TextView
+        android:id="@+id/label_role"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/role"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_num_likes"
+        app:layout_constraintStart_toEndOf="@+id/txt_num_likes"
+        app:layout_constraintTop_toTopOf="@+id/txt_num_likes" />
+
+    <TextView
+        android:id="@+id/txt_role"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="@string/admin"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/label_role"
+        app:layout_constraintStart_toEndOf="@+id/label_role"
+        app:layout_constraintTop_toTopOf="@+id/label_role" />
+
+    <TextView
+        android:id="@+id/label_likes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/likes"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_num_following"
+        app:layout_constraintStart_toEndOf="@+id/txt_num_following"
+        app:layout_constraintTop_toTopOf="@+id/txt_num_following" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/text_box_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/delete"
+        android:textColor="@color/main_color"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_delete"
+        app:layout_constraintBottom_toBottomOf="@+id/label_likes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

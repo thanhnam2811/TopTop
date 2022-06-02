@@ -37,7 +37,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_email" />
 
     <EditText
-        android:id="@+id/txt_phone_number"
+        android:id="@+id/txt_phonenumber"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -65,6 +65,6 @@
         android:textColor="@color/main_color"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_phone_number" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_phonenumber" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

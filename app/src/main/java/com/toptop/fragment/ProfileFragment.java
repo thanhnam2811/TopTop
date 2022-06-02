@@ -69,7 +69,7 @@ public class ProfileFragment extends Fragment {
 
 	private static final ProfileFragment instance = new ProfileFragment();
 
-	private ProfileFragment() {
+	public ProfileFragment() {
 	}
 
 	public static ProfileFragment getInstance() {

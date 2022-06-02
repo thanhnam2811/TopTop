@@ -270,7 +270,7 @@ public class VideoFirebase {
 	}
 
 	// Get all video
-	public static void getAllVideo(ListVideoCallback listVideoCallback, FailureCallback failureCallback) {
+	public static void getAllVideos(ListVideoCallback listVideoCallback, FailureCallback failureCallback) {
 		videoRef.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CommentFirebase {
 	// Tag
@@ -120,9 +121,19 @@ public class CommentFirebase {
 	}
 
 	public static void deleteCommentFromVideo(Video video) {
-		for (Map.Entry<String, Boolean> entry : video.getComments().entrySet()) {
-			deleteCommentByCommentId(entry.getKey());
-		}
+		commentRef.orderByChild("videoId").equalTo(video.getVideoId()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+					snapshot.getRef().removeValue();
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Log.e(TAG, "onCancelled: ", databaseError.toException());
+			}
+		});
 	}
 
 	// Get comment by videoId

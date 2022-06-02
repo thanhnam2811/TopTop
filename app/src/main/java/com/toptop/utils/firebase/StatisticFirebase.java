@@ -138,7 +138,7 @@ public class StatisticFirebase {
 	// Get statistic today
 	public static void getStatisticToday(StatisticCallback callback, FailureCallback failureCallback) {
 		String date = MyUtil.dateToString(new Date());
-		statisticRef.child(date).addValueEventListener(new ValueEventListener() {
+		statisticRef.child(date).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
 				Statistic statistic = new Statistic();

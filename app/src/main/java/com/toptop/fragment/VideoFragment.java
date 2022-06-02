@@ -7,23 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.toptop.R;
 import com.toptop.adapters.VideoFragmentAdapter;
 import com.toptop.models.User;
 import com.toptop.models.Video;
-import com.toptop.utils.MyUtil;
-import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.ArrayList;
@@ -38,7 +32,7 @@ public class VideoFragment extends Fragment {
 
 	private static final VideoFragment instance = new VideoFragment();
 
-	private VideoFragment() { }
+	public VideoFragment() { }
 
 	public static VideoFragment getInstance() {
 		return instance;
@@ -77,7 +71,7 @@ public class VideoFragment extends Fragment {
 	}
 
 	private void loadVideos() {
-		VideoFirebase.getAllVideo(
+		VideoFirebase.getAllVideos(
 				listVideos -> {
 					VideoFragmentAdapter adapter = (VideoFragmentAdapter) recyclerView.getAdapter();
 					if (adapter != null) {

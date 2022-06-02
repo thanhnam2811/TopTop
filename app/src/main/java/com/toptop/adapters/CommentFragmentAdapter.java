@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,37 +21,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.toptop.MainActivity;
 import com.toptop.R;
-import com.toptop.WatchProfileActivity;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.Comment;
 import com.toptop.utils.ItemClickListener;
 import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.CommentFirebase;
-import com.toptop.utils.firebase.FirebaseUtil;
 import com.toptop.utils.firebase.UserFirebase;
 import com.toptop.utils.firebase.VideoFirebase;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragmentAdapter.ViewHolder> {
 	// tag'
 	private static final String TAG = "CommentFragmentAdapter";
-	private final DatabaseReference mDB_comment;
 	Context context;
 	private final List<Comment> comments;
-	private List<Comment> replies = new ArrayList<>();
 	PopupMenu popupMenu;
 
 	public CommentFragmentAdapter(List<Comment> comments, Context context) {
-		mDB_comment = FirebaseUtil.getDatabase(FirebaseUtil.TABLE_COMMENTS);
 		this.comments = comments;
 		this.context = context;
 	}
@@ -216,65 +204,6 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 
 	}
 
-	private void getReplies(Comment comment, RecyclerView recycler_reply_comment) {
-		// Get replies
-		Query query = mDB_comment.orderByChild("replyToCommentId").equalTo(comment.getCommentId());
-		query.addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				if (recycler_reply_comment.getAdapter() == null) {
-					// Log
-					Log.i(TAG, "First time load reply comment");
-					// Get all replies from firebase
-					replies.clear();
-					for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-						Comment reply = new Comment(dataSnapshot);
-
-						// Log
-						Log.i(TAG, "Reply comment for commentId " + comment.getCommentId() + " is " + reply.getContent());
-
-						replies.add(reply);
-					}
-
-					// Set adapter for recycler view
-					if (replies.size() > 0) Comment.sortByTimeNewsest(replies);
-					ReplyAdapter adapter = new ReplyAdapter(replies, comment, context);
-					recycler_reply_comment.setAdapter(adapter);
-
-					// Set visibility
-					recycler_reply_comment.setVisibility(View.VISIBLE);
-				} else {
-					ReplyAdapter adapter = (ReplyAdapter) recycler_reply_comment.getAdapter();
-					replies = adapter.getReplies();
-
-					// Get all replies from firebase
-					for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-						Comment reply = new Comment(dataSnapshot);
-						// Add reply to list if it is not in list
-						if (!replies.contains(reply))
-							replies.add(reply);
-							// if reply is in list, update it if changed
-						else {
-							int index = replies.indexOf(reply);
-							if (!replies.get(index).isEqual(reply)) {
-								replies.set(index, reply);
-								adapter.notifyItemChanged(index, reply);
-							}
-						}
-					}
-					// Sort by time
-					Comment.sortByTimeNewsest(comments);
-					// Notify adapter
-					recycler_reply_comment.getAdapter().notifyItemRangeChanged(0, comments.size());
-				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError error) {
-				Log.e(TAG, "onCancelled: ", error.toException());
-			}
-		});
-	}
 
 	@Override
 	public int getItemCount() {
@@ -300,13 +229,13 @@ public class CommentFragmentAdapter extends RecyclerView.Adapter<CommentFragment
 			}
 		}
 
-		for (Comment comment : newComments) {
+		comments.removeIf(comment -> {
 			if (!newComments.contains(comment)) {
-				int index = comments.indexOf(comment);
-				comments.remove(comment);
-				notifyItemRemoved(index);
+				notifyItemRemoved(comments.indexOf(comment));
+				return true;
 			}
-		}
+			return false;
+		});
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {

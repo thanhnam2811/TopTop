@@ -39,7 +39,8 @@ public class SearchFragment extends Fragment implements SearchView.OnQueryTextLi
 
 	private static final SearchFragment instance = new SearchFragment();
 
-	private SearchFragment() {
+	public SearchFragment() {
+		// Required empty public constructor
 	}
 
 	public static SearchFragment getInstance() {
