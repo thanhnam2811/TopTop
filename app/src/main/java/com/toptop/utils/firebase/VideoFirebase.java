@@ -271,7 +271,7 @@ public class VideoFirebase {
 
 	// Get all video
 	public static void getAllVideos(ListVideoCallback listVideoCallback, FailureCallback failureCallback) {
-		videoRef.addValueEventListener(new ValueEventListener() {
+		videoRef.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
 				List<Video> videos = new ArrayList<>();

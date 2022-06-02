@@ -1,11 +1,7 @@
 package com.toptop.adapters;
 
-import static android.os.Looper.getMainLooper;
-
 import android.app.AlertDialog;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +20,6 @@ import com.toptop.utils.MyUtil;
 import com.toptop.utils.firebase.VideoFirebase;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class VideosManagementAdapter extends RecyclerView.Adapter<VideosManagementAdapter.VideosManagementViewHolder> {
@@ -69,6 +63,7 @@ public class VideosManagementAdapter extends RecyclerView.Adapter<VideosManageme
 				allVideos.remove(video);
 				filteredVideos.remove(video);
 				notifyItemRemoved(i);
+				notifyItemRangeChanged(i, filteredVideos.size());
 			});
 			builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
 			builder.show();
@@ -105,7 +100,7 @@ public class VideosManagementAdapter extends RecyclerView.Adapter<VideosManageme
 		public VideosManagementViewHolder(View view) {
 			super(view);
 			txtUsername = view.findViewById(R.id.txt_username);
-			txtDateUploaded = view.findViewById(R.id.txt_date_uploaded);
+			txtDateUploaded = view.findViewById(R.id.txt_time);
 			txtContent = view.findViewById(R.id.txt_content);
 			txtDelete = view.findViewById(R.id.txt_delete);
 			txtNumViews = view.findViewById(R.id.txt_num_views);

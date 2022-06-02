@@ -20,9 +20,6 @@ import com.toptop.adapters.UsersManagementAdapter;
 import com.toptop.models.User;
 import com.toptop.utils.firebase.UserFirebase;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class UsersManagementFragment extends Fragment {
 	// tag
 	private static final String TAG = "UsersManagementFragment";
@@ -92,10 +89,7 @@ public class UsersManagementFragment extends Fragment {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				filterNumberOfFollowers = parent.getItemAtPosition(position).toString();
-				UsersManagementAdapter usersManagementAdapter = (UsersManagementAdapter) recyclerView.getAdapter();
-				if (usersManagementAdapter != null) {
-					usersManagementAdapter.setFilter(filterNumberOfFollowers, filterNumberOfFollowing, filterNumberOfLikes, searchText, role);
-				}
+				filter();
 			}
 
 			@Override
@@ -108,10 +102,7 @@ public class UsersManagementFragment extends Fragment {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				filterNumberOfFollowing = parent.getItemAtPosition(position).toString();
-				UsersManagementAdapter usersManagementAdapter = (UsersManagementAdapter) recyclerView.getAdapter();
-				if (usersManagementAdapter != null) {
-					usersManagementAdapter.setFilter(filterNumberOfFollowers, filterNumberOfFollowing, filterNumberOfLikes, searchText, role);
-				}
+				filter();
 			}
 
 			@Override
@@ -124,10 +115,7 @@ public class UsersManagementFragment extends Fragment {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				filterNumberOfLikes = parent.getItemAtPosition(position).toString();
-				UsersManagementAdapter usersManagementAdapter = (UsersManagementAdapter) recyclerView.getAdapter();
-				if (usersManagementAdapter != null) {
-					usersManagementAdapter.setFilter(filterNumberOfFollowers, filterNumberOfFollowing, filterNumberOfLikes, searchText, role);
-				}
+				filter();
 			}
 
 			@Override
@@ -150,10 +138,7 @@ public class UsersManagementFragment extends Fragment {
 						role = User.ROLE_USER;
 						break;
 				}
-				UsersManagementAdapter usersManagementAdapter = (UsersManagementAdapter) recyclerView.getAdapter();
-				if (usersManagementAdapter != null) {
-					usersManagementAdapter.setFilter(filterNumberOfFollowers, filterNumberOfFollowing, filterNumberOfLikes, searchText, role);
-				}
+				filter();
 			}
 
 			@Override
@@ -167,24 +152,25 @@ public class UsersManagementFragment extends Fragment {
 			@Override
 			public boolean onQueryTextSubmit(String query) {
 				searchText = query;
-				UsersManagementAdapter usersManagementAdapter = (UsersManagementAdapter) recyclerView.getAdapter();
-				if (usersManagementAdapter != null) {
-					usersManagementAdapter.setFilter(filterNumberOfFollowers, filterNumberOfFollowing, filterNumberOfLikes, searchText, role);
-				}
+				filter();
 				return false;
 			}
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
 				searchText = newText;
-				UsersManagementAdapter usersManagementAdapter = (UsersManagementAdapter) recyclerView.getAdapter();
-				if (usersManagementAdapter != null) {
-					usersManagementAdapter.setFilter(filterNumberOfFollowers, filterNumberOfFollowing, filterNumberOfLikes, searchText, role);
-				}
+				filter();
 				return false;
 			}
 		});
 
 		return view;
+	}
+
+	private void filter() {
+		UsersManagementAdapter usersManagementAdapter = (UsersManagementAdapter) recyclerView.getAdapter();
+		if (usersManagementAdapter != null) {
+			usersManagementAdapter.setFilter(filterNumberOfFollowers, filterNumberOfFollowing, filterNumberOfLikes, searchText, role);
+		}
 	}
 }

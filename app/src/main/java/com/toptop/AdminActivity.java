@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.navigation.NavigationView;
+import com.toptop.fragment.CommentsManagementFragment;
 import com.toptop.fragment.DashboardFragment;
 import com.toptop.fragment.UsersManagementFragment;
 import com.toptop.fragment.VideosManagementFragment;
@@ -65,6 +66,15 @@ public class AdminActivity extends FragmentActivity {
 						activeFragment = VideosManagementFragment.getInstance();
 					}
 					break;
+				case R.id.comments:
+					if (activeFragment != CommentsManagementFragment.getInstance()) {
+						getSupportFragmentManager().beginTransaction()
+								.hide(activeFragment)
+								.show(CommentsManagementFragment.getInstance())
+								.commit();
+						activeFragment = CommentsManagementFragment.getInstance();
+					}
+					break;
 			}
 			drawer.close();
 			return true;
@@ -78,6 +88,8 @@ public class AdminActivity extends FragmentActivity {
 				.hide(UsersManagementFragment.getInstance())
 				.add(R.id.fragment_container, VideosManagementFragment.getInstance())
 				.hide(VideosManagementFragment.getInstance())
+				.add(R.id.fragment_container, CommentsManagementFragment.getInstance())
+				.hide(CommentsManagementFragment.getInstance())
 				.commit();
 
 		// Show Dashboard Fragment

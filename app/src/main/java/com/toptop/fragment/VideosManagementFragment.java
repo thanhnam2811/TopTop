@@ -40,7 +40,6 @@ public class VideosManagementFragment extends Fragment {
 	RecyclerView recyclerView;
 	Spinner spinnerNumberOfViews, spinnerNumberOfLikes, spinnerNumberOfComments;
 	SearchView searchView;
-	List<User> users = new ArrayList<>();
 	String filterNumberOfViews, filterNumberOfLikes, filterNumberOfComments, searchText;
 
 	@Override
@@ -88,10 +87,7 @@ public class VideosManagementFragment extends Fragment {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				filterNumberOfViews = parent.getItemAtPosition(position).toString();
-				VideosManagementAdapter videosManagementAdapter = (VideosManagementAdapter) recyclerView.getAdapter();
-				if (videosManagementAdapter != null) {
-					videosManagementAdapter.filter(filterNumberOfViews, filterNumberOfLikes, filterNumberOfComments, searchText);
-				}
+				filter();
 			}
 
 			@Override
@@ -105,10 +101,7 @@ public class VideosManagementFragment extends Fragment {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				filterNumberOfLikes = parent.getItemAtPosition(position).toString();
-				VideosManagementAdapter videosManagementAdapter = (VideosManagementAdapter) recyclerView.getAdapter();
-				if (videosManagementAdapter != null) {
-					videosManagementAdapter.filter(filterNumberOfViews, filterNumberOfLikes, filterNumberOfComments, searchText);
-				}
+				filter();
 			}
 
 			@Override
@@ -122,10 +115,7 @@ public class VideosManagementFragment extends Fragment {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				filterNumberOfComments = parent.getItemAtPosition(position).toString();
-				VideosManagementAdapter videosManagementAdapter = (VideosManagementAdapter) recyclerView.getAdapter();
-				if (videosManagementAdapter != null) {
-					videosManagementAdapter.filter(filterNumberOfViews, filterNumberOfLikes, filterNumberOfComments, searchText);
-				}
+				filter();
 			}
 
 			@Override
@@ -140,24 +130,25 @@ public class VideosManagementFragment extends Fragment {
 			@Override
 			public boolean onQueryTextSubmit(String query) {
 				searchText = query;
-				VideosManagementAdapter videosManagementAdapter = (VideosManagementAdapter) recyclerView.getAdapter();
-				if (videosManagementAdapter != null) {
-					videosManagementAdapter.filter(filterNumberOfViews, filterNumberOfLikes, filterNumberOfComments, searchText);
-				}
+				filter();
 				return false;
 			}
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
 				searchText = newText;
-				VideosManagementAdapter videosManagementAdapter = (VideosManagementAdapter) recyclerView.getAdapter();
-				if (videosManagementAdapter != null) {
-					videosManagementAdapter.filter(filterNumberOfViews, filterNumberOfLikes, filterNumberOfComments, searchText);
-				}
+				filter();
 				return false;
 			}
 		});
 
 		return view;
+	}
+
+	private void filter() {
+		VideosManagementAdapter videosManagementAdapter = (VideosManagementAdapter) recyclerView.getAdapter();
+		if (videosManagementAdapter != null) {
+			videosManagementAdapter.filter(filterNumberOfViews, filterNumberOfLikes, filterNumberOfComments, searchText);
+		}
 	}
 }

@@ -191,4 +191,24 @@ public class CommentFirebase {
 			}
 		});
 	}
+
+	// Get all comments
+	public static void getAllComments(final ListCommentCallback callback, final FailureCallback failureCallback) {
+		commentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				List<Comment> comments = new ArrayList<>();
+				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+					Comment comment = new Comment(snapshot);
+					comments.add(comment);
+				}
+				callback.onCallback(comments);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				failureCallback.onCallback(databaseError);
+			}
+		});
+	}
 }

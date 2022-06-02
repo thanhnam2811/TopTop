@@ -34,6 +34,7 @@
             android:exported="false" />
         <activity
             android:name=".AdminActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="false" />
         <activity
             android:name=".RegisterActivity"

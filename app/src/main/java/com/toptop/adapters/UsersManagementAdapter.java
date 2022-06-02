@@ -64,6 +64,7 @@ public class UsersManagementAdapter extends RecyclerView.Adapter<UsersManagement
 				allUsers.remove(user);
 				filteredUsers.remove(user);
 				notifyItemRemoved(i);
+				notifyItemRangeChanged(i, filteredUsers.size());
 			});
 			builder.setNegativeButton("No", (dialog, which) -> {
 				dialog.dismiss();

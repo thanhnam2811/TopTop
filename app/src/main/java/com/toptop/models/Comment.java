@@ -285,4 +285,13 @@ public class Comment {
 		return content != null && !content.isEmpty() &&
 				username != null && !username.isEmpty();
 	}
+
+	public boolean contains(String searchText) {
+		if (searchText == null || searchText.isEmpty()) {
+			return true;
+		}
+
+		return content.toLowerCase().contains(searchText.toLowerCase()) ||
+				username.toLowerCase().contains(searchText.toLowerCase());
+	}
 }
