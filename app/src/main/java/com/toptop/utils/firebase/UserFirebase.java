@@ -58,6 +58,7 @@ public class UserFirebase {
 	public static void deleteUser(User user) {
 		userRef.child(user.getUsername()).removeValue();
 		Log.i(TAG, "deleteUser: " + user.getUsername() + " deleted from firebase");
+
 	}
 
 	// Follow user
@@ -153,7 +154,7 @@ public class UserFirebase {
 	// get user by email
 	public static void getUserByEmail(UserCallback callback, String email) {
 		Query query = userRef.orderByChild("email").equalTo(email);
-		query.addValueEventListener(new ValueEventListener() {
+		query.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				if (dataSnapshot.exists()) {

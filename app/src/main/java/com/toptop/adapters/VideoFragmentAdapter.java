@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.toptop.MainActivity;
 import com.toptop.R;
-import com.toptop.WatchProfileActivity;
 import com.toptop.fragment.CommentFragment;
 import com.toptop.models.User;
 import com.toptop.models.Video;
@@ -153,8 +152,10 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 
 		// Check if video is liked or not
 		if (!MainActivity.isLoggedIn() || !video.isLiked()) {
+			Log.i(TAG, "updateUI: Not liked");
 			holder.img_like.setImageResource(R.drawable.ic_like);
 		} else {
+			Log.i(TAG, "updateUI: Liked");
 			holder.img_like.setImageResource(R.drawable.ic_liked);
 		}
 
@@ -172,7 +173,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 
 		// Set onClickListener for img_follow
 		holder.img_follow.setOnClickListener(v ->
-				handleClickFollow(video, holder.img_follow));
+				handleClickFollow(video));
 
 		// Set onClickListener for img_avatar
 		holder.img_avatar.setOnClickListener(v -> handleClickAvatar(video));
@@ -189,7 +190,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 		context.startActivity(Intent.createChooser(shareIntent, context.getResources().getString(R.string.share)));
 	}
 
-	private void handleClickFollow(Video video, ImageView img_follow) {
+	private void handleClickFollow(Video video) {
 		if (!MainActivity.isLoggedIn())
 			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
 		else {
@@ -207,6 +208,7 @@ public class VideoFragmentAdapter extends RecyclerView.Adapter<VideoFragmentAdap
 				VideoFirebase.unlikeVideo(video);
 			else
 				VideoFirebase.likeVideo(video);
+			notifyItemChanged(videos.indexOf(video), video);
 		} else
 			Toast.makeText(context, "Bạn cần đăng nhập để thực hiện chức năng này", Toast.LENGTH_SHORT).show();
 	}

@@ -12,12 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -43,7 +39,7 @@ public class NotificationService extends Service {
 	private static final int NOTIFICATION_FOLLOW_ID = 3;
 	private static final String COMMENT_NOTIFICATION = "comment_notification";
 
-//
+	//
 	public static final String NOTIFICATION_REPLY = "NotificationReply";
 	public static final String CHANNNEL_ID = "SimplifiedCodingChannel";
 	public static final String CHANNEL_NAME = "SimplifiedCodingChannel";
@@ -157,8 +153,7 @@ public class NotificationService extends Service {
 						Log.e(TAG, "sendNotification: " + error.getMessage());
 					}
 			);
-		} else if (notification.getType().equals(com.toptop.models.Notification.TYPE_FOLLOW))
-		{
+		} else if (notification.getType().equals(com.toptop.models.Notification.TYPE_FOLLOW)) {
 			// event click notification to open activity
 			Intent intent = new Intent(this, WatchProfileActivity.class);
 			Log.d(TAG, "sendNotification: " + notification.getRedirectTo());
@@ -191,19 +186,32 @@ public class NotificationService extends Service {
 					new Intent(this, NotificationReceiver.class)
 							.putExtra(KEY_INTENT_LIKE, REQUEST_CODE_LIKE)
 							.putExtra(COMMENT_NOTIFICATION, notification.getRedirectTo()),
-					PendingIntent.FLAG_UPDATE_CURRENT
+					PendingIntent.FLAG_IMMUTABLE
 			);
 
 			//Pending intent for a notification button REPLY
-			PendingIntent helpPendingIntent = PendingIntent.getBroadcast(
-					this,
-					REQUEST_CODE_HELP,
-					new Intent(this, NotificationReceiver.class)
-							.putExtra(KEY_INTENT_HELP, REQUEST_CODE_HELP)
-							.putExtra(COMMENT_NOTIFICATION, notification.getRedirectTo())
-							.putExtra(NOTIFICATION_ID, notification.getNotificationId()),
-					PendingIntent.FLAG_UPDATE_CURRENT
-			);
+			PendingIntent helpPendingIntent;
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+				helpPendingIntent = PendingIntent.getBroadcast(
+						this,
+						REQUEST_CODE_HELP,
+						new Intent(this, NotificationReceiver.class)
+								.putExtra(KEY_INTENT_HELP, REQUEST_CODE_HELP)
+								.putExtra(COMMENT_NOTIFICATION, notification.getRedirectTo())
+								.putExtra(NOTIFICATION_ID, notification.getNotificationId()),
+						PendingIntent.FLAG_MUTABLE
+				);
+			} else {
+				helpPendingIntent = PendingIntent.getBroadcast(
+						this,
+						REQUEST_CODE_HELP,
+						new Intent(this, NotificationReceiver.class)
+								.putExtra(KEY_INTENT_HELP, REQUEST_CODE_HELP)
+								.putExtra(COMMENT_NOTIFICATION, notification.getRedirectTo())
+								.putExtra(NOTIFICATION_ID, notification.getNotificationId()),
+						PendingIntent.FLAG_UPDATE_CURRENT
+				);
+			}
 
 			//We need this object for getting direct input from notification
 			RemoteInput remoteInput = new RemoteInput.Builder(NOTIFICATION_REPLY)
