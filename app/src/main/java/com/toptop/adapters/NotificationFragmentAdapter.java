@@ -247,7 +247,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 			followViewHolder.txt_content.setText(notification.getContent());
 			followViewHolder.tx_time.setText(MyUtil.getTimeAgo(notification.getTime()));
 			//get user from username
-			UserFirebase.getUserByUsernameOneTime(notification.getUsername(),
+			UserFirebase.getUserByUsernameOneTime(notification.getRedirectTo(),
 					user -> {
 						try {
 							Glide.with(context)
@@ -258,7 +258,7 @@ public class NotificationFragmentAdapter extends RecyclerView.Adapter<RecyclerVi
 							Log.w(TAG, "Glide error: " + e.getMessage());
 						}
 
-						((FollowViewHolder) holder).txt_username.setText(user.getUsername());
+						((FollowViewHolder) holder).txt_username.setText(user.getFullname());
 					}, databaseError -> {
 						Log.e(TAG, "onBindViewHolder: " + databaseError.getMessage());
 
