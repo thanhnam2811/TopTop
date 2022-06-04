@@ -71,7 +71,7 @@ public class VideoFragment extends Fragment {
 	}
 
 	private void loadVideos() {
-		VideoFirebase.getAllVideos(
+		VideoFirebase.getAllVideosRealtime(
 				listVideos -> {
 					VideoFragmentAdapter adapter = (VideoFragmentAdapter) recyclerView.getAdapter();
 					if (adapter != null) {

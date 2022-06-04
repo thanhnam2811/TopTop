@@ -289,4 +289,23 @@ public class VideoFirebase {
 		});
 	}
 
+	// Get all video realtime
+	public static void getAllVideosRealtime(ListVideoCallback listVideoCallback, FailureCallback failureCallback) {
+		videoRef.addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				List<Video> videos = new ArrayList<>();
+				for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+					Video video = new Video(dataSnapshot);
+					videos.add(video);
+				}
+				listVideoCallback.onCallback(videos);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+				failureCallback.onCallback(error);
+			}
+		});
+	}
 }
